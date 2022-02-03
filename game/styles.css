@@ -1,0 +1,119 @@
+body {
+  padding: 0;
+  margin: 0;
+}
+
+.screen {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+}
+
+.menu {
+  display: flex;
+  width: 30%;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  border-left: lightseagreen 5px solid;
+}
+
+.messages {
+  width: 95%;
+  height: 400px;
+  overflow-y: auto;
+
+}
+
+.menu-upper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: center;
+}
+
+.chat-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%; 
+}
+
+.menu-button {
+  width: 70%;
+  margin-top: 10px;
+  font-size: 1.4em;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 80%;
+  background: rgb(181,213,212);
+background: linear-gradient(180deg, rgba(181,213,212,1) 0%, rgba(200,218,216,1) 50%, rgba(216,227,226,1) 100%);
+  margin: 0;
+}
+
+.board {
+  margin: auto;
+  display: grid;
+  grid-template-columns: repeat(8, auto);
+  grid-template-rows: repeat(8, auto);
+  border: gray outset 5px;
+  box-shadow: 10px 10px 10px gray;
+  width: 70vh;
+  height: 70vh;
+}
+.square-container {
+  display: relative;
+}
+.square {
+  display: flex;
+  /* display: grid; */
+  /* align-self: stretch;
+  justify-self: stretch; */
+  padding: 0;
+  justify-content: center;
+  align-items: center;
+}
+
+.black {
+  background-color: rgb(37, 35, 35);
+}
+
+.white {
+  background-color: burlywood;
+}
+
+.destination {
+  background-color: cadetblue;
+}
+
+.piece {
+  /* position: none; */
+  width: 90%;
+  height: 90%;
+  border-radius: 100%;
+}
+
+.black-piece {
+  background-color: rgb(100, 93, 79);
+}
+
+.white-piece {
+  background-color: rgb(216, 186, 147);
+}
+
+/* .king {
+} */
+
+.white-king {
+  background-color: gold;
+}
+
+.black-king {
+  background-color: silver;
+}
