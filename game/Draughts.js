@@ -1,14 +1,40 @@
-import { getSquare } from "./utils.js";
+import { getCookie, getSquare } from "./utils.js";
 
 export default class GameState {
-    constructor(blackPieces, whitePieces) {
-      this.gameMode = 'ai';
+    constructor(blackPieces, whitePieces, gameMode, playerColour) {
+      this.playerColour = playerColour;
+      this.gameMode = gameMode;
       this.blackPieces = blackPieces;
       this.whitePieces = whitePieces;
       this.captureAvailable = false;
       this.movingPlayer = 'black';
       this.chainCapturing = null;
-      this.computerColour = null;
+      this.opponentColour = null;
+      if (this.gameMode === "vs") {
+        this.initGame();
+      }
+    }
+
+    initGame() {
+      this.websocket = new WebSocket('wss://hermy-games-websockets.herokuapp.com/');
+      this.websocket.addEventListener('open', () => {
+        if (getCookie('type') === 'new-game') {
+          const id = getCookie('id');
+          this.websocket.send(JSON.stringify({type: 'start', id: id}));
+        } else {
+          const opponent = getCookie('opponent');
+          const event = { type: 'join', token: opponent};
+          this.websocket.send(JSON.stringify(event));
+        }
+      })
+      this.websocket.addEventListener('message', ({data}) => {
+        const event = JSON.parse(data);
+        const move = JSON.parse(event.content);
+        if (move.colour === this.movingPlayer) {
+          window.setTimeout(() => this.handleOpponentMove(move.from, move.to, move.capturing), 50);
+
+        }
+      })
     }
   
     calcMoves() {
@@ -70,8 +96,8 @@ export default class GameState {
     }
   
     computerTurn() {
-      if (this.movingPlayer === this.computerColour) {
-        const pieces = this.computerColour === "black" ? this.blackPieces : this.whitePieces;
+      if (this.movingPlayer === this.opponentColour) {
+        const pieces = this.opponentColour === "black" ? this.blackPieces : this.whitePieces;
         const captures = pieces.filter((piece) => piece.captures.length > 0);
         const moves = pieces.filter((piece) => piece.moves.length > 0);
         if (captures.length > 0) {
@@ -107,6 +133,22 @@ export default class GameState {
       if (this.gameMode === 'ai') {
         this.computerTurn();
       }
+    }
+
+    handleOpponentMove(from, to, capturing) {
+      const ele = getSquare(from.x, from.y).children[0];
+      const pieces = this.movingPlayer === "black" ? this.blackPieces : this.whitePieces;
+      const piece = pieces.filter((piece) => piece.posX === from.x && piece.posY === from.y)[0];
+      piece.destination = getSquare(to.x, to.y);
+      piece.newX = to.x;
+      piece.newY = to.y;
+      if (capturing) {
+        piece.capturing = true;
+      }
+      this.dragPiece(ele, piece.destination);
+      setTimeout(() => {
+        piece.moveOpponentPiece(ele);
+      }, 290)
     }
 
     dragPiece(ele, destination) {

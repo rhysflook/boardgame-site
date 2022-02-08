@@ -72,6 +72,7 @@ background: linear-gradient(180deg, rgba(181,213,212,1) 0%, rgba(200,218,216,1) 
 }
 .square {
   display: flex;
+  color: 'white';
   /* display: grid; */
   /* align-self: stretch;
   justify-self: stretch; */
@@ -97,6 +98,9 @@ background: linear-gradient(180deg, rgba(181,213,212,1) 0%, rgba(200,218,216,1) 
   width: 90%;
   height: 90%;
   border-radius: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .black-piece {

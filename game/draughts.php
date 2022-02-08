@@ -13,7 +13,6 @@
                     <?php for($j=0; $j < 8; $j++): ?>
                         <?php if ($i % 2 == 1 && $j % 2 == 0 || $i % 2 == 0 && $j % 2 == 1): ?>
                         <div id="<?=$i."-".$j ?>" class="square black">
-
                         </div>
                         <?php else: ?>
                             <div class="square white">
@@ -41,5 +40,5 @@
         <script type="module" src="Draughts.js"></script>
         <script type="module" src="utils.js"></script>
         <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    </body>
+     </body>
 </html>

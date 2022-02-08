@@ -1,4 +1,7 @@
-import { isInSquare, getSquare, createHtmlPiece, isOutOfBounds, isOpenSpace} from './utils.js'
+import {
+  isInSquare, getSquare, createHtmlPiece,
+  isOutOfBounds, isOpenSpace, reverseCoord
+} from './utils.js'
 
 export class Piece {
   constructor(posX, posY, colour) {
@@ -16,7 +19,8 @@ export class Piece {
   }
 
   handleDragStart(e, ele) {
-    const { width, height } = ele.getBoundingClientRect();
+    if (this.colour === this.game.playerColour) {
+      const { width, height } = ele.getBoundingClientRect();
     ele.style.width = `${width}px`;
     ele.style.height = `${height}px`;
   
@@ -27,6 +31,7 @@ export class Piece {
     ele.style.top = e.pageY - 40 + 'px';
     this.moving = true;
     this.offset = [ele.offsetLeft - e.clientX, ele.offsetTop - e.clientY];
+    }
   }
   
   handleMouseOut(e, ele) {
@@ -115,8 +120,8 @@ export class DraughtPiece extends Piece {
   }
 
   crownCheck(ele) {
-    if (this.colour === this.game.computerColour && this.posX === 7 || 
-        this.colour !== this.game.computerColour && this.posX === 0) {
+    if (this.colour === this.game.opponentColour && this.posX === 7 || 
+        this.colour !== this.game.opponentColour && this.posX === 0) {
       this.isKing = true;
       ele.classList.add(`${this.colour}-king`);
     } 
@@ -144,7 +149,7 @@ export class DraughtPiece extends Piece {
   }
 
   getXDirection() {
-    if (this.colour === this.game.computerColour) {
+    if (this.colour === this.game.opponentColour) {
       return 1;
     }
     else {
@@ -180,6 +185,24 @@ export class DraughtPiece extends Piece {
     }
   }
 
+  moveOpponentPiece(ele){
+    getSquare(this.posX, this.posY).innerHTML = '';
+    this.destination.classList.remove('destination');
+    if (this.capturing) {
+      this.capturePiece();
+
+    }
+    this.posX = this.newX;
+    this.posY = this.newY;
+    this.crownCheck(ele);
+    this.destination.appendChild(createHtmlPiece(this));
+    if (this.captures.length > 0) {
+      this.game.chainCapturing = this;
+    } else {
+      this.endTurn();
+    }  
+  }
+
   movePiece(ele) {
     if (this.destination === null) {
       ele.style.left = this.left;
@@ -189,8 +212,28 @@ export class DraughtPiece extends Piece {
     } else {
       getSquare(this.posX, this.posY).innerHTML = '';
       this.destination.classList.remove('destination');
+     if (this.game.gameMode === "vs") {
+      const move = JSON.stringify(
+        {
+          from: {
+            x: reverseCoord(this.posX),
+            y: reverseCoord(this.posY)
+          },
+          to: {
+            x: reverseCoord(this.newX),
+            y: reverseCoord(this.newY)
+          },
+          capturing: this.capturing,
+          colour: this.colour
+        }
+      )
+      this.game.websocket.send(
+        JSON.stringify({type: 'move', content: move})
+      )
+     } 
       if (this.capturing) {
         this.capturePiece();
+
       }
       this.posX = this.newX;
       this.posY = this.newY;

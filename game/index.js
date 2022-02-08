@@ -1,6 +1,6 @@
 import { DraughtPiece } from './Piece.js'
 import GameState from './Draughts.js';
-import { createHtmlPiece } from './utils.js';
+import { createHtmlPiece, getCookie } from './utils.js';
 
 class Player {
   constructor() {
@@ -32,12 +32,6 @@ const createPieces = (start, finish, colour) => {
     return pieces;
   }
 
-function getCookie(name) {
-  var value = "; " + document.cookie;
-  var parts = value.split("; " + name + "=");
-  if (parts.length == 2) return parts.pop().split(";").shift();
-}
-
 const getPieces = (colour) => {
   if (colour === 'black') {
     return {blacks: createPieces(5, 8, 'black'), whites: createPieces(0, 3, 'white')};
@@ -57,15 +51,16 @@ const resetGamePieces = () => {
 const isNewGame = getCookie('new-game');
 
 if (isNewGame) {
+  const gameType = getCookie("type")
   const playerColour = getCookie('colour');
   resetGamePieces();
   const {blacks, whites} = getPieces(playerColour);
-  const game = new GameState(blacks, whites);
-  game.computerColour = playerColour === "black" ? "white" : "black";
+  const game = new GameState(blacks, whites, gameType, playerColour);
+  game.opponentColour = playerColour === "black" ? "white" : "black";
   localStorage.setItem('enemy', game.computerColour)
   setPieces([...whites, ...blacks], game);
   game.calcMoves();
-  if (game.computerColour === "black") {
+  if (game.opponentColour === "black" && game.gameMode === "ai") {
     game.computerTurn();
   }
 } else {
@@ -76,7 +71,8 @@ if (isNewGame) {
   const blackObjects = blacks.map((black) => {
     return createPiece(black.x, black.y, black.colour)
   })
-  const game = new GameState(blackObjects, whiteObjects);
+
+  const game = new GameState(blackObjects, whiteObjects, 'vs');
   game.movingPlayer = localStorage.getItem('moving');
   const player = new Player();
   const playerId = getCookie('id');

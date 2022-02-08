@@ -92,7 +92,6 @@ if(isset($_SESSION['username taken']))
 
             const registerButton = document.querySelector('#register');
             const passwOne = document.querySelector('#passw');
-            console.log(passwOne)
             const passwordTwo = document.querySelector('#repeatPassw');
             passwOne.addEventListener('input', controlButton);
             passwordTwo.addEventListener('input', controlButton);
