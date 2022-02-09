@@ -19,7 +19,7 @@ echo var_dump($_POST);
 if (isset($_POST['vs-player'])) {
     $id = $_COOKIE['id'];
 
-    $mysqli = new mysqli("localhost", "root", "", "draughts");
+    $mysqli = new mysqli($cleardb_server, $cleardb_username, $cleardb_password, $cleardb_db);
     $sql = "INSERT INTO games (player_1_id) VALUES (?)";
     $stmt = mysqli_prepare($mysqli, $sql);
     $stmt->bind_param("i", $id);
