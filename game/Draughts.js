@@ -22,6 +22,7 @@ export default class GameState {
           const id = getCookie('id');
           this.websocket.send(JSON.stringify({type: 'start', id: id}));
         } else {
+          console.log('getting game')
           const opponent = getCookie('opponent');
           const event = { type: 'join', token: opponent};
           this.websocket.send(JSON.stringify(event));
