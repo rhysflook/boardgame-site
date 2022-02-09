@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <?php
-
+$cleardb_url = parse_url(getenv("CLEARDB_DATABASE_URL"));
+$cleardb_server = $cleardb_url["host"];
+$cleardb_username = $cleardb_url["user"];
+$cleardb_password = $cleardb_url["pass"];
+$cleardb_db = substr($cleardb_url["path"],1);
+$active_group = 'default';
+$query_builder = TRUE;
 function addUser($conn) {
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
     $sql = "INSERT INTO users (username, password, in_game) VALUES (?, ?, ?)";
@@ -25,7 +31,7 @@ session_start();
 // $_POST = json_decode(file_get_contents("php://input"), true);
 if (array_key_exists('register', $_POST)) {
 
-    $conn = new mysqli("localhost", "root", "", "draughts");
+    $conn = new mysqli($cleardb_server, $cleardb_username, $cleardb_password, $cleardb_db);
     if (usernameTaken($conn)) {
         $_SESSION['username taken'] = true;
         header('location: register.php');
