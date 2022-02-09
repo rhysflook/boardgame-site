@@ -22,6 +22,7 @@ if (isset($_POST['vs-player'])) {
     $stmt = mysqli_prepare($mysqli, $sql);
     $stmt->bind_param("i", $id);
     $stmt->execute();
+    setcookie('player-1', true, 0, '/');
     setcookie('new-game', true, 0,'/');
     setcookie('type', 'vs', 0, '/');
     setcookie('colour', $_POST['colour'], 0, '/');

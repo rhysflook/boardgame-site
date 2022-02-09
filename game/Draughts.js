@@ -18,7 +18,7 @@ export default class GameState {
     initGame() {
       this.websocket = new WebSocket('wss://hermy-games-websockets.herokuapp.com/');
       this.websocket.addEventListener('open', () => {
-        if (getCookie('type') === 'new-game') {
+        if (getCookie('player-1')) {
           const id = getCookie('id');
           this.websocket.send(JSON.stringify({type: 'start', id: id}));
         } else {
