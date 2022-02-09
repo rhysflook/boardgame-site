@@ -43,7 +43,7 @@ if (isset($_POST['join-game'])) {
     $stmt->bind_result($opponent, $user);
     $stmt->fetch();
     $id = $_COOKIE['id'];
-    $mysqli = new mysqli("localhost", "root", "", "draughts");
+    $mysqli = new mysqli($cleardb_server, $cleardb_username, $cleardb_password, $cleardb_db);
     $sql = "INSERT INTO games (player_2_id) VALUES (?)";
     $stmt = mysqli_prepare($mysqli, $sql);
     $stmt->bind_param("i", $id);
