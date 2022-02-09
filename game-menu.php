@@ -54,7 +54,7 @@ if (isset($_POST['join-game'])) {
     $stmt->execute();
     setcookie('opponent', $opponent, 0, '/');
     setcookie('new-game', true, 0,'/');
-    setcookie('type', 'join-game', 0, '/');
+    setcookie('type', 'vs', 0, '/');
     setcookie('colour', $_POST['colour'], 0, '/');
     header('location: game/draughts.php');
 }
