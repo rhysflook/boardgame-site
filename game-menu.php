@@ -1,61 +1,32 @@
-<!DOCTYPE html>
 <?php 
-$cleardb_url = parse_url(getenv("CLEARDB_DATABASE_URL"));
-$cleardb_server = $cleardb_url["host"];
-$cleardb_username = $cleardb_url["user"];
-$cleardb_password = $cleardb_url["pass"];
-$cleardb_db = substr($cleardb_url["path"],1);
-$active_group = 'default';
-$query_builder = TRUE;
+namespace draughts;
+include "siteUtils.php";
 session_start();
+$id = $_COOKIE['id'];
 if (isset($_POST['ai'])){
-    setcookie('new-game', true, 0,'/');
-    setcookie('type', 'ai', 0, '/');
-    setcookie('colour', $_POST['colour'], 0, '/');
     $_SESSION['type'] = 'ai';
+    setCookies(['new-game'=>true, 'type'=>'ai', 'colour'=>$_POST['colour']]);
     header('location: game/draughts.php');
 }
-echo var_dump($_POST);
-if (isset($_POST['vs-player'])) {
-    $id = $_COOKIE['id'];
 
-    $mysqli = new mysqli($cleardb_server, $cleardb_username, $cleardb_password, $cleardb_db);
-    $sql = "INSERT INTO games (player_1_id) VALUES (?)";
-    $stmt = mysqli_prepare($mysqli, $sql);
-    $stmt->bind_param("i", $id);
-    $stmt->execute();
-    $sql = "UPDATE users SET in_game=1 WHERE id=?";
-    $stmt = mysqli_prepare($mysqli, $sql);
-    $stmt->bind_param("i", $id);
-    $stmt->execute();
-    setcookie('player-1', true, 0, '/');
-    setcookie('new-game', true, 0,'/');
-    setcookie('type', 'vs', 0, '/');
-    setcookie('colour', $_POST['colour'], 0, '/');
+if (isset($_POST['vs-player'])) {
+    sendRequest("INSERT INTO games (player_1_id) VALUES (?)", ["i", $id]);
+    sendRequest("UPDATE users SET in_game=1 WHERE id=?",  ["i", $id]);
+    setCookies(
+        ['player-1'=>true, 'new-game'=>true, 'type'=>'vs', 'colour'=>$_POST['colour']]
+    );
     header('location: game/draughts.php');
 }
+
 if (isset($_POST['join-game'])) {
-    $mysqli = new mysqli($cleardb_server, $cleardb_username, $cleardb_password, $cleardb_db);
-    $sql = "SELECT id, username FROM users WHERE Username = ?";
-    $stmt = mysqli_prepare($mysqli, $sql);
-    $stmt->bind_param("s", $_POST['username']);
-    $stmt->execute();
-    $stmt->bind_result($opponent, $user);
-    $stmt->fetch();
-    $id = $_COOKIE['id'];
-    $mysqli = new mysqli($cleardb_server, $cleardb_username, $cleardb_password, $cleardb_db);
-    $sql = "INSERT INTO games (player_2_id) VALUES (?)";
-    $stmt = mysqli_prepare($mysqli, $sql);
-    $stmt->bind_param("i", $id);
-    $stmt->execute();
-    $sql = "UPDATE users SET in_game=1 WHERE id=?";
-    $stmt = mysqli_prepare($mysqli, $sql);
-    $stmt->bind_param("i", $id);
-    $stmt->execute();
-    setcookie('opponent', $opponent, 0, '/');
-    setcookie('new-game', true, 0,'/');
-    setcookie('type', 'vs', 0, '/');
-    setcookie('colour', $_POST['colour'], 0, '/');
+
+    [$opponent, $user] = sendRequest(
+        "SELECT id, username FROM users WHERE Username = ?",
+        ["s", $_POST['username']]
+    )->fetch_all();
+    sendRequest("INSERT INTO games (player_2_id) VALUES (?)", ["i", $id]);
+    sendRequest("UPDATE users SET in_game=1 WHERE id=?", ["i", $id]);
+    setCookies(['opponent'=>$opponent, 'new-game'=>true, 'type'=>'vs', 'colour'=>$_POST['colour']]);
     header('location: game/draughts.php');
 }
 if(isset($_SESSION['type']))

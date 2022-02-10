@@ -1,27 +1,21 @@
-<!DOCTYPE html>
 <?php
-$cleardb_url = parse_url(getenv("CLEARDB_DATABASE_URL"));
-$cleardb_server = $cleardb_url["host"];
-$cleardb_username = $cleardb_url["user"];
-$cleardb_password = $cleardb_url["pass"];
-$cleardb_db = substr($cleardb_url["path"],1);
-$active_group = 'default';
-$query_builder = TRUE;
-function addUser($conn) {
+namespace draughts;
+include "siteUtils.php";
+
+function addUser() {
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
-    $sql = "INSERT INTO users (username, password, in_game) VALUES (?, ?, ?)";
-    $stmt = mysqli_prepare($conn, $sql);
-    $stmt->bind_param("ssi", $_POST['username'], $password, $_POST['in_game']);
-    $stmt->execute();
+    sendRequest(
+        "INSERT INTO users (username, password, in_game) VALUES (?, ?, ?)",
+        ["ssi", $_POST['username'], $password, $_POST['in_game']]
+    );
 }
 
-function usernameTaken($conn) {
-    $sql = "SELECT username FROM users WHERE username = ?";
-    $stmt = mysqli_prepare($conn, $sql);
-    $stmt->bind_param('s', $_POST['username']);
-    $stmt->execute();
-    $stmt->bind_result($username);
-    $stmt->fetch();
+function usernameTaken() {
+    [$username] = sendRequest(
+        "SELECT username FROM users WHERE username = ?",
+        ['s', $_POST['username']]
+    )->fetch_all();
+
     if ($username !== null) {
         return True;
     } 
@@ -30,8 +24,6 @@ $error = false;
 session_start();
 // $_POST = json_decode(file_get_contents("php://input"), true);
 if (array_key_exists('register', $_POST)) {
-
-    $conn = new mysqli($cleardb_server, $cleardb_username, $cleardb_password, $cleardb_db);
     if (usernameTaken($conn)) {
         $_SESSION['username taken'] = true;
         header('location: register.php');
@@ -39,7 +31,7 @@ if (array_key_exists('register', $_POST)) {
     } else {
         addUser($conn);
         header('location: login.php');
-        die;
+        exit;
     }
 }
 

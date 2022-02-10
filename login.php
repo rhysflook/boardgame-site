@@ -1,56 +1,44 @@
-<!DOCTYPE html>
 <?php
-$cleardb_url = parse_url(getenv("CLEARDB_DATABASE_URL"));
-$cleardb_server = $cleardb_url["host"];
-$cleardb_username = $cleardb_url["user"];
-$cleardb_password = $cleardb_url["pass"];
-$cleardb_db = substr($cleardb_url["path"],1);
-$active_group = 'default';
-$query_builder = TRUE;
-    function getUserInfo($conn) {
-        $sql = "SELECT id, username, password FROM users WHERE Username = ?";
-        $stmt = mysqli_prepare($conn, $sql);
-        $stmt->bind_param("s", $_POST['username']);
-        $stmt->execute();
-        $stmt->bind_result($id, $user, $passw);
-        $stmt->fetch();
-        
-        return array('id'=>$id, 'username'=>$user, 'password'=>$passw);
-    }
-    $error = false;
-    session_start();
-    if (array_key_exists("login", $_POST)) {
-        
-        // $_POST = json_decode(file_get_contents("php://input"), true);
-        $mysqli = new mysqli($cleardb_server, $cleardb_username, $cleardb_password, $cleardb_db);
+namespace draughts;
+include "siteUtils.php";
 
-        $userInfo = getUserInfo($mysqli);
-
-        $correct_passw = password_verify($_POST['password'], $userInfo['password']);
-        if ($userInfo['username'] && $correct_passw) {
-            $_SESSION['logged in'] = true;
-            setcookie('id', $userInfo['id'], 0, "/");
-            header('location: game-menu.php');
-            exit;
-            // echo json_encode(['id'=>$userInfo['id'], 'status'=>200, 'message'=>'login successful']);
-        } else if (!$userInfo['username']) {
-            $_SESSION['login error'] = true;
-            header('location: login.php');
-            exit;
-        } else if (!$correct_passw) {
-            $_SESSION['login error'] = true;
-            header('location: login.php');
-            exit;
-        } else {
-            echo json_encode(['error'=>'Unknown error']);
-        }
-    }
-    if(isset($_SESSION['login error']))
-    {   
-        $error = true;
-        unset($_SESSION['login error']);
-    }  
+function getUserInfo() {
+    return sendRequest(
+        "SELECT id, username, password FROM users WHERE Username = ?",
+        ["s", $_POST['username']]
+    )->fetch_all();
+}
+$error = false;
+session_start();
+if (array_key_exists("login", $_POST)) {
     
+    [$id, $user, $passw] = getUserInfo();
+
+    $correct_passw = password_verify($_POST['password'], $passw);
+    if ($user && $correct_passw) {
+        $_SESSION['logged in'] = true;
+        setcookie('id', $id, 0, "/");
+        header('location: game-menu.php');
+        exit;
+        // echo json_encode(['id'=>$userInfo['id'], 'status'=>200, 'message'=>'login successful']);
+    } else if (!$user) {
+        $_SESSION['login error'] = true;
+        header('location: login.php');
+        exit;
+    } else if (!$correct_passw) {
+        $_SESSION['login error'] = true;
+        header('location: login.php');
+        exit;
+    } else {
+        echo json_encode(['error'=>'Unknown error']);
+    }
+}
+if(isset($_SESSION['login error']))
+{   
+    $error = true;
+    unset($_SESSION['login error']);
+}  
+
         
 ?>
 
