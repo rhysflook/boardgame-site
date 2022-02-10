@@ -14,7 +14,7 @@ function usernameTaken() {
     [$username] = sendRequest(
         "SELECT username FROM users WHERE username = ?",
         ['s', $_POST['username']]
-    )->fetch_all();
+    )->fetch_array();
 
     if ($username !== null) {
         return True;

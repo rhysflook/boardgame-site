@@ -23,7 +23,7 @@ if (isset($_POST['join-game'])) {
     [$opponent, $user] = sendRequest(
         "SELECT id, username FROM users WHERE Username = ?",
         ["s", $_POST['username']]
-    )->fetch_all();
+    )->fetch_array();
     sendRequest("INSERT INTO games (player_2_id) VALUES (?)", ["i", $id]);
     sendRequest("UPDATE users SET in_game=1 WHERE id=?", ["i", $id]);
     setCookies(['opponent'=>$opponent, 'new-game'=>true, 'type'=>'vs', 'colour'=>$_POST['colour']]);

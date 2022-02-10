@@ -6,7 +6,7 @@ function getUserInfo() {
     return sendRequest(
         "SELECT id, username, password FROM users WHERE Username = ?",
         ["s", $_POST['username']]
-    )->fetch_all();
+    )->fetch_array();
 }
 $error = false;
 session_start();
