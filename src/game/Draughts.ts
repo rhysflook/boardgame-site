@@ -1,0 +1,290 @@
+import { EventHandler } from './Events/EventHandler';
+import {
+  DraughtGamePiece,
+  DraughtMovesCalculator,
+} from './MoveCalculators/DraughtMovesCalculator';
+import { MoveCalculator, Pieces } from './MoveCalculators/MoveCalculator';
+import { PieceMaker } from './PieceMaker';
+import { GamePiece } from './Pieces/Piece';
+import { DraughtRules } from './Rules/DraughtRules';
+
+import { getSquare, reverseCoord } from './utils';
+
+export interface BoardSpace {
+  x: number;
+  y: number;
+}
+
+export interface Move {
+  pos: BoardSpace;
+  newPos: BoardSpace;
+  isCapture: boolean;
+}
+
+export interface Rules<T extends GamePiece> {
+  handleCapture(capturingPiece: T, pieces: T[], move: Move): BoardSpace;
+  endTurn(game: GameState<T>, movedPiece: T): void;
+}
+
+export default class GameState<T extends GamePiece> {
+  movingPlayer: 'blacks' | 'whites' = 'blacks';
+  opponentColour: string;
+  moves: Move[];
+
+  static setupDraughtsGame(
+    gameMode: string,
+    playerColour: string,
+    socket: WebSocket | null = null
+  ): GameState<DraughtGamePiece> {
+    const pieces = PieceMaker.setupDraughtsBoard(playerColour);
+    return new GameState<DraughtGamePiece>(
+      gameMode,
+      playerColour,
+      new DraughtMovesCalculator(pieces),
+      new EventHandler<DraughtGamePiece>(),
+      pieces,
+      new DraughtRules(),
+      socket
+    );
+  }
+
+  constructor(
+    public gameMode: string,
+    public playerColour: string,
+    public calculator: MoveCalculator<T>,
+    public events: EventHandler<T>,
+    public pieces: Pieces<T>,
+    public rules: Rules<T>,
+    public socket: WebSocket | null = null
+  ) {
+    this.moves = [];
+    this.opponentColour = this.playerColour === 'blacks' ? 'whites' : 'blacks';
+    localStorage.setItem('movingColour', 'blacks');
+    this.initGame();
+  }
+
+  initGame = (): void => {
+    this.moves = [];
+    this.moves = this.calculator.calc('blacks', this.pieces);
+    this.addEvents();
+    if (this.gameMode === 'ai' && this.opponentColour === 'blacks') {
+      this.computerTurn();
+    } else {
+      this.socket?.addEventListener('message', (event) => {
+        const data = JSON.parse(event.data);
+        if (data.type === 'move') {
+          const { move } = data;
+          console.log(move);
+          let x = reverseCoord(move.pos.x);
+          let y = reverseCoord(move.pos.y);
+          let newX = reverseCoord(move.newPos.x);
+          let newY = reverseCoord(move.newPos.y);
+          const pieces =
+            move.colour === 'blacks' ? this.pieces.blacks : this.pieces.whites;
+          const piece = pieces.find(
+            (piece) => piece.pos.x === x && piece.pos.y === y
+          ) as T;
+          const opponentMove = {
+            pos: { x, y },
+            newPos: { x: newX, y: newY },
+            isCapture: move.isCapture,
+          };
+          this.makeMove(opponentMove, piece);
+        }
+      });
+    }
+  };
+
+  addEvents = (): void => {
+    this.events.cleanUpEvents();
+    const pieces = this.getMovablePieces();
+    Object.values(pieces).forEach((data) => {
+      const { piece, moves } = data;
+      this.events.applyEvents(piece, moves, this);
+    });
+  };
+
+  getMovablePieces = (): { [key: string]: { moves: number[][]; piece: T } } => {
+    const pieces: { [key: string]: { moves: number[][]; piece: T } } = {};
+    this.moves.forEach((move: Move) => {
+      const movingPieces =
+        this.movingPlayer === 'blacks'
+          ? this.pieces.blacks
+          : this.pieces.whites;
+      const piece = movingPieces.find(
+        (movingPiece: T) =>
+          movingPiece.pos.x === move.pos.x && movingPiece.pos.y === move.pos.y
+      );
+
+      if (piece) {
+        const key = `${piece.pos.x}-${piece.pos.y}`;
+        if (pieces[key]) {
+          pieces[key].moves.push([move.newPos.x, move.newPos.y]);
+        } else {
+          pieces[key] = { moves: [[move.newPos.x, move.newPos.y]], piece };
+        }
+      }
+    });
+    return pieces;
+  };
+
+  movePiece = (piece: T, target: BoardSpace): void => {
+    const { x, y } = target;
+    const chosenMove = this.moves.find(
+      (move: Move) =>
+        move.pos.x === piece.pos.x &&
+        move.pos.y === piece.pos.y &&
+        x === move.newPos.x &&
+        y === move.newPos.y
+    );
+    const enemyPieces =
+      this.movingPlayer === 'blacks' ? this.pieces.whites : this.pieces.blacks;
+
+    if (chosenMove?.isCapture) {
+      const { x, y } = this.rules.handleCapture(piece, enemyPieces, chosenMove);
+      const enemyPiece = enemyPieces.find(
+        (piece) => piece.pos.x === x && piece.pos.y === y
+      ) as T;
+      if (enemyPiece) {
+        this.movingPlayer === 'blacks'
+          ? this.pieces.whites.splice(enemyPieces.indexOf(enemyPiece), 1)
+          : this.pieces.blacks.splice(enemyPieces.indexOf(enemyPiece), 1);
+      }
+
+      this.calculator.allPieces = [
+        ...this.pieces.blacks,
+        ...this.pieces.whites,
+      ];
+    }
+    if (this.gameMode === 'vs') {
+      const move = {
+        pos: { x: piece.pos.x, y: piece.pos.y },
+        newPos: {
+          x: x,
+          y: y,
+        },
+        isCapture: chosenMove?.isCapture as boolean,
+      };
+      this.sendMove(move);
+    }
+
+    piece.pos.x = x;
+    piece.pos.y = y;
+    this.rules.endTurn(this, piece);
+  };
+
+  sendMove = (move: Move) => {
+    this.socket?.send(
+      JSON.stringify({ type: 'move', move: JSON.stringify(move) })
+    );
+  };
+
+  findPiece = (findEnemy: boolean, x: number, y: number): T => {
+    const colour = findEnemy ? this.opponentColour : this.playerColour;
+    const pieces = this.getPieces(colour);
+    return pieces.find((piece) => piece.pos.x === x && piece.pos.y === y) as T;
+  };
+
+  getPieces(colour: string): T[] {
+    return colour === 'blacks' ? this.pieces.blacks : this.pieces.whites;
+  }
+
+  switchColour(): void {
+    this.movingPlayer === 'blacks'
+      ? (this.movingPlayer = 'whites')
+      : (this.movingPlayer = 'blacks');
+
+    localStorage.setItem(
+      'movingColour',
+      this.movingPlayer === 'blacks' ? 'blacks' : 'whites'
+    );
+  }
+
+  winnerCheck(): void {
+    const container = document.querySelector('.container') as HTMLElement;
+    if (this.pieces.blacks.length === 0 || this.pieces.whites.length === 0) {
+      const winnerMessage = document.createElement('h1');
+      winnerMessage.innerText = `${this.movingPlayer.toUpperCase()} Win!`;
+      container.appendChild(winnerMessage);
+    }
+  }
+
+  makeMove = (move: Move, piece: T): void => {
+    console.log(move);
+    const currentSpace = getSquare(move.pos.x, move.pos.y) as HTMLElement;
+    const targetSpace = getSquare(move.newPos.x, move.newPos.y) as HTMLElement;
+    this.dragPiece(
+      currentSpace.children[0] as HTMLElement,
+      targetSpace as HTMLElement
+    );
+    setTimeout(() => {
+      currentSpace.innerHTML = '';
+      targetSpace.appendChild(piece.createHTMLElement());
+      this.movePiece(piece as T, { x: move.newPos.x, y: move.newPos.y });
+    }, 290);
+  };
+
+  computerTurn = (): void => {
+    if (this.moves.length > 0) {
+      const move = this.moves[Math.floor(Math.random() * this.moves.length)];
+      const movingPieces =
+        this.movingPlayer === 'blacks'
+          ? this.pieces.blacks
+          : this.pieces.whites;
+      const piece = movingPieces.find(
+        (movingPiece: T) =>
+          movingPiece.pos.x === move.pos.x && movingPiece.pos.y === move.pos.y
+      );
+
+      if (piece) {
+        this.makeMove(move, piece);
+      }
+    } else {
+      this.switchPlayer();
+    }
+  };
+
+  switchPlayer = (): void => {
+    this.moves = [];
+    this.winnerCheck();
+    this.switchColour();
+    this.moves = this.calculator.calc(this.movingPlayer, this.pieces);
+    this.addEvents();
+    console.log(this.movingPlayer);
+    if (this.gameMode === 'ai' && this.movingPlayer === this.opponentColour) {
+      console.log('HEY');
+      this.computerTurn();
+    }
+  };
+
+  dragPiece(ele: HTMLElement, destination: HTMLElement): void {
+    console.log('MOVIHG');
+    const pos = ele.getBoundingClientRect();
+    const newPos = destination.getBoundingClientRect();
+    ele.animate(
+      [
+        {
+          transform: `translate(${newPos.x - pos.x + 5}px, ${
+            newPos.y - pos.y + 5
+          }px)`,
+        },
+      ],
+      {
+        duration: 300,
+      }
+    );
+  }
+
+  updateStoredData(): void {
+    localStorage.setItem('moving', this.movingPlayer);
+
+    const whiteData = this.pieces.whites.map((piece) => {
+      return { x: piece.pos.x, y: piece.pos.y, colour: piece.colour };
+    });
+    const blackData = this.pieces.blacks.map((piece) => {
+      return { x: piece.pos.x, y: piece.pos.y, colour: piece.colour };
+    });
+    const piecesJson = JSON.stringify({ whites: whiteData, blacks: blackData });
+    localStorage.setItem('pieces', piecesJson);
+  }
+}

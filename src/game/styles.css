@@ -1,6 +1,12 @@
 body {
   padding: 0;
   margin: 0;
+  background: linear-gradient(
+    180deg,
+    rgb(225, 219, 230) 0,
+    rgba(213, 199, 223) 50%,
+    rgb(176, 136, 204) 100%
+  );
 }
 
 .screen {
@@ -15,14 +21,13 @@ body {
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  border-left: lightseagreen 5px solid;
+  border-left: rgb(125, 57, 173) 5px solid;
 }
 
 .messages {
   width: 95%;
   height: 400px;
   overflow-y: auto;
-
 }
 
 .menu-upper {
@@ -36,7 +41,17 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 100%; 
+  width: 100%;
+}
+
+#chat-menu {
+  width: 20%;
+  display: flex;
+
+  flex-direction: column;
+  justify-content: space-between;
+  border-left: rgb(125, 57, 173) 5px outset;
+  box-shadow: -2px 0px 3px rgb(125, 57, 173);
 }
 
 .menu-button {
@@ -46,15 +61,15 @@ body {
 }
 
 .container {
+  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 100%;
   width: 80%;
-  background: rgb(181,213,212);
-background: linear-gradient(180deg, rgba(181,213,212,1) 0%, rgba(200,218,216,1) 50%, rgba(216,227,226,1) 100%);
-  margin: 0;
+
+  margin: 0 2%;
 }
 
 .board {
@@ -63,7 +78,7 @@ background: linear-gradient(180deg, rgba(181,213,212,1) 0%, rgba(200,218,216,1) 
   grid-template-columns: repeat(8, auto);
   grid-template-rows: repeat(8, auto);
   border: gray outset 5px;
-  box-shadow: 10px 10px 10px gray;
+  box-shadow: 0px 8px 10px gray, -10px 8px 15px gray, 10px 8px 15px gray;
   width: 70vh;
   height: 70vh;
 }
@@ -90,7 +105,7 @@ background: linear-gradient(180deg, rgba(181,213,212,1) 0%, rgba(200,218,216,1) 
 }
 
 .destination {
-  background-color: cadetblue;
+  background-color: rgb(198, 165, 221);
 }
 
 .piece {

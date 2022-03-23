@@ -47,32 +47,33 @@ if(isset($_SESSION['username taken']))
     <head>
         <meta charset="utf-8">
         <link rel="stylesheet" href="menu.css">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="menu.css">
     </head>
     <body>
-        <div class="menu-container">
         <form method="POST">
-            <div class="menu-section">
+        <div class="menu-container">
+            <div class="popup"> 
+            <div class="flex-container">
                 <label for="username">Username</label>
                 <input type="text" name="username" >
-            </div>
-            <div class="menu-section">
+        
                 <label for="password">Password</label>
                 <input type="password" name="password" id="passw">
-            </div>
-            <div class="menu-section">
+          
                 <label for="password">Repeat password</label>
                 <input type="password" name="password-again" id="repeatPassw">
-            </div>
-            <div class="menu-section">
-            <input type="submit" name="register" id="register" disabled>
-            </div>
-            <div class="menu-section">
+         
+            <input class="popup-button" type="submit" name="register" id="register" value="Register" disabled>
+      
             <?php if ($error): ?>
                 <p class="error">User with that name already exists</p>
             <?php endif; ?>
             </div>
-        </form>
+            </div>
         </div>
+    </form>
         <script>
             function controlButton() {
                 if (validPassword(passwOne.value, passwordTwo.value)) {

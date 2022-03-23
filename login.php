@@ -18,7 +18,7 @@ if (array_key_exists("login", $_POST)) {
     if ($user && $correct_passw) {
         $_SESSION['logged in'] = true;
         setcookie('id', $id, 0, "/");
-        header('location: game-menu.php');
+        header('location: ./src/menu/game-menu.php');
         exit;
         // echo json_encode(['id'=>$userInfo['id'], 'status'=>200, 'message'=>'login successful']);
     } else if (!$user) {
@@ -46,30 +46,29 @@ if(isset($_SESSION['login error']))
 <html lang="en">
     <head>
         <meta charset="utf-8">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="menu.css">
     </head>
     <body>
+        <form method="POST">
         <div class="menu-container">
-            <form method="POST">
-                <div class="menu-section">
+            <div class="popup">
+                <div class="flex-container">
                     <label for="username">Username</label>
                     <input type="text" name="username" >
-                </div>
-                <div class="menu-section">
                     <label for="password">Password</label>
                     <input type="password" name="password">
+                    <input class="popup-button" type="submit" name="login" value="Login">
+                    <?php
+                    if ($error):
+                    ?>
+                    <p  class="error">Username or password incorrect</p>
+                    <?php endif; ?>
                 </div>
-                <div class="menu-section">
-                <input type="submit" name="login">
-                </div>
-                <div class="menu-section">
-                <?php
-                if ($error):
-                ?>
-                <p  class="error">Username or password incorrect</p>
-                <?php endif; ?>
-                </div>
-            </form>
+            </div>
         </div>
+        </form>
     </body>
 </html>
