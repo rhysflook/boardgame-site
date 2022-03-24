@@ -22,7 +22,6 @@ function sendRequest($sql, $params) {
     $stmt->bind_param(...$params);
     $stmt->execute();
     return $stmt->get_result();
-   
 }
 
 function setCookies($cookies) {

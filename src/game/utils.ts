@@ -10,6 +10,7 @@ export const isInSquare = (
 };
 
 export const getSquare = (x: number, y: number): HTMLElement => {
+  console.log(x, y);
   return document.getElementById(`${x}-${y}`) as HTMLElement;
 };
 

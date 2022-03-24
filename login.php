@@ -33,6 +33,7 @@ if (array_key_exists("login", $_POST)) {
         echo json_encode(['error'=>'Unknown error']);
     }
 }
+
 if(isset($_SESSION['login error']))
 {   
     $error = true;

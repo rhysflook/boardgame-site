@@ -1,3 +1,4 @@
+import { ScoreBoard } from '../scoreboard/ScoreBoard';
 import { EventHandler } from './Events/EventHandler';
 import {
   DraughtGamePiece,
@@ -22,7 +23,11 @@ export interface Move {
 }
 
 export interface Rules<T extends GamePiece> {
-  handleCapture(capturingPiece: T, pieces: T[], move: Move): BoardSpace;
+  handleCapture(
+    capturingPiece: T,
+    scoreboard: ScoreBoard,
+    move: Move
+  ): BoardSpace;
   endTurn(game: GameState<T>, movedPiece: T): void;
 }
 
@@ -34,6 +39,7 @@ export default class GameState<T extends GamePiece> {
   static setupDraughtsGame(
     gameMode: string,
     playerColour: string,
+    scorecard: ScoreBoard,
     socket: WebSocket | null = null
   ): GameState<DraughtGamePiece> {
     const pieces = PieceMaker.setupDraughtsBoard(playerColour);
@@ -44,6 +50,7 @@ export default class GameState<T extends GamePiece> {
       new EventHandler<DraughtGamePiece>(),
       pieces,
       new DraughtRules(),
+      scorecard,
       socket
     );
   }
@@ -55,9 +62,11 @@ export default class GameState<T extends GamePiece> {
     public events: EventHandler<T>,
     public pieces: Pieces<T>,
     public rules: Rules<T>,
+    public scoreboard: ScoreBoard,
     public socket: WebSocket | null = null
   ) {
     this.moves = [];
+    console.log(this.playerColour);
     this.opponentColour = this.playerColour === 'blacks' ? 'whites' : 'blacks';
     localStorage.setItem('movingColour', 'blacks');
     this.initGame();
@@ -141,7 +150,11 @@ export default class GameState<T extends GamePiece> {
       this.movingPlayer === 'blacks' ? this.pieces.whites : this.pieces.blacks;
 
     if (chosenMove?.isCapture) {
-      const { x, y } = this.rules.handleCapture(piece, enemyPieces, chosenMove);
+      const { x, y } = this.rules.handleCapture(
+        piece,
+        this.scoreboard,
+        chosenMove
+      );
       const enemyPiece = enemyPieces.find(
         (piece) => piece.pos.x === x && piece.pos.y === y
       ) as T;
@@ -250,6 +263,7 @@ export default class GameState<T extends GamePiece> {
     this.switchColour();
     this.moves = this.calculator.calc(this.movingPlayer, this.pieces);
     this.addEvents();
+    this.scoreboard.switchPlayers();
     console.log(this.movingPlayer);
     if (this.gameMode === 'ai' && this.movingPlayer === this.opponentColour) {
       console.log('HEY');

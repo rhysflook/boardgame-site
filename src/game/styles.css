@@ -37,21 +37,14 @@ body {
   align-items: center;
 }
 
-.chat-box {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-}
-
 #chat-menu {
-  width: 20%;
-  display: flex;
-
-  flex-direction: column;
-  justify-content: space-between;
-  border-left: rgb(125, 57, 173) 5px outset;
-  box-shadow: -2px 0px 3px rgb(125, 57, 173);
+  width: 25%;
+  background-color: bisque;
+  border: rgb(125, 57, 173) 5px solid;
+  border-radius: 15px;
+  box-shadow: 3px 0px 4px rgb(179, 145, 202), 0px 3px 4px rgb(179, 145, 202),
+    -3px 0px 4px rgb(179, 145, 202);
+  margin: 3%;
 }
 
 .menu-button {
@@ -60,7 +53,7 @@ body {
   font-size: 1.4em;
 }
 
-.container {
+#left-side {
   position: relative;
   display: flex;
   flex-direction: column;
@@ -68,8 +61,25 @@ body {
   align-items: center;
   height: 100%;
   width: 80%;
+}
+
+.container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 80%;
+  width: 80%;
 
   margin: 0 2%;
+}
+
+#scores {
+  height: 20%;
+  display: flex;
+  width: 90%;
+  justify-content: space-evenly;
 }
 
 .board {

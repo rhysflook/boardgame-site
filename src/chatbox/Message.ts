@@ -12,8 +12,8 @@ export class Message extends HTMLElement {
     newMessage.classList.add(this.isLocal ? 'right' : 'left');
     newMessage.classList.add('message-box');
     newMessage.innerHTML = `
-        <p class="message-sender">${this.sender}</p>
-        <p class="message-content">${this.message}</p>
+        <div class="message-sender">${this.sender}</div>
+        <div class="message-content">${this.message}</div>
     `;
     this.appendChild(newMessage);
     return this;

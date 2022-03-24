@@ -1,3 +1,4 @@
+import { ScoreBoard } from '../../scoreboard/ScoreBoard';
 import GameState, { BoardSpace, Move, Rules } from '../Draughts';
 import { DraughtGamePiece } from '../MoveCalculators/DraughtMovesCalculator';
 import { getSquare } from '../utils';
@@ -5,8 +6,13 @@ import { getSquare } from '../utils';
 export class DraughtRules<T extends DraughtGamePiece> implements Rules<T> {
   capturingPiece: T | null = null;
 
-  handleCapture = (capturingPiece: T, pieces: T[], move: Move): BoardSpace => {
+  handleCapture = (
+    capturingPiece: T,
+    scoreboard: ScoreBoard,
+    move: Move
+  ): BoardSpace => {
     this.capturingPiece = capturingPiece;
+
     const { enemyX, enemyY } = this.findCapturedPiece(move);
     const square = document.getElementById(
       `${enemyX}-${enemyY}`

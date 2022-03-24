@@ -62,9 +62,12 @@ const chatBox = `
 
 const playerCard = `
   <link rel="stylesheet" href="../../menu.css">
-  <div class="player-info">
-    <h1 id="username"></h1>
-    <div id="colour"></div>
+  <div id="card" class="player-info">
+    <div class="player-card-right">
+      <h1 id="username"></h1>
+      <div class="black-square light-bg">
+      <div id="colour" class="select"></div></div>
+    </div>
     <div id="captures"></div>
   </div>
 `;
@@ -75,6 +78,7 @@ const templates: Templates = {
   inviteWait,
   chooseColour,
   chatBox,
+  playerCard,
 };
 
 export const getTemplate = (tmplName: string) => {

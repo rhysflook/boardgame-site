@@ -6,6 +6,7 @@ export class EventHandler<T extends GamePiece> {
   target: BoardSpace = { x: 0, y: 0 };
   space: HTMLElement | null = null;
   eventBoundPieces: HTMLElement[] = [];
+  constructor() {}
 
   applyEvents(piece: T, moves: number[][], game: GameState<T>): void {
     const ele = piece.element;
@@ -30,14 +31,12 @@ export class EventHandler<T extends GamePiece> {
     const ele = piece.element;
 
     if (this.isPlayersPiece(piece)) {
-      const { width, height, top, left } = ele.getBoundingClientRect();
+      const { width, height, left, top } = ele.getBoundingClientRect();
       ele.style.width = `${width}px`;
       ele.style.height = `${height}px`;
       ele.style.position = 'absolute';
       piece.left = left;
       piece.top = top;
-      ele.style.left = e.pageX - 40 + 'px';
-      ele.style.top = e.pageY - 40 + 'px';
       piece.moving = true;
       piece.offset = [ele.offsetLeft - e.clientX, ele.offsetTop - e.clientY];
     }
@@ -45,19 +44,19 @@ export class EventHandler<T extends GamePiece> {
 
   handleMouseOut(e: MouseEvent, piece: T) {
     const ele = piece.element;
-    if (piece.moving) {
-      ele.style.left = e.pageX - 40 + 'px';
-      ele.style.top = e.pageY - 40 + 'px';
-    }
+    // if (piece.moving) {
+    //   ele.style.left = e.pageX - 120 + 'px';
+    //   ele.style.top = e.pageY - 40 + 'px';
+    // }
   }
 
   handleDragEnd(e: MouseEvent, piece: T, game: GameState<T>) {
     const ele = piece.element;
     piece.moving = false;
     if (this.space === null) {
+      ele.style.position = 'none';
       ele.style.left = piece.left + 'px';
       ele.style.top = piece.top + 'px';
-      ele.style.position = 'none';
     } else {
       getSquare(piece.pos.x, piece.pos.y).innerHTML = '';
       this.space.classList.remove('destination');

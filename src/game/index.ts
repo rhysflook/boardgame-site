@@ -1,4 +1,6 @@
 import { ColourSelection } from '../matchmaking/ColourSelection';
+import { PlayerCard } from '../scoreboard/PlayerCard';
+import { ScoreBoard } from '../scoreboard/ScoreBoard';
 import { GameSocket } from '../socket/GameSocket';
 import GameState from './Draughts';
 import { getCookie } from './utils';
@@ -26,11 +28,31 @@ if (gameType === 'ai') {
   screen.appendChild(colourSelection);
   colourSelection.getSelection().then((colour) => {
     localStorage.setItem('playerColour', colour);
-    GameState.setupDraughtsGame('ai', colour);
+    const computerColour = colour === 'blacks' ? 'white' : 'black';
+    const playerColour = colour === 'blacks' ? 'black' : 'white';
+    const cardOne = new PlayerCard(
+      colour === 'blacks' ? 'Billiam' : 'Boss A.I',
+      'black'
+    );
+    cardOne.select();
+    const cardTwo = new PlayerCard(
+      colour === 'blacks' ? 'Boss A.I' : 'Billiam',
+      'white'
+    );
+    const area = document.getElementById('scores') as HTMLElement;
+    area.appendChild(cardOne);
+    area.appendChild(cardTwo);
+    const scoreCard = new ScoreBoard(cardOne, cardTwo);
+    GameState.setupDraughtsGame('ai', colour, scoreCard);
     colourSelection.remove();
   });
 } else if (opponent) {
   new GameSocket('ws://localhost:8001/', false);
 } else {
   new GameSocket('ws://localhost:8001/', true);
+  const area = document.getElementById('scores') as HTMLElement;
+  const cardOne = new PlayerCard('Billiam', 'black');
+  area.appendChild(cardOne);
+  cardOne.select();
+  area.appendChild(new PlayerCard('Billy', 'white'));
 }
