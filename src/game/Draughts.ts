@@ -5,7 +5,7 @@ import {
   DraughtMovesCalculator,
 } from './MoveCalculators/DraughtMovesCalculator';
 import { AllPieces, MoveCalculator } from './MoveCalculators/MoveCalculator';
-import { PieceMaker, Pieces } from './PieceMaker';
+import { PieceMaker } from './PieceMaker';
 import { GamePiece } from './Pieces/Piece';
 import { DraughtRules } from './Rules/DraughtRules';
 
@@ -31,11 +31,8 @@ export interface Move {
 }
 
 export interface Rules<T extends GamePiece> {
-  handleCapture(
-    capturingPiece: T,
-    scoreboard: ScoreBoard,
-    move: Move
-  ): BoardSpace;
+  scoreboard: ScoreBoard;
+  handleCapture(capturingPiece: T, capturedPiece: T): BoardSpace;
   endTurn(game: GameState<T>, movedPiece: T): void;
 }
 
@@ -57,7 +54,7 @@ export default class GameState<T extends GamePiece> {
       new DraughtMovesCalculator(pieces),
       new EventHandler<DraughtGamePiece>(),
       pieces,
-      new DraughtRules(),
+      new DraughtRules(scorecard),
       scorecard,
       socket
     );
@@ -155,17 +152,15 @@ export default class GameState<T extends GamePiece> {
     );
 
     if (chosenMove?.isCapture) {
-      const { x, y } = this.rules.handleCapture(
-        piece,
-        this.scoreboard,
-        chosenMove
-      );
-
       const capturedColour =
         this.movingPlayer === 'blacks' ? 'whites' : 'blacks';
+      this.rules.handleCapture(
+        piece,
+        this.getPiece(capturedColour, chosenMove?.captureKey)
+      );
+
       delete this.pieces[capturedColour][chosenMove.captureKey];
-      console.log(chosenMove.captureKey);
-      console.log(this.pieces);
+
       this.calculator.allPieces = getPieceListAll(this.pieces);
     }
     if (this.gameMode === 'vs') {
@@ -193,16 +188,6 @@ export default class GameState<T extends GamePiece> {
       JSON.stringify({ type: 'move', move: JSON.stringify(move) })
     );
   };
-
-  // findPiece = (findEnemy: boolean, x: number, y: number): T => {
-  //   const colour = findEnemy ? this.opponentColour : this.playerColour;
-  //   const pieces = this.getPieces(colour);
-  //   return pieces.find((piece) => piece.pos.x === x && piece.pos.y === y) as T;
-  // };
-
-  // getPieces(colour: string): T[] {
-  //   return colour === 'blacks' ? this.pieces.blacks : this.pieces.whites;
-  // }
 
   switchColour(): void {
     this.movingPlayer === 'blacks'

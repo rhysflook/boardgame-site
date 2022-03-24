@@ -1,29 +1,35 @@
-import { getTemplate } from '../templates/invite';
-
 export class PlayerCard extends HTMLElement {
   numOfCaptures: number = 0;
   numOfKings: number = 0;
   card: HTMLElement;
   constructor(public name: string, public colour: string) {
     super();
-    const shadowRoot = this.attachShadow({ mode: 'open' });
-    const tmpl = document.createElement('template');
-    tmpl.innerHTML = this.renderHtml();
-    shadowRoot.appendChild(tmpl.content.cloneNode(true));
+    const shadowRoot = this.attachShadow({ mode: 'open' }) as ShadowRoot;
+    shadowRoot.appendChild(this.renderHtml());
     this.style.width = '40%';
     this.card = this.shadowRoot?.getElementById('card') as HTMLElement;
   }
 
+  rerender = (): void => {
+    if (this.shadowRoot) {
+      this.shadowRoot.innerHTML = '';
+      this.shadowRoot.appendChild(this.renderHtml());
+    }
+  };
+
   incrementCaptures = (): void => {
     this.numOfCaptures++;
+    this.rerender();
   };
 
   incrementKings = (): void => {
     this.numOfKings++;
+    this.rerender();
   };
 
   decrementKings = (): void => {
     this.numOfKings--;
+    this.rerender();
   };
 
   select = (): void => {
@@ -34,8 +40,9 @@ export class PlayerCard extends HTMLElement {
     this.card.className = 'player-info';
   };
 
-  renderHtml = (): string => {
-    return `
+  renderHtml = (): Node => {
+    const tmpl = document.createElement('template');
+    tmpl.innerHTML = `
     <link rel="stylesheet" href="../../menu.css">
     <div id="card" class="player-info">
       <div class="player-card-right">
@@ -49,7 +56,8 @@ export class PlayerCard extends HTMLElement {
         <h3>Kings: ${this.numOfKings}</h3>
       </div>
     </div>
-  `;
+    `;
+    return tmpl.content.cloneNode(true);
   };
 }
 

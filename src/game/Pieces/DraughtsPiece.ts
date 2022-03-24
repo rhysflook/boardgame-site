@@ -1,4 +1,5 @@
 import { BoardSpace } from '../Draughts';
+import { getSquare } from '../utils';
 import { GamePiece } from './Piece';
 
 export class DraughtPiece implements GamePiece {
@@ -8,6 +9,8 @@ export class DraughtPiece implements GamePiece {
   top: number = 0;
   moving: boolean = false;
   element: HTMLElement;
+  width: number = 0;
+  height: number = 0;
   constructor(
     public pos: BoardSpace,
     public colour: 'black' | 'white',

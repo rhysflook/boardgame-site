@@ -6,14 +6,34 @@ export class EventHandler<T extends GamePiece> {
   target: BoardSpace = { x: 0, y: 0 };
   space: HTMLElement | null = null;
   eventBoundPieces: HTMLElement[] = [];
-  constructor() {}
+  board: DOMRect;
+  dragging: boolean = false;
+  draggedEle: HTMLElement | null = null;
+  draggedPiece: GamePiece | null = null;
+  constructor() {
+    const boardEle = document.querySelector('.board') as HTMLElement;
+    boardEle.addEventListener('mousemove', (e) => {
+      if (this.dragging && this.draggedEle && this.draggedPiece) {
+        const { width, height, left, top } =
+          this.draggedEle.getBoundingClientRect();
+        if (this.draggedPiece.moving) {
+          this.draggedEle.style.left =
+            e.clientX - width / 2 - this.board.x + 'px';
+          this.draggedEle.style.top = e.clientY - height / 2 + 'px';
+          // moves.forEach((move) => {
+          //   this.handleDestinationHover(e, move, piece);
+          // });
+        }
+      }
+    });
+    this.board = boardEle.getBoundingClientRect();
+  }
 
   applyEvents(piece: T, moves: number[][], game: GameState<T>): void {
     const ele = piece.element;
     ele.onmousedown = (e) => this.handleDragStart(e, piece);
     ele.onmousemove = (e) => this.handleDrag(e, piece, moves);
     ele.onmouseup = (e) => this.handleDragEnd(e, piece, game);
-    ele.onmouseout = (e) => this.handleMouseOut(e, piece);
     this.eventBoundPieces.push(ele);
   }
 
@@ -22,7 +42,6 @@ export class EventHandler<T extends GamePiece> {
       element.onmousedown = null;
       element.onmousemove = null;
       element.onmouseup = null;
-      element.onmouseout = null;
     });
     this.eventBoundPieces = [];
   };
@@ -31,50 +50,44 @@ export class EventHandler<T extends GamePiece> {
     const ele = piece.element;
 
     if (this.isPlayersPiece(piece)) {
+      this.draggedEle = piece.element;
+      this.draggedPiece = piece;
       const { width, height, left, top } = ele.getBoundingClientRect();
       ele.style.width = `${width}px`;
       ele.style.height = `${height}px`;
       ele.style.position = 'absolute';
-      piece.left = left;
+      piece.left = left - this.board.x;
       piece.top = top;
+      piece.width = width;
+      piece.height = height;
+      ele.style.left = left - this.board.x + 'px';
+      ele.style.top = e.clientY - height / 2 + 'px';
       piece.moving = true;
-      piece.offset = [ele.offsetLeft - e.clientX, ele.offsetTop - e.clientY];
+      this.dragging = true;
     }
-  }
-
-  handleMouseOut(e: MouseEvent, piece: T) {
-    const ele = piece.element;
-    // if (piece.moving) {
-    //   ele.style.left = e.pageX - 120 + 'px';
-    //   ele.style.top = e.pageY - 40 + 'px';
-    // }
   }
 
   handleDragEnd(e: MouseEvent, piece: T, game: GameState<T>) {
     const ele = piece.element;
     piece.moving = false;
     if (this.space === null) {
-      ele.style.position = 'none';
       ele.style.left = piece.left + 'px';
       ele.style.top = piece.top + 'px';
+      ele.style.position = 'none';
     } else {
       getSquare(piece.pos.x, piece.pos.y).innerHTML = '';
       this.space.classList.remove('destination');
       this.space.appendChild(piece.createHTMLElement());
       game.movePiece(piece, this.target);
     }
+    this.dragging = false;
+    this.draggedEle = null;
+    this.draggedPiece = null;
     this.space = null;
   }
 
   handleDrag(e: MouseEvent, piece: T, moves: number[][]) {
-    const ele = piece.element;
     if (piece.moving) {
-      const mousePosition = {
-        x: e.clientX,
-        y: e.clientY,
-      };
-      ele.style.left = mousePosition.x + piece.offset[0] + 'px';
-      ele.style.top = mousePosition.y + piece.offset[1] + 'px';
       moves.forEach((move) => {
         this.handleDestinationHover(e, move, piece);
       });

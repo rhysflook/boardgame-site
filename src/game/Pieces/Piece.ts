@@ -11,5 +11,8 @@ export interface GamePiece {
   moving: boolean;
   element: HTMLElement;
   id: number;
+  width: number;
+  height: number;
+
   createHTMLElement(): HTMLElement;
 }
