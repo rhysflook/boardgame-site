@@ -4,12 +4,17 @@ import {
   DraughtGamePiece,
   DraughtMovesCalculator,
 } from './MoveCalculators/DraughtMovesCalculator';
-import { MoveCalculator, Pieces } from './MoveCalculators/MoveCalculator';
-import { PieceMaker } from './PieceMaker';
+import { AllPieces, MoveCalculator } from './MoveCalculators/MoveCalculator';
+import { PieceMaker, Pieces } from './PieceMaker';
 import { GamePiece } from './Pieces/Piece';
 import { DraughtRules } from './Rules/DraughtRules';
 
-import { getSquare, reverseCoord } from './utils';
+import {
+  getPieceList,
+  getPieceListAll,
+  getSquare,
+  reverseCoord,
+} from './utils';
 
 export interface BoardSpace {
   x: number;
@@ -20,6 +25,9 @@ export interface Move {
   pos: BoardSpace;
   newPos: BoardSpace;
   isCapture: boolean;
+  key: number;
+  colour: 'blacks' | 'whites';
+  captureKey: number;
 }
 
 export interface Rules<T extends GamePiece> {
@@ -33,7 +41,7 @@ export interface Rules<T extends GamePiece> {
 
 export default class GameState<T extends GamePiece> {
   movingPlayer: 'blacks' | 'whites' = 'blacks';
-  opponentColour: string;
+  opponentColour: 'blacks' | 'whites';
   moves: Move[];
 
   static setupDraughtsGame(
@@ -60,13 +68,12 @@ export default class GameState<T extends GamePiece> {
     public playerColour: string,
     public calculator: MoveCalculator<T>,
     public events: EventHandler<T>,
-    public pieces: Pieces<T>,
+    public pieces: AllPieces<T>,
     public rules: Rules<T>,
     public scoreboard: ScoreBoard,
     public socket: WebSocket | null = null
   ) {
     this.moves = [];
-    console.log(this.playerColour);
     this.opponentColour = this.playerColour === 'blacks' ? 'whites' : 'blacks';
     localStorage.setItem('movingColour', 'blacks');
     this.initGame();
@@ -83,25 +90,28 @@ export default class GameState<T extends GamePiece> {
         const data = JSON.parse(event.data);
         if (data.type === 'move') {
           const { move } = data;
-          console.log(move);
           let x = reverseCoord(move.pos.x);
           let y = reverseCoord(move.pos.y);
           let newX = reverseCoord(move.newPos.x);
           let newY = reverseCoord(move.newPos.y);
-          const pieces =
-            move.colour === 'blacks' ? this.pieces.blacks : this.pieces.whites;
-          const piece = pieces.find(
-            (piece) => piece.pos.x === x && piece.pos.y === y
-          ) as T;
+
+          const piece = this.getPiece(move.colour, move.key);
           const opponentMove = {
             pos: { x, y },
             newPos: { x: newX, y: newY },
             isCapture: move.isCapture,
+            key: move.key,
+            colour: move.colour,
+            captureKey: move.captureKey,
           };
           this.makeMove(opponentMove, piece);
         }
       });
     }
+  };
+
+  getPiece = (colour: keyof AllPieces<T>, key: number): T => {
+    return this.pieces[colour][key];
   };
 
   addEvents = (): void => {
@@ -120,10 +130,7 @@ export default class GameState<T extends GamePiece> {
         this.movingPlayer === 'blacks'
           ? this.pieces.blacks
           : this.pieces.whites;
-      const piece = movingPieces.find(
-        (movingPiece: T) =>
-          movingPiece.pos.x === move.pos.x && movingPiece.pos.y === move.pos.y
-      );
+      const piece = this.getPiece(move.colour, move.key);
 
       if (piece) {
         const key = `${piece.pos.x}-${piece.pos.y}`;
@@ -146,8 +153,6 @@ export default class GameState<T extends GamePiece> {
         x === move.newPos.x &&
         y === move.newPos.y
     );
-    const enemyPieces =
-      this.movingPlayer === 'blacks' ? this.pieces.whites : this.pieces.blacks;
 
     if (chosenMove?.isCapture) {
       const { x, y } = this.rules.handleCapture(
@@ -155,19 +160,13 @@ export default class GameState<T extends GamePiece> {
         this.scoreboard,
         chosenMove
       );
-      const enemyPiece = enemyPieces.find(
-        (piece) => piece.pos.x === x && piece.pos.y === y
-      ) as T;
-      if (enemyPiece) {
-        this.movingPlayer === 'blacks'
-          ? this.pieces.whites.splice(enemyPieces.indexOf(enemyPiece), 1)
-          : this.pieces.blacks.splice(enemyPieces.indexOf(enemyPiece), 1);
-      }
 
-      this.calculator.allPieces = [
-        ...this.pieces.blacks,
-        ...this.pieces.whites,
-      ];
+      const capturedColour =
+        this.movingPlayer === 'blacks' ? 'whites' : 'blacks';
+      delete this.pieces[capturedColour][chosenMove.captureKey];
+      console.log(chosenMove.captureKey);
+      console.log(this.pieces);
+      this.calculator.allPieces = getPieceListAll(this.pieces);
     }
     if (this.gameMode === 'vs') {
       const move = {
@@ -177,6 +176,9 @@ export default class GameState<T extends GamePiece> {
           y: y,
         },
         isCapture: chosenMove?.isCapture as boolean,
+        key: chosenMove?.key as number,
+        colour: chosenMove?.colour as 'blacks' | 'whites',
+        captureKey: chosenMove?.captureKey as number,
       };
       this.sendMove(move);
     }
@@ -192,15 +194,15 @@ export default class GameState<T extends GamePiece> {
     );
   };
 
-  findPiece = (findEnemy: boolean, x: number, y: number): T => {
-    const colour = findEnemy ? this.opponentColour : this.playerColour;
-    const pieces = this.getPieces(colour);
-    return pieces.find((piece) => piece.pos.x === x && piece.pos.y === y) as T;
-  };
+  // findPiece = (findEnemy: boolean, x: number, y: number): T => {
+  //   const colour = findEnemy ? this.opponentColour : this.playerColour;
+  //   const pieces = this.getPieces(colour);
+  //   return pieces.find((piece) => piece.pos.x === x && piece.pos.y === y) as T;
+  // };
 
-  getPieces(colour: string): T[] {
-    return colour === 'blacks' ? this.pieces.blacks : this.pieces.whites;
-  }
+  // getPieces(colour: string): T[] {
+  //   return colour === 'blacks' ? this.pieces.blacks : this.pieces.whites;
+  // }
 
   switchColour(): void {
     this.movingPlayer === 'blacks'
@@ -215,15 +217,14 @@ export default class GameState<T extends GamePiece> {
 
   winnerCheck(): void {
     const container = document.querySelector('.container') as HTMLElement;
-    if (this.pieces.blacks.length === 0 || this.pieces.whites.length === 0) {
+    if (this.scoreboard.playerOne.numOfCaptures === 12) {
       const winnerMessage = document.createElement('h1');
-      winnerMessage.innerText = `${this.movingPlayer.toUpperCase()} Win!`;
+      winnerMessage.innerText = `${this.movingPlayer.toUpperCase()} WIN!`;
       container.appendChild(winnerMessage);
     }
   }
 
   makeMove = (move: Move, piece: T): void => {
-    console.log(move);
     const currentSpace = getSquare(move.pos.x, move.pos.y) as HTMLElement;
     const targetSpace = getSquare(move.newPos.x, move.newPos.y) as HTMLElement;
     this.dragPiece(
@@ -244,10 +245,7 @@ export default class GameState<T extends GamePiece> {
         this.movingPlayer === 'blacks'
           ? this.pieces.blacks
           : this.pieces.whites;
-      const piece = movingPieces.find(
-        (movingPiece: T) =>
-          movingPiece.pos.x === move.pos.x && movingPiece.pos.y === move.pos.y
-      );
+      const piece = this.getPiece(move.colour, move.key);
 
       if (piece) {
         this.makeMove(move, piece);
@@ -264,15 +262,12 @@ export default class GameState<T extends GamePiece> {
     this.moves = this.calculator.calc(this.movingPlayer, this.pieces);
     this.addEvents();
     this.scoreboard.switchPlayers();
-    console.log(this.movingPlayer);
     if (this.gameMode === 'ai' && this.movingPlayer === this.opponentColour) {
-      console.log('HEY');
       this.computerTurn();
     }
   };
 
   dragPiece(ele: HTMLElement, destination: HTMLElement): void {
-    console.log('MOVIHG');
     const pos = ele.getBoundingClientRect();
     const newPos = destination.getBoundingClientRect();
     ele.animate(
@@ -292,11 +287,13 @@ export default class GameState<T extends GamePiece> {
   updateStoredData(): void {
     localStorage.setItem('moving', this.movingPlayer);
 
-    const whiteData = this.pieces.whites.map((piece) => {
-      return { x: piece.pos.x, y: piece.pos.y, colour: piece.colour };
+    const whiteData = getPieceList(this.pieces.whites).map((piece) => {
+      const { x, y, colour, isKing } = piece[1];
+      return { x, y, colour, isKing };
     });
-    const blackData = this.pieces.blacks.map((piece) => {
-      return { x: piece.pos.x, y: piece.pos.y, colour: piece.colour };
+    const blackData = getPieceList(this.pieces.blacks).map((piece) => {
+      const { x, y, colour, isKing } = piece[1];
+      return { x, y, colour, isKing };
     });
     const piecesJson = JSON.stringify({ whites: whiteData, blacks: blackData });
     localStorage.setItem('pieces', piecesJson);

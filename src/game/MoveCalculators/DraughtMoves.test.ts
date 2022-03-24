@@ -86,7 +86,7 @@ describe('Tests for draught moves calculator', () => {
     const moves = newCalculator.findCaptures(piece);
     const spaces = newCalculator.getMoves(piece);
     spaces.forEach((space) =>
-      console.log(newCalculator.spaceAfterCapture(space[0], space[1], piece))
+      newCalculator.spaceAfterCapture(space[0], space[1], piece)
     );
     expect(moves.length).toEqual(4);
   });
@@ -100,7 +100,7 @@ describe('Tests for draught moves calculator', () => {
   });
   test('calc returns no normal moves when captures available', () => {
     const moves = calculator.calc('blacks');
-    console.log(moves);
+    moves;
     expect(moves.some((move: Move) => move.isCapture === false)).toBeFalsy();
     expect(moves.some((move: Move) => move.isCapture === true)).toBeTruthy();
   });

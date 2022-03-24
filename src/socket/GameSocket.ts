@@ -27,7 +27,6 @@ export class GameSocket extends WebSocket {
   connectChatbox = (): void => {
     this.addEventListener('message', (event) => {
       const data = JSON.parse(event.data);
-      console.log(data);
       if (data.type === 'chat') {
         this.chatBox?.handleMessage(data.message, data.sender);
       }

@@ -1,4 +1,5 @@
-import { GamePiece, Pieces } from './MoveCalculators/MoveCalculator';
+import { AllPieces, GamePiece } from './MoveCalculators/MoveCalculator';
+import { Pieces } from './PieceMaker';
 
 export const isInSquare = (
   x: number,
@@ -10,7 +11,6 @@ export const isInSquare = (
 };
 
 export const getSquare = (x: number, y: number): HTMLElement => {
-  console.log(x, y);
   return document.getElementById(`${x}-${y}`) as HTMLElement;
 };
 
@@ -19,9 +19,9 @@ export const detectPiece = <T extends GamePiece>(
   y: number,
   pieces: T[]
 ): T | null => {
-  const piece = pieces.find(
-    (piece: T) => piece.pos.x === x && piece.pos.y === y
-  );
+  const piece = pieces.find((piece: T) => {
+    return piece.pos.x === x && piece.pos.y === y;
+  });
   if (piece) {
     return piece;
   }
@@ -53,4 +53,15 @@ export const getCookie = (name: string): string | undefined => {
 
 export const reverseCoord = (coord: number): number => {
   return Math.abs(Number(coord) - 7);
+};
+
+export const getPieceListAll = <T>(allPieces: AllPieces<T>) => {
+  return [
+    ...Object.values(allPieces.blacks),
+    ...Object.values(allPieces.whites),
+  ];
+};
+
+export const getPieceList = <T>(pieces: Pieces<T>) => {
+  return Object.entries(pieces);
 };

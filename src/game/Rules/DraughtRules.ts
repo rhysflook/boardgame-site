@@ -34,7 +34,10 @@ export class DraughtRules<T extends DraughtGamePiece> implements Rules<T> {
       this.capturingPiece = null;
       game.switchPlayer();
     } else if (this.capturingPiece) {
-      const captures = game.calculator.findCaptures(this.capturingPiece);
+      const captures = game.calculator.findCaptures(
+        this.capturingPiece,
+        this.capturingPiece.id
+      );
       if (captures.length === 0) {
         this.capturingPiece = null;
         game.switchPlayer();

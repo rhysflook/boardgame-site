@@ -1,8 +1,9 @@
 import { Move } from '../Draughts';
+import { Pieces } from '../PieceMaker';
 
-export interface Pieces<T> {
-  blacks: T[];
-  whites: T[];
+export interface AllPieces<T> {
+  blacks: Pieces<T>;
+  whites: Pieces<T>;
 }
 
 export interface GamePiece {
@@ -12,10 +13,11 @@ export interface GamePiece {
 }
 
 export interface MoveCalculator<T extends GamePiece> {
-  pieces: Pieces<T>;
+  pieces: AllPieces<T>;
   moving: 'blacks' | 'whites';
-  calc(colour: 'blacks' | 'whites', allPieces: Pieces<T>): Move[];
-  findCaptures(piece: T): Move[];
-  findMoves(piece: T): Move[];
+  calc(colour: 'blacks' | 'whites', allPieces: AllPieces<T>): Move[];
+  findCaptures(piece: T, key: number): Move[];
+  getCaptureKey(moveX: number, moveY: number): number;
+  findMoves(piece: T, key: number): Move[];
   allPieces: T[];
 }

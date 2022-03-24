@@ -1,7 +1,13 @@
 import { Move } from '../Draughts';
 import { GamePiece } from '../Pieces/Piece';
-import { detectPiece, isOpenSpace, isOutOfBounds } from '../utils';
-import { MoveCalculator, Pieces } from './MoveCalculator';
+import {
+  detectPiece,
+  getPieceList,
+  getPieceListAll,
+  isOpenSpace,
+  isOutOfBounds,
+} from '../utils';
+import { AllPieces, MoveCalculator } from './MoveCalculator';
 
 export interface DraughtGamePiece extends GamePiece {
   isKing: boolean;
@@ -11,34 +17,34 @@ export class DraughtMovesCalculator
   implements MoveCalculator<DraughtGamePiece>
 {
   moving: 'blacks' | 'whites';
-  constructor(public pieces: Pieces<DraughtGamePiece>) {
+  constructor(public pieces: AllPieces<DraughtGamePiece>) {
     this.moving = 'blacks';
   }
-  allPieces = [...this.pieces.blacks, ...this.pieces.whites];
+  allPieces = getPieceListAll<DraughtGamePiece>(this.pieces);
 
   calc(
     colour: 'blacks' | 'whites',
-    allPieces: Pieces<DraughtGamePiece>
+    allPieces: AllPieces<DraughtGamePiece>
   ): Move[] {
     this.moving = colour;
     this.pieces = allPieces;
-    this.allPieces = [...this.pieces.blacks, ...this.pieces.whites];
+    this.allPieces = getPieceListAll<DraughtGamePiece>(allPieces);
     const pieces = this.pieces[colour];
 
     let moves: Move[] = [];
-    pieces.forEach((piece: DraughtGamePiece) => {
-      moves = [...moves, ...this.findCaptures(piece)];
+    getPieceList(pieces).forEach((data: [string, DraughtGamePiece]) => {
+      moves = [...moves, ...this.findCaptures(data[1], Number(data[0]))];
     });
     if (moves.length === 0) {
-      pieces.forEach((piece: DraughtGamePiece) => {
-        moves = [...moves, ...this.findMoves(piece)];
+      getPieceList(pieces).forEach((data: [string, DraughtGamePiece]) => {
+        moves = [...moves, ...this.findMoves(data[1], Number(data[0]))];
       });
     }
 
     return moves;
   }
 
-  findMoves(piece: DraughtGamePiece): Move[] {
+  findMoves(piece: DraughtGamePiece, key: number): Move[] {
     const moves: Move[] = [];
     this.getMoves(piece).forEach((move) => {
       if (isOpenSpace(move[0], move[1], this.allPieces)) {
@@ -46,6 +52,9 @@ export class DraughtMovesCalculator
           pos: { x: piece.pos.x, y: piece.pos.y },
           newPos: { x: move[0], y: move[1] },
           isCapture: false,
+          key,
+          colour: this.moving,
+          captureKey: 0,
         });
       }
     });
@@ -84,7 +93,7 @@ export class DraughtMovesCalculator
     }
   }
 
-  findCaptures(piece: DraughtGamePiece): Move[] {
+  findCaptures(piece: DraughtGamePiece, key: number): Move[] {
     const captures: Move[] = [];
     this.getMoves(piece).forEach((move) => {
       if (this.captureIsLegal(move[0], move[1], piece)) {
@@ -93,11 +102,29 @@ export class DraughtMovesCalculator
           pos: { x: piece.pos.x, y: piece.pos.y },
           newPos: { x: newSpace[0], y: newSpace[1] },
           isCapture: true,
+          key,
+          colour: this.moving,
+          captureKey: this.getCaptureKey(move[0], move[1]),
         });
       }
     });
     return captures;
   }
+
+  getCaptureKey = (moveX: number, moveY: number): number => {
+    const enemy = detectPiece<DraughtGamePiece>(moveX, moveY, this.allPieces);
+    const enemyColour = this.moving === 'blacks' ? 'whites' : 'blacks';
+    let captureKey = 0;
+    Object.entries(this.pieces[enemyColour]).forEach(
+      (data: [string, DraughtGamePiece]) => {
+        const [key, piece] = data;
+        if (piece.pos.x === enemy?.pos.x && piece.pos.y === enemy.pos.y) {
+          captureKey = Number(key);
+        }
+      }
+    );
+    return captureKey;
+  };
 
   canCapture(moveX: number, moveY: number, piece: DraughtGamePiece): boolean {
     const enemy = detectPiece(moveX, moveY, this.allPieces);

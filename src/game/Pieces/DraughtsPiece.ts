@@ -1,5 +1,4 @@
 import { BoardSpace } from '../Draughts';
-import { DraughtGamePiece } from '../MoveCalculators/DraughtMovesCalculator';
 import { GamePiece } from './Piece';
 
 export class DraughtPiece implements GamePiece {
@@ -12,19 +11,10 @@ export class DraughtPiece implements GamePiece {
   constructor(
     public pos: BoardSpace,
     public colour: 'black' | 'white',
-    public side: 'top' | 'bottom'
+    public side: 'top' | 'bottom',
+    public id: number
   ) {
     this.element = this.createHTMLElement();
-  }
-
-  crownCheck(ele: HTMLElement): void {
-    // if (
-    //   (this.colour === this.game.opponentColour && this.pos.x === 7) ||
-    //   (this.colour !== this.game.opponentColour && this.pos.x === 0)
-    // ) {
-    //   this.isKing = true;
-    //   ele.classList.add(`${this.colour}-king`);
-    // }
   }
 
   createHTMLElement(): HTMLDivElement {

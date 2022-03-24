@@ -50,9 +50,9 @@ export class ColourSelection extends HTMLElement {
     const promise = new Promise<string>((resolve) => {
       socket.addEventListener('message', (event) => {
         const data = JSON.parse(event.data);
-        console.log(data['type']);
+        data['type'];
         if (data.type === 'colourChoice') {
-          console.log(data);
+          data;
           resolve(data.colour === 'blacks' ? 'whites' : 'blacks');
         }
       });

@@ -10,5 +10,6 @@ export interface GamePiece {
   side: 'top' | 'bottom';
   moving: boolean;
   element: HTMLElement;
+  id: number;
   createHTMLElement(): HTMLElement;
 }
