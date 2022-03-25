@@ -56,8 +56,7 @@ export class EventHandler<T extends GamePiece> {
     if (this.isPlayersPiece(piece)) {
       this.draggedEle = piece.element;
       this.draggedPiece = piece;
-      const { width, height, left, top, x } = ele.getBoundingClientRect();
-      console.log(x);
+      const { width, height, left, top } = ele.getBoundingClientRect();
       ele.style.width = `${width}px`;
       ele.style.height = `${height}px`;
       ele.style.position = 'absolute';

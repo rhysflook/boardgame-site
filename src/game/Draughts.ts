@@ -1,4 +1,6 @@
+import { Chatbox } from '../chatbox/Chatbox';
 import { ScoreBoard } from '../scoreboard/ScoreBoard';
+import { GameSocket } from '../socket/GameSocket';
 import { EventHandler } from './Events/EventHandler';
 import {
   DraughtGamePiece,
@@ -40,12 +42,13 @@ export default class GameState<T extends GamePiece> {
   movingPlayer: 'blacks' | 'whites' = 'blacks';
   opponentColour: 'blacks' | 'whites';
   moves: Move[];
+  chatbox: Chatbox;
 
   static setupDraughtsGame(
     gameMode: string,
     playerColour: string,
     scorecard: ScoreBoard,
-    socket: WebSocket | null = null
+    socket: GameSocket | null = null
   ): GameState<DraughtGamePiece> {
     const pieces = PieceMaker.setupDraughtsBoard(playerColour);
     return new GameState<DraughtGamePiece>(
@@ -68,11 +71,12 @@ export default class GameState<T extends GamePiece> {
     public pieces: AllPieces<T>,
     public rules: Rules<T>,
     public scoreboard: ScoreBoard,
-    public socket: WebSocket | null = null
+    public socket: GameSocket | null = null
   ) {
     this.moves = [];
     this.opponentColour = this.playerColour === 'blacks' ? 'whites' : 'blacks';
     localStorage.setItem('movingColour', 'blacks');
+    this.chatbox = new Chatbox(this.gameMode === 'vs' ? this.socket : null);
     this.initGame();
   }
 

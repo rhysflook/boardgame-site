@@ -1,3 +1,4 @@
+import { Chatbox } from '../chatbox/Chatbox';
 import { ColourSelection } from '../matchmaking/ColourSelection';
 import { PlayerCard } from '../scoreboard/PlayerCard';
 import { ScoreBoard } from '../scoreboard/ScoreBoard';
@@ -26,6 +27,9 @@ if (gameType === 'ai') {
   const screen = document.querySelector('.container') as HTMLElement;
   const colourSelection = new ColourSelection(0);
   screen.appendChild(colourSelection);
+  const chatMenu = document.getElementById('chat-menu') as HTMLElement;
+
+  chatMenu.appendChild(new Chatbox());
   colourSelection.getSelection().then((colour) => {
     localStorage.setItem('playerColour', colour);
     const computerColour = colour === 'blacks' ? 'white' : 'black';

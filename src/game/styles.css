@@ -69,17 +69,15 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 80%;
-  width: 80%;
-
-  margin: 0 2%;
+  height: 100%;
+  width: 100%;
 }
 
 #scores {
   height: 20%;
   display: flex;
-  width: 90%;
-  justify-content: space-evenly;
+  width: 100%;
+  justify-content: center;
 }
 
 .board {

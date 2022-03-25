@@ -6,7 +6,8 @@ export class PlayerCard extends HTMLElement {
     super();
     const shadowRoot = this.attachShadow({ mode: 'open' }) as ShadowRoot;
     shadowRoot.appendChild(this.renderHtml());
-    this.style.width = '40%';
+    // this.style.width = '35%';
+    // this.style.margin = '0 2%';
     this.card = this.shadowRoot?.getElementById('card') as HTMLElement;
   }
 

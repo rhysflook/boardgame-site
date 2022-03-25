@@ -6,7 +6,7 @@ export class Chatbox extends HTMLElement {
   messageBox: HTMLElement;
   textInput: HTMLTextAreaElement;
   sendButton: HTMLElement;
-  constructor(public socket: GameSocket) {
+  constructor(public socket: GameSocket | null = null) {
     super();
     const shadowRoot = this.attachShadow({ mode: 'open' });
     shadowRoot.appendChild(getTemplate('chatBox'));
@@ -22,6 +22,10 @@ export class Chatbox extends HTMLElement {
     this.sendButton.addEventListener('click', () => {
       this.sendMessage();
     });
+
+    if (this.socket) {
+      this.connectChatbox();
+    }
   }
 
   handleMessage = (message: string, sender: string): void => {
@@ -30,17 +34,30 @@ export class Chatbox extends HTMLElement {
     );
   };
 
+  connectChatbox = (): void => {
+    if (this.socket) {
+      this.socket.addEventListener('message', (event) => {
+        const data = JSON.parse(event.data);
+        if (data.type === 'chat') {
+          this.handleMessage(data.message, data.sender);
+        }
+      });
+    }
+  };
+
   sendMessage = (): void => {
     this.messageBox.appendChild(
       new Message(this.textInput.value, 'Billiam', true).renderMessage()
     );
-    this.socket.send(
-      JSON.stringify({
-        type: 'chat',
-        content: this.textInput.value,
-        sender: 'Billiam',
-      })
-    );
+    if (this.socket) {
+      this.socket.send(
+        JSON.stringify({
+          type: 'chat',
+          content: this.textInput.value,
+          sender: 'Billiam',
+        })
+      );
+    }
     this.textInput.value = '';
   };
 }

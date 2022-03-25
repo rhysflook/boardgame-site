@@ -8,8 +8,6 @@ export class GameSocket extends WebSocket {
   constructor(url: string, public isChallenger: boolean) {
     super(url);
     this.addEventListener('open', () => {
-      this.createChatbox();
-      this.connectChatbox();
       if (isChallenger) {
         this.setupChallenger();
       } else {
@@ -17,21 +15,6 @@ export class GameSocket extends WebSocket {
       }
     });
   }
-
-  createChatbox = (): void => {
-    const chatMenu = document.getElementById('chat-menu') as HTMLElement;
-    this.chatBox = new Chatbox(this);
-    chatMenu.appendChild(this.chatBox);
-  };
-
-  connectChatbox = (): void => {
-    this.addEventListener('message', (event) => {
-      const data = JSON.parse(event.data);
-      if (data.type === 'chat') {
-        this.chatBox?.handleMessage(data.message, data.sender);
-      }
-    });
-  };
 
   setupChallenger = (): void => {
     this.send(JSON.stringify({ type: 'start', id: 2 }));
