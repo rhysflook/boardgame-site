@@ -89,15 +89,14 @@ body {
   grid-template-rows: repeat(8, auto);
   border: gray outset 5px;
   box-shadow: 0px 8px 10px gray, -10px 8px 15px gray, 10px 8px 15px gray;
-  width: 70vh;
-  height: 70vh;
+  width: 50vw;
+  height: 50vw;
 }
 .square-container {
   display: relative;
 }
 .square {
   display: flex;
-  color: 'white';
   /* display: grid; */
   /* align-self: stretch;
   justify-self: stretch; */

@@ -11,14 +11,16 @@ export class EventHandler<T extends GamePiece> {
   draggedEle: HTMLElement | null = null;
   draggedPiece: GamePiece | null = null;
   constructor() {
+    const scaling = window.outerWidth / window.innerWidth;
+    console.log(scaling);
     const boardEle = document.querySelector('.board') as HTMLElement;
     boardEle.addEventListener('mousemove', (e) => {
       if (this.dragging && this.draggedEle && this.draggedPiece) {
         const { width, height, left, top } =
           this.draggedEle.getBoundingClientRect();
+        console.log(this.board.x);
         if (this.draggedPiece.moving) {
-          this.draggedEle.style.left =
-            e.clientX - width / 2 - this.board.x + 'px';
+          this.draggedEle.style.left = e.clientX - this.board.x + 'px';
           this.draggedEle.style.top = e.clientY - height / 2 + 'px';
           // moves.forEach((move) => {
           //   this.handleDestinationHover(e, move, piece);
@@ -27,6 +29,8 @@ export class EventHandler<T extends GamePiece> {
       }
     });
     this.board = boardEle.getBoundingClientRect();
+    console.log(window.innerWidth);
+    console.log(window.outerWidth);
   }
 
   applyEvents(piece: T, moves: number[][], game: GameState<T>): void {
@@ -52,16 +56,17 @@ export class EventHandler<T extends GamePiece> {
     if (this.isPlayersPiece(piece)) {
       this.draggedEle = piece.element;
       this.draggedPiece = piece;
-      const { width, height, left, top } = ele.getBoundingClientRect();
+      const { width, height, left, top, x } = ele.getBoundingClientRect();
+      console.log(x);
       ele.style.width = `${width}px`;
       ele.style.height = `${height}px`;
       ele.style.position = 'absolute';
-      piece.left = left - this.board.x;
+      ele.style.left = e.clientX - this.board.x + 'px';
+      piece.left = left;
       piece.top = top;
       piece.width = width;
       piece.height = height;
-      ele.style.left = left - this.board.x + 'px';
-      ele.style.top = e.clientY - height / 2 + 'px';
+
       piece.moving = true;
       this.dragging = true;
     }
@@ -71,9 +76,10 @@ export class EventHandler<T extends GamePiece> {
     const ele = piece.element;
     piece.moving = false;
     if (this.space === null) {
+      // ele.style.left = '0';
       ele.style.left = piece.left + 'px';
       ele.style.top = piece.top + 'px';
-      ele.style.position = 'none';
+      ele.style.position = 'fixed';
     } else {
       getSquare(piece.pos.x, piece.pos.y).innerHTML = '';
       this.space.classList.remove('destination');
