@@ -109,9 +109,9 @@ export default class GameState<T extends GamePiece> {
               pos: { x, y },
               newPos: { x: newX, y: newY },
               isCapture: move.isCapture,
-              key: move.key,
+              key: 13 - move.key,
               colour: move.colour,
-              captureKey: move.captureKey,
+              captureKey: 13 - move.captureKey,
             };
             this.makeMove(opponentMove, piece);
           }
