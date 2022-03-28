@@ -117,7 +117,6 @@ export default class GameState<T extends GamePiece> {
   };
 
   getPiece = (colour: keyof AllPieces<T>, key: number): T => {
-    console.log(this.pieces);
     console.log(colour, key);
     return this.pieces[colour][key];
   };
@@ -133,11 +132,8 @@ export default class GameState<T extends GamePiece> {
 
   getMovablePieces = (): { [key: string]: { moves: number[][]; piece: T } } => {
     const pieces: { [key: string]: { moves: number[][]; piece: T } } = {};
+    console.log(this.moves);
     this.moves.forEach((move: Move) => {
-      const movingPieces =
-        this.movingPlayer === 'blacks'
-          ? this.pieces.blacks
-          : this.pieces.whites;
       const piece = this.getPiece(move.colour, move.key);
 
       if (piece) {
@@ -154,6 +150,7 @@ export default class GameState<T extends GamePiece> {
 
   movePiece = (piece: T, target: BoardSpace): void => {
     const { x, y } = target;
+
     const chosenMove = this.moves.find(
       (move: Move) =>
         move.pos.x === piece.pos.x &&
@@ -189,8 +186,14 @@ export default class GameState<T extends GamePiece> {
       this.sendMove(move);
     }
 
-    piece.pos.x = x;
-    piece.pos.y = y;
+    if (this.gameMode === 'vs' && this.movingPlayer === this.opponentColour) {
+      piece.pos.x = reverseCoord(x);
+      piece.pos.y = reverseCoord(y);
+    } else {
+      piece.pos.x = x;
+      piece.pos.y = y;
+    }
+
     this.rules.endTurn(this, piece);
   };
 
@@ -237,10 +240,6 @@ export default class GameState<T extends GamePiece> {
   computerTurn = (): void => {
     if (this.moves.length > 0) {
       const move = this.moves[Math.floor(Math.random() * this.moves.length)];
-      const movingPieces =
-        this.movingPlayer === 'blacks'
-          ? this.pieces.blacks
-          : this.pieces.whites;
       const piece = this.getPiece(move.colour, move.key);
 
       if (piece) {
@@ -255,6 +254,7 @@ export default class GameState<T extends GamePiece> {
     this.moves = [];
     this.winnerCheck();
     this.switchColour();
+
     this.moves = this.calculator.calc(this.movingPlayer, this.pieces);
     this.addEvents();
     this.scoreboard.switchPlayers();
