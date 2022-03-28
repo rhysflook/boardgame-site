@@ -132,6 +132,7 @@ export default class GameState<T extends GamePiece> {
   getMovablePieces = (): { [key: string]: { moves: number[][]; piece: T } } => {
     const pieces: { [key: string]: { moves: number[][]; piece: T } } = {};
     this.moves.forEach((move: Move) => {
+      console.log(move);
       const piece = this.getPiece(move.colour, move.key);
 
       if (piece) {
@@ -247,8 +248,11 @@ export default class GameState<T extends GamePiece> {
     this.winnerCheck();
     this.switchColour();
     console.log(this.pieces);
-    this.moves = this.calculator.calc(this.movingPlayer, this.pieces);
-    this.addEvents();
+    if (this.movingPlayer === this.playerColour && this.gameMode === 'vs') {
+      this.moves = this.calculator.calc(this.movingPlayer, this.pieces);
+      console.log(this.moves);
+      this.addEvents();
+    }
     this.scoreboard.switchPlayers();
     if (this.gameMode === 'ai' && this.movingPlayer === this.opponentColour) {
       this.computerTurn();
