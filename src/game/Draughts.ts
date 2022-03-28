@@ -189,14 +189,8 @@ export default class GameState<T extends GamePiece> {
       this.sendMove(move);
     }
 
-    if (this.movingPlayer === this.opponentColour && this.gameMode === 'vs') {
-      piece.pos.x = reverseCoord(x);
-      piece.pos.y = reverseCoord(y);
-    } else {
-      piece.pos.x = x;
-      piece.pos.y = y;
-    }
-
+    piece.pos.x = x;
+    piece.pos.y = y;
     this.rules.endTurn(this, piece);
   };
 
