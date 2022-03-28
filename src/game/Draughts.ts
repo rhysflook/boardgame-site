@@ -93,25 +93,26 @@ export default class GameState<T extends GamePiece> {
       this.computerTurn();
     } else {
       this.socket?.addEventListener('message', (event) => {
-        console.log('detected');
         const data = JSON.parse(event.data);
         if (data.type === 'move') {
           const move = JSON.parse(data.move);
-          let x = reverseCoord(move.pos.x);
-          let y = reverseCoord(move.pos.y);
-          let newX = reverseCoord(move.newPos.x);
-          let newY = reverseCoord(move.newPos.y);
+          if (move.colour !== this.playerColour) {
+            let x = reverseCoord(move.pos.x);
+            let y = reverseCoord(move.pos.y);
+            let newX = reverseCoord(move.newPos.x);
+            let newY = reverseCoord(move.newPos.y);
 
-          const piece = this.getPiece(move.colour, move.key);
-          const opponentMove = {
-            pos: { x, y },
-            newPos: { x: newX, y: newY },
-            isCapture: move.isCapture,
-            key: move.key,
-            colour: move.colour,
-            captureKey: move.captureKey,
-          };
-          this.makeMove(opponentMove, piece);
+            const piece = this.getPiece(move.colour, move.key);
+            const opponentMove = {
+              pos: { x, y },
+              newPos: { x: newX, y: newY },
+              isCapture: move.isCapture,
+              key: move.key,
+              colour: move.colour,
+              captureKey: move.captureKey,
+            };
+            this.makeMove(opponentMove, piece);
+          }
         }
       });
     }
