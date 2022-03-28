@@ -60,7 +60,7 @@ axios
     }
   });
 
-const socket = new WebSocket('ws://localhost:8001/');
+const socket = new WebSocket('wss://hermy-games-websockets.herokuapp.com/');
 socket.addEventListener('open', () => {
   socket.addEventListener('message', (event) => {
     const data = JSON.parse(event.data);
