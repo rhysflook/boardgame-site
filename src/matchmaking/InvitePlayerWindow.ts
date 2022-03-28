@@ -1,19 +1,16 @@
-import { AxiosResponse } from '../../node_modules/axios/index';
+import { AxiosError, AxiosResponse } from '../../node_modules/axios/index';
 import { GameSocket } from '../socket/GameSocket';
 import { getTemplate } from '../templates/invite';
 
 const axios = require('axios').default;
 
 export class InvitePlayerWindow extends HTMLElement {
-  invite: Node;
-  wait: Node;
   timer: NodeJS.Timeout | null = null;
   constructor(public socket: GameSocket, public parent: HTMLElement) {
     super();
     const shadowRoot = this.attachShadow({ mode: 'open' });
-    this.invite = getTemplate('invitePlayer');
-    this.wait = getTemplate('inviteWait');
-    shadowRoot.appendChild(this.invite);
+
+    shadowRoot.appendChild(getTemplate('invitePlayer'));
   }
 
   connectedCallback(): void {
@@ -30,6 +27,7 @@ export class InvitePlayerWindow extends HTMLElement {
         axios
           .get(`getPlayer.php/?user=${opponentInput?.value}`)
           .then((res: AxiosResponse) => {
+            console.log(res);
             if (res.data) {
               this.socket.send(
                 JSON.stringify({
@@ -40,16 +38,20 @@ export class InvitePlayerWindow extends HTMLElement {
                 })
               );
             }
-            this.shadowRoot?.children[0].remove();
-            this.shadowRoot?.appendChild(this.wait);
+            if (this.shadowRoot) {
+              this.shadowRoot.innerHTML = '';
+              this.shadowRoot.appendChild(getTemplate('inviteWait'));
+            }
             this.waitForOpponent();
             this.handleResponse();
-          });
+          })
+          .catch(() => {});
       });
     }
   };
 
   waitForOpponent = () => {
+    this.setCancelHandling();
     this.timer = setTimeout(() => {
       this.cancelInvite();
     }, 30000);
@@ -59,8 +61,15 @@ export class InvitePlayerWindow extends HTMLElement {
     this.socket.send(
       JSON.stringify({ type: 'end', id: localStorage.getItem('id') })
     );
-    this.shadowRoot?.children[0].remove();
-    this.shadowRoot?.appendChild(this.invite);
+    if (this.timer) {
+      clearTimeout(this.timer);
+    }
+    console.log('cancelling');
+    if (this.shadowRoot) {
+      this.shadowRoot.innerHTML = '';
+      this.shadowRoot.appendChild(getTemplate('invitePlayer'));
+      this.inviteHandling();
+    }
   };
 
   setCancelHandling = (): void => {
