@@ -26,6 +26,11 @@ export class Chatbox extends HTMLElement {
     if (this.socket) {
       this.connectChatbox();
     }
+
+    const chatArea = document.getElementById('chat-menu');
+    if (chatArea) {
+      chatArea.appendChild(this);
+    }
   }
 
   handleMessage = (message: string, sender: string): void => {
@@ -53,7 +58,7 @@ export class Chatbox extends HTMLElement {
       this.socket.send(
         JSON.stringify({
           type: 'chat',
-          content: this.textInput.value,
+          message: this.textInput.value,
           sender: 'Billiam',
         })
       );

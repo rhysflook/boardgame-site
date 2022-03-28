@@ -6,8 +6,9 @@ export class PlayerCard extends HTMLElement {
     super();
     const shadowRoot = this.attachShadow({ mode: 'open' }) as ShadowRoot;
     shadowRoot.appendChild(this.renderHtml());
-    // this.style.width = '35%';
-    // this.style.margin = '0 2%';
+    this.style.width = '35%';
+    this.style.height = '65%';
+    this.style.margin = '0 2%';
     this.card = this.shadowRoot?.getElementById('card') as HTMLElement;
   }
 
@@ -46,8 +47,8 @@ export class PlayerCard extends HTMLElement {
     tmpl.innerHTML = `
     <link rel="stylesheet" href="../../menu.css">
     <div id="card" class="player-info">
-      <div class="player-card-right">
-        <h1 id="username">${this.name}</h1>
+      <div class="player-card-left">
+        <h2 id="username">${this.name}</h2>
             <div class="black-square light-bg">
             <div id="colour" class="${this.colour} select"></div>
         </div>

@@ -18,7 +18,7 @@ if (array_key_exists("login", $_POST)) {
     if ($user && $correct_passw) {
         $_SESSION['logged in'] = true;
         setcookie('id', $id, 0, "/");
-        header('location: ./src/menu/game-menu.php');
+        header("location: ./src/menu/game-menu.php?user={$user}");
         exit;
         // echo json_encode(['id'=>$userInfo['id'], 'status'=>200, 'message'=>'login successful']);
     } else if (!$user) {

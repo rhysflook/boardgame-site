@@ -20,8 +20,8 @@ export class EventHandler<T extends GamePiece> {
           this.draggedEle.getBoundingClientRect();
         console.log(this.board.x);
         if (this.draggedPiece.moving) {
-          this.draggedEle.style.left = e.clientX - this.board.x + 'px';
-          this.draggedEle.style.top = e.clientY - height / 2 + 'px';
+          this.draggedEle.style.left = e.clientX - width / 2 + 'px';
+          this.draggedEle.style.top = e.clientY - height + 'px';
           // moves.forEach((move) => {
           //   this.handleDestinationHover(e, move, piece);
           // });
@@ -60,7 +60,7 @@ export class EventHandler<T extends GamePiece> {
       ele.style.width = `${width}px`;
       ele.style.height = `${height}px`;
       ele.style.position = 'absolute';
-      ele.style.left = e.clientX - this.board.x + 'px';
+      ele.style.left = e.clientX - width / 2 + 'px';
       piece.left = left;
       piece.top = top;
       piece.width = width;

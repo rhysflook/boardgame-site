@@ -77,6 +77,11 @@ export default class GameState<T extends GamePiece> {
     this.opponentColour = this.playerColour === 'blacks' ? 'whites' : 'blacks';
     localStorage.setItem('movingColour', 'blacks');
     this.chatbox = new Chatbox(this.gameMode === 'vs' ? this.socket : null);
+    const scores = document.getElementById('scores');
+    if (scores) {
+      scores.appendChild(this.scoreboard.playerOne);
+      scores.appendChild(this.scoreboard.playerTwo);
+    }
     this.initGame();
   }
 
@@ -112,6 +117,8 @@ export default class GameState<T extends GamePiece> {
   };
 
   getPiece = (colour: keyof AllPieces<T>, key: number): T => {
+    console.log(this.pieces);
+    console.log(colour, key);
     return this.pieces[colour][key];
   };
 

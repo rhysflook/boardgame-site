@@ -64,12 +64,17 @@ const playerCard = `
   <link rel="stylesheet" href="../../menu.css">
   <div id="card" class="player-info">
     <div class="player-card-right">
-      <h1 id="username"></h1>
+      <h2 id="username"></h2>
       <div class="black-square light-bg">
       <div id="colour" class="select"></div></div>
     </div>
     <div id="captures"></div>
   </div>
+`;
+
+const waitForChoice = `
+<link rel="stylesheet" href="../../menu.css">
+<h5>Please wait a moment!</h5>
 `;
 
 const templates: Templates = {
@@ -79,6 +84,7 @@ const templates: Templates = {
   chooseColour,
   chatBox,
   playerCard,
+  waitForChoice,
 };
 
 export const getTemplate = (tmplName: string) => {

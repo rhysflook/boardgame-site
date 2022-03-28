@@ -1,8 +1,6 @@
 import { AxiosResponse } from '../../node_modules/axios/index';
-import GameState from '../game/Draughts';
 import { GameSocket } from '../socket/GameSocket';
 import { getTemplate } from '../templates/invite';
-import { ColourSelection } from './ColourSelection';
 
 const axios = require('axios').default;
 
@@ -34,7 +32,12 @@ export class InvitePlayerWindow extends HTMLElement {
           .then((res: AxiosResponse) => {
             if (res.data) {
               this.socket.send(
-                JSON.stringify({ type: 'invite', target: res.data.id, id: 2 })
+                JSON.stringify({
+                  type: 'invite',
+                  target: res.data.id,
+                  id: Number(localStorage.getItem('id')),
+                  username: localStorage.getItem('username'),
+                })
               );
             }
             this.shadowRoot?.children[0].remove();
@@ -53,7 +56,9 @@ export class InvitePlayerWindow extends HTMLElement {
   };
 
   cancelInvite = () => {
-    this.socket.send(JSON.stringify({ type: 'end', id: 2 }));
+    this.socket.send(
+      JSON.stringify({ type: 'end', id: localStorage.getItem('id') })
+    );
     this.shadowRoot?.children[0].remove();
     this.shadowRoot?.appendChild(this.invite);
   };
@@ -69,29 +74,15 @@ export class InvitePlayerWindow extends HTMLElement {
     this.socket.addEventListener('message', (event) => {
       const data = JSON.parse(event.data);
       if (data.type === 'accept') {
+        localStorage.setItem('opponentId', String(data.id));
+        localStorage.setItem('opponentName', data.username);
         if (this.timer) {
           clearTimeout(this.timer);
         }
         const coinFlip = Math.floor(Math.random() * 2);
         this.socket.send(JSON.stringify({ type: 'coinFlip', coinFlip }));
 
-        const colourSelection = new ColourSelection(coinFlip);
-        this.parent.appendChild(colourSelection);
-
-        if (coinFlip === 0) {
-          colourSelection.getSelection().then((colour) => {
-            localStorage.setItem('playerColour', colour);
-            this.socket.send(JSON.stringify({ type: 'colourChoice', colour }));
-            GameState.setupDraughtsGame('vs', colour, this.socket);
-            colourSelection.remove();
-          });
-        } else {
-          colourSelection.waitForPlayer(this.socket).then((colour) => {
-            localStorage.setItem('playerColour', colour);
-            GameState.setupDraughtsGame('vs', colour, this.socket);
-            colourSelection.remove();
-          });
-        }
+        this.socket.handleColourChoice(coinFlip);
 
         this.remove();
       }

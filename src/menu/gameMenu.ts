@@ -1,5 +1,8 @@
+import { AxiosResponse } from '../../node_modules/axios/index';
 import { getCookie } from '../game/utils';
 import { getTemplate } from '../templates/invite';
+
+const axios = require('axios').default;
 
 const menu = document.querySelector('.menu-container') as HTMLElement;
 
@@ -29,6 +32,8 @@ class InviteWindow extends HTMLDivElement {
   }
 
   acceptInvite = (): void => {
+    localStorage.setItem('opponentId', String(this.userId));
+    localStorage.setItem('opponentName', this.player);
     window.location.href = `../../src/game/draughts.php?opponent=${this.userId}`;
   };
 
@@ -43,6 +48,17 @@ class InviteWindow extends HTMLDivElement {
 }
 
 customElements.define('x-invite-window', InviteWindow, { extends: 'div' });
+const queryString = window.location.search;
+const urlParams = new URLSearchParams(queryString);
+const player = urlParams.get('user');
+axios
+  .get(`../game/getPlayer.php/?user=${player}`)
+  .then((res: AxiosResponse) => {
+    if (res.data) {
+      localStorage.setItem('id', String(res.data.id));
+      localStorage.setItem('username', String(player));
+    }
+  });
 
 const socket = new WebSocket('ws://localhost:8001/');
 socket.addEventListener('open', () => {
