@@ -61,7 +61,9 @@ export class GameSocket extends WebSocket {
     const urlParams = new URLSearchParams(queryString);
     const opponent = urlParams.get('opponent');
 
-    this.send(JSON.stringify({ type: 'start', id: 2 }));
+    this.send(
+      JSON.stringify({ type: 'start', id: Number(localStorage.getItem('id')) })
+    );
     this.send(
       JSON.stringify({
         type: 'accept',
