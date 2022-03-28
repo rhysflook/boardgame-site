@@ -93,6 +93,7 @@ export default class GameState<T extends GamePiece> {
       this.computerTurn();
     } else {
       this.socket?.addEventListener('message', (event) => {
+        console.log('detected');
         const data = JSON.parse(event.data);
         if (data.type === 'move') {
           const move = JSON.parse(data.move);
