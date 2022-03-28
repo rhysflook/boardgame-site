@@ -1,6 +1,7 @@
 import { AxiosError, AxiosResponse } from '../../node_modules/axios/index';
 import { GameSocket } from '../socket/GameSocket';
 import { getTemplate } from '../templates/invite';
+import { PopupMessage } from '../ui/PopupMessage';
 
 const axios = require('axios').default;
 
@@ -45,7 +46,9 @@ export class InvitePlayerWindow extends HTMLElement {
             this.waitForOpponent();
             this.handleResponse();
           })
-          .catch(() => {});
+          .catch(() => {
+            new PopupMessage('Player not found!').render();
+          });
       });
     }
   };

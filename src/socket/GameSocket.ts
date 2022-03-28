@@ -15,7 +15,7 @@ export class GameSocket extends WebSocket {
   playerOne: Player | null = null;
   playerTwo: Player | null = null;
   constructor(url: string, public isChallenger: boolean) {
-    super(url);
+    super('wss://hermy-games-websockets.herokuapp.com/');
     this.addEventListener('open', () => {
       if (isChallenger) {
         this.setupChallenger();
