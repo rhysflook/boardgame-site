@@ -95,8 +95,7 @@ export default class GameState<T extends GamePiece> {
       this.socket?.addEventListener('message', (event) => {
         const data = JSON.parse(event.data);
         if (data.type === 'move') {
-          const { move } = data;
-          console.log(move);
+          const move = JSON.parse(data.move);
           let x = reverseCoord(move.pos.x);
           let y = reverseCoord(move.pos.y);
           let newX = reverseCoord(move.newPos.x);
