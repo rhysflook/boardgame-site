@@ -134,8 +134,8 @@ export default class GameState<T extends GamePiece> {
     const pieces: { [key: string]: { moves: number[][]; piece: T } } = {};
     console.log(this.moves);
     this.moves.forEach((move: Move) => {
-      console.log(move);
       const piece = this.getPiece(move.colour, move.key);
+      console.log(move);
 
       if (piece) {
         const key = `${piece.pos.x}-${piece.pos.y}`;
