@@ -50,7 +50,7 @@ if (gameType === 'ai') {
     colourSelection.remove();
   });
 } else if (opponent) {
-  new GameSocket('ws://localhost:8001/', false);
+  new GameSocket('wss://hermy-games-websockets.herokuapp.com/', false);
 } else {
-  new GameSocket('ws://localhost:8001/', true);
+  new GameSocket('wss://hermy-games-websockets.herokuapp.com/', true);
 }
