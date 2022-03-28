@@ -174,7 +174,7 @@ export default class GameState<T extends GamePiece> {
 
       this.calculator.allPieces = getPieceListAll(this.pieces);
     }
-    if (this.gameMode === 'vs') {
+    if (this.gameMode === 'vs' && this.movingPlayer === this.playerColour) {
       const move = {
         pos: { x: piece.pos.x, y: piece.pos.y },
         newPos: {
