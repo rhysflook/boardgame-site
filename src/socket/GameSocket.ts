@@ -77,7 +77,8 @@ export class GameSocket extends WebSocket {
     this.addEventListener('message', (event) => {
       const data = JSON.parse(event.data);
       if (data.type === 'coinFlip') {
-        this.handleColourChoice(data.coinFlip);
+        const coinFlip = data.coinFlip === 1 ? 0 : 1;
+        this.handleColourChoice(coinFlip);
       }
     });
   };
