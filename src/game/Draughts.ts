@@ -97,6 +97,7 @@ export default class GameState<T extends GamePiece> {
         if (data.type === 'move') {
           const move = JSON.parse(data.move);
           if (move.colour !== this.playerColour) {
+            console.log(move.colour, this.playerColour);
             console.log('SADFWEDFWf');
             let x = reverseCoord(move.pos.x);
             let y = reverseCoord(move.pos.y);
