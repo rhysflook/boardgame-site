@@ -26,7 +26,9 @@ export class GameSocket extends WebSocket {
   }
 
   setupChallenger = (): void => {
-    this.send(JSON.stringify({ type: 'start', id: 2 }));
+    this.send(
+      JSON.stringify({ type: 'start', id: Number(localStorage.getItem('id')) })
+    );
     const screen = document.querySelector('.container') as HTMLElement;
     if (screen) {
       screen.appendChild(new InvitePlayerWindow(this, screen));
@@ -67,7 +69,7 @@ export class GameSocket extends WebSocket {
     this.send(
       JSON.stringify({
         type: 'accept',
-        id: 2,
+        id: Number(localStorage.getItem('id')),
         opponent: Number(opponent),
         username: 'Billiam',
       })
