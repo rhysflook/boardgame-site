@@ -28,7 +28,6 @@ export class InvitePlayerWindow extends HTMLElement {
         axios
           .get(`getPlayer.php/?user=${opponentInput?.value}`)
           .then((res: AxiosResponse) => {
-            console.log(res);
             if (res.data) {
               this.socket.send(
                 JSON.stringify({
@@ -67,7 +66,6 @@ export class InvitePlayerWindow extends HTMLElement {
     if (this.timer) {
       clearTimeout(this.timer);
     }
-    console.log('cancelling');
     if (this.shadowRoot) {
       this.shadowRoot.innerHTML = '';
       this.shadowRoot.appendChild(getTemplate('invitePlayer'));

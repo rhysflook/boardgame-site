@@ -12,13 +12,11 @@ export class EventHandler<T extends GamePiece> {
   draggedPiece: GamePiece | null = null;
   constructor() {
     const scaling = window.outerWidth / window.innerWidth;
-    console.log(scaling);
     const boardEle = document.querySelector('.board') as HTMLElement;
     boardEle.addEventListener('mousemove', (e) => {
       if (this.dragging && this.draggedEle && this.draggedPiece) {
         const { width, height, left, top } =
           this.draggedEle.getBoundingClientRect();
-        console.log(this.board.x);
         if (this.draggedPiece.moving) {
           this.draggedEle.style.left = e.clientX - width / 2 + 'px';
           this.draggedEle.style.top = e.clientY - height + 'px';
@@ -29,8 +27,6 @@ export class EventHandler<T extends GamePiece> {
       }
     });
     this.board = boardEle.getBoundingClientRect();
-    console.log(window.innerWidth);
-    console.log(window.outerWidth);
   }
 
   applyEvents(piece: T, moves: number[][], game: GameState<T>): void {

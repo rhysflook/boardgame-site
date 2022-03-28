@@ -117,7 +117,6 @@ export default class GameState<T extends GamePiece> {
   };
 
   getPiece = (colour: keyof AllPieces<T>, key: number): T => {
-    console.log(colour, key);
     return this.pieces[colour][key];
   };
 
@@ -132,10 +131,8 @@ export default class GameState<T extends GamePiece> {
 
   getMovablePieces = (): { [key: string]: { moves: number[][]; piece: T } } => {
     const pieces: { [key: string]: { moves: number[][]; piece: T } } = {};
-    console.log(this.moves);
     this.moves.forEach((move: Move) => {
       const piece = this.getPiece(move.colour, move.key);
-      console.log(move);
 
       if (piece) {
         const key = `${piece.pos.x}-${piece.pos.y}`;
@@ -249,7 +246,7 @@ export default class GameState<T extends GamePiece> {
     this.moves = [];
     this.winnerCheck();
     this.switchColour();
-
+    console.log(this.pieces);
     this.moves = this.calculator.calc(this.movingPlayer, this.pieces);
     this.addEvents();
     this.scoreboard.switchPlayers();
