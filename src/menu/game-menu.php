@@ -57,9 +57,9 @@ if(isset($_SESSION['type']))
                         <button class="popup-button" id="vs-ai" name="ai">A.I</button>
                         <button class="popup-button" id="vs-player" name="vs-player">Invite</button>
  
-                        <h3>Input a player name to join their game</h3>
+                        <!-- <h3>Input a player name to join their game</h3>
                         <input type="text" name="username">
-                        <button class="popup-button" id="join-game" name="join-game">Join</button>
+                        <button class="popup-button" id="join-game" name="join-game">Join</button> -->
 
                 </div>
             </div>
