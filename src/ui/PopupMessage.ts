@@ -4,19 +4,32 @@ export class PopupMessage extends HTMLElement {
     const shadowRoot = this.attachShadow({ mode: 'open' });
   }
 
+  connectedCallback(): void {
+    if (this.shadowRoot) {
+      const close = this.shadowRoot.getElementById('okay');
+      if (close) {
+        close.addEventListener('click', () => {
+          this.remove();
+        });
+      }
+    }
+  }
+
   render = (): void => {
     const html = `
         <link rel="stylesheet" href="../../menu.css">
-        <div id="popup">
-            <h4>${this.message}</h4>
-            <button is="okay-button" class="popup-button">Okay</button>
+        <div id="popup" class="error">
+          <div class="popup-inner">
+            <h4 class="error-message">${this.message}</h4>
+            <button id="okay" parent=${this} class="popup-button short corner">✕</button>
+          </div>
         </div>
     `;
 
     const tmpl = document.createElement('template');
     tmpl.innerHTML = html;
     if (this.shadowRoot) {
-      this.shadowRoot.append(tmpl);
+      this.shadowRoot.append(tmpl.content.cloneNode(true));
       const screen = document.querySelector('.screen');
       if (screen) {
         screen.appendChild(this);
@@ -25,14 +38,4 @@ export class PopupMessage extends HTMLElement {
   };
 }
 
-export class OkayButton extends HTMLButtonElement {
-  constructor(public parent: HTMLElement) {
-    super();
-    this.addEventListener('click', () => {
-      this.parent.remove();
-    });
-  }
-}
-
 customElements.define('popup-message', PopupMessage);
-customElements.define('okay-button', OkayButton, { extends: 'button' });
