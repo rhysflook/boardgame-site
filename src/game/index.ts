@@ -1,3 +1,4 @@
+import { AxiosResponse } from '../../node_modules/axios/index';
 import { Chatbox } from '../chatbox/Chatbox';
 import { ColourSelection } from '../matchmaking/ColourSelection';
 import { PlayerCard } from '../scoreboard/PlayerCard';
@@ -5,6 +6,7 @@ import { ScoreBoard } from '../scoreboard/ScoreBoard';
 import { GameSocket } from '../socket/GameSocket';
 import GameState from './Draughts';
 import { getCookie } from './utils';
+const axios = require('axios').default;
 
 // const resetGamePieces = (): void => {
 //   localStorage.clear();
@@ -15,6 +17,14 @@ import { getCookie } from './utils';
 //     piece.remove();
 //   });
 // };
+
+let socket_url = '';
+
+axios.get('../socket-url.php').then((res: AxiosResponse) => {
+  if (res) {
+    socket_url = res.data;
+  }
+});
 
 const gameType = getCookie('type') as string;
 // resetGamePieces();
@@ -50,7 +60,7 @@ if (gameType === 'ai') {
     colourSelection.remove();
   });
 } else if (opponent) {
-  new GameSocket('wss://hermy-games-websockets.herokuapp.com/', false);
+  new GameSocket(socket_url, false);
 } else {
-  new GameSocket('wss://hermy-games-websockets.herokuapp.com/', true);
+  new GameSocket(socket_url, true);
 }

@@ -7,7 +7,11 @@ const axios = require('axios').default;
 const menu = document.querySelector('.menu-container') as HTMLElement;
 
 class InviteWindow extends HTMLDivElement {
-  constructor(public player: string, public userId: number) {
+  constructor(
+    public player: string,
+    public userId: number,
+    public socket: WebSocket
+  ) {
     super();
 
     this.classList.add('popup');
@@ -38,7 +42,7 @@ class InviteWindow extends HTMLDivElement {
   };
 
   rejectInvite = (): void => {
-    socket.send(JSON.stringify({ type: 'end' }));
+    this.socket.send(JSON.stringify({ type: 'end' }));
     this.remove();
   };
 
@@ -60,16 +64,20 @@ axios
     }
   });
 
-const socket = new WebSocket('wss://hermy-games-websockets.herokuapp.com/');
-socket.addEventListener('open', () => {
-  socket.addEventListener('message', (event) => {
-    const data = JSON.parse(event.data);
-    if (data.type === 'invite') {
-      menu.appendChild(new InviteWindow(data.userName, data.id));
-    }
-  });
-  const userId = getCookie('id');
-  if (userId) {
-    socket.send(JSON.stringify({ type: 'start', id: Number(userId) }));
+axios.get('../socket-url.php').then((res: AxiosResponse) => {
+  if (res) {
+    const socket = new WebSocket(res.data as string);
+    socket.addEventListener('open', () => {
+      socket.addEventListener('message', (event) => {
+        const data = JSON.parse(event.data);
+        if (data.type === 'invite') {
+          menu.appendChild(new InviteWindow(data.userName, data.id, socket));
+        }
+      });
+      const userId = getCookie('id');
+      if (userId) {
+        socket.send(JSON.stringify({ type: 'start', id: Number(userId) }));
+      }
+    });
   }
 });

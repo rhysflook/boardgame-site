@@ -97,14 +97,12 @@ export default class GameState<T extends GamePiece> {
         if (data.type === 'move') {
           const move = JSON.parse(data.move);
           if (move.colour !== this.playerColour) {
-            console.log(move.colour, this.playerColour);
-            console.log('SADFWEDFWf');
             let x = reverseCoord(move.pos.x);
             let y = reverseCoord(move.pos.y);
             let newX = reverseCoord(move.newPos.x);
             let newY = reverseCoord(move.newPos.y);
 
-            const piece = this.getPiece(move.colour, move.key);
+            const piece = this.getPiece(move.colour, 13 - move.key);
             const opponentMove = {
               pos: { x, y },
               newPos: { x: newX, y: newY },
@@ -113,6 +111,7 @@ export default class GameState<T extends GamePiece> {
               colour: move.colour,
               captureKey: 13 - move.captureKey,
             };
+
             this.makeMove(opponentMove, piece);
           }
         }
@@ -136,7 +135,6 @@ export default class GameState<T extends GamePiece> {
   getMovablePieces = (): { [key: string]: { moves: number[][]; piece: T } } => {
     const pieces: { [key: string]: { moves: number[][]; piece: T } } = {};
     this.moves.forEach((move: Move) => {
-      console.log(move);
       const piece = this.getPiece(move.colour, move.key);
 
       if (piece) {
@@ -169,7 +167,6 @@ export default class GameState<T extends GamePiece> {
         piece,
         this.getPiece(capturedColour, chosenMove?.captureKey)
       );
-
       delete this.pieces[capturedColour][chosenMove.captureKey];
 
       this.calculator.allPieces = getPieceListAll(this.pieces);
@@ -251,12 +248,9 @@ export default class GameState<T extends GamePiece> {
     this.moves = [];
     this.winnerCheck();
     this.switchColour();
-    console.log(this.pieces);
-    if (this.movingPlayer === this.playerColour && this.gameMode === 'vs') {
-      this.moves = this.calculator.calc(this.movingPlayer, this.pieces);
-      console.log(this.moves);
-      this.addEvents();
-    }
+
+    this.moves = this.calculator.calc(this.movingPlayer, this.pieces);
+    this.addEvents();
     this.scoreboard.switchPlayers();
     if (this.gameMode === 'ai' && this.movingPlayer === this.opponentColour) {
       this.computerTurn();

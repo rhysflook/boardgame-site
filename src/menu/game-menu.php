@@ -55,11 +55,11 @@ if(isset($_SESSION['type']))
                 <div class="flex-container">
                         <h1>Game Type</h1>
                         <button class="popup-button" id="vs-ai" name="ai">A.I</button>
-                        <button class="popup-button" id="vs-player" name="vs-player">Invite Player</button>
+                        <button class="popup-button" id="vs-player" name="vs-player">Invite</button>
  
                         <h3>Input a player name to join their game</h3>
                         <input type="text" name="username">
-                        <button class="popup-button" id="join-game" name="join-game">Join game</button>
+                        <button class="popup-button" id="join-game" name="join-game">Join</button>
 
                 </div>
             </div>
