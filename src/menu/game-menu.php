@@ -50,7 +50,7 @@ if(isset($_SESSION['type']))
     </head>
     <body>
         <form method="post">
-        <div class="menu-container">
+        <div id="screen" class="menu-container">
         <div class="popup">
                 <div class="flex-container">
                         <h1>Game Type</h1>

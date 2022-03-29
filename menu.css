@@ -13,6 +13,13 @@ a:active {
   color: inherit;
 }
 
+.flex-column-center {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
 .menu-container {
   width: 100%;
   height: 100vh;
@@ -79,7 +86,7 @@ label {
   height: auto;
   width: auto;
   margin-top: 0;
-  font-size: 0.4em;
+  font-size: 0.8em;
 }
 
 .popup-inner {
@@ -90,8 +97,8 @@ label {
 
 .corner {
   position: absolute;
-  right: 3px;
-  top: 3px;
+  right: 5px;
+  top: 5px;
 }
 
 .popup-button:hover {
@@ -366,4 +373,43 @@ label {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+}
+
+#friend-box {
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  background-color: bisque;
+  border: rgb(125, 57, 173) 5px solid;
+  border-radius: 15px;
+  box-shadow: 3px 0px 4px rgb(179, 145, 202), 0px 3px 4px rgb(179, 145, 202),
+    -3px 0px 4px rgb(179, 145, 202);
+}
+
+.friend-row {
+  display: flex;
+  justify-content: space-around;
+}
+
+.friend-block {
+  font-size: 0.8rem;
+  width: 30%;
+}
+
+#friendName {
+  margin-right: 10px;
+  height: 1em;
+  font-size: 1.2rem;
+}
+
+#addBar {
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+  background-color: rgb(226, 182, 128);
+  border-bottom: 3px outset rgb(204, 170, 128);
+  box-shadow: 0 3px 5px rgb(177, 148, 114);
+  padding: 5px;
+  display: flex;
+  justify-content: left;
+  align-items: center;
 }

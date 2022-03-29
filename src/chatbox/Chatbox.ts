@@ -1,3 +1,4 @@
+import { capitalise } from '../game/utils';
 import { GameSocket } from '../socket/GameSocket';
 import { getTemplate } from '../templates/invite';
 import { Message } from './Message';
@@ -35,7 +36,7 @@ export class Chatbox extends HTMLElement {
 
   handleMessage = (message: string, sender: string): void => {
     this.messageBox.appendChild(
-      new Message(message, sender, false).renderMessage()
+      new Message(message, capitalise(sender), false).renderMessage()
     );
   };
 
@@ -52,14 +53,18 @@ export class Chatbox extends HTMLElement {
 
   sendMessage = (): void => {
     this.messageBox.appendChild(
-      new Message(this.textInput.value, 'Billiam', true).renderMessage()
+      new Message(
+        this.textInput.value,
+        localStorage.getItem('username') as string,
+        true
+      ).renderMessage()
     );
     if (this.socket) {
       this.socket.send(
         JSON.stringify({
           type: 'chat',
           message: this.textInput.value,
-          sender: 'Billiam',
+          sender: localStorage.getItem('username'),
         })
       );
     }
