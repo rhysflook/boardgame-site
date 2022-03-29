@@ -18,14 +18,6 @@ const axios = require('axios').default;
 //   });
 // };
 
-let socket_url = '';
-
-axios.get('../socket-url.php').then((res: AxiosResponse) => {
-  if (res) {
-    socket_url = res.data;
-  }
-});
-
 const gameType = getCookie('type') as string;
 // resetGamePieces();
 
@@ -60,7 +52,15 @@ if (gameType === 'ai') {
     colourSelection.remove();
   });
 } else if (opponent) {
-  new GameSocket(socket_url, false);
+  axios.get('../socket-url.php').then((res: AxiosResponse) => {
+    if (res) {
+      new GameSocket(res.data, false);
+    }
+  });
 } else {
-  new GameSocket(socket_url, true);
+  axios.get('../socket-url.php').then((res: AxiosResponse) => {
+    if (res) {
+      new GameSocket(res.data, true);
+    }
+  });
 }
