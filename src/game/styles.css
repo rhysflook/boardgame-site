@@ -144,3 +144,31 @@ body {
 .black-king {
   background-color: silver;
 }
+
+#quit {
+  position: absolute;
+  width: 6%;
+  left: 3px;
+  top: 3px;
+}
+
+.popup-button {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 16px;
+  width: 100%;
+  height: 30px;
+  font-weight: bolder;
+  background-color: bisque;
+  border: 1px rgb(185, 121, 231) solid;
+  border-radius: 5px;
+  /* border-top: 0; */
+  /* box-shadow: 0 5px indigo; */
+}
+
+.popup-button:hover {
+  color: rgb(185, 121, 231);
+}
+
+.popup-button:active {
+  box-shadow: 1px 1px 5px rgb(134, 67, 182), -1px 1px 5px rgb(134, 67, 182);
+}

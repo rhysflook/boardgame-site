@@ -18,6 +18,11 @@ const axios = require('axios').default;
 //   });
 // };
 
+const quitButton = document.getElementById('quit');
+quitButton?.addEventListener('click', () => {
+  window.location.href = '../menu/game-menu.php';
+});
+
 const gameType = getCookie('type') as string;
 // resetGamePieces();
 

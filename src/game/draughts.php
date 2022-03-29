@@ -14,6 +14,7 @@
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <div class="screen">
         <div id="left-side">
+            <div id="quit"><button class="popup-button">Back</button></div>
             <div class="container">
                 <div class="board">        
                     <?php for($i=0; $i < 8; $i++ ): ?> 
@@ -30,6 +31,7 @@
             </div>
             <div id="scores"></div>
         </div>
+        
         <div id="chat-menu"></div>                          
     </div>  
 </body>
