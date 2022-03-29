@@ -71,7 +71,7 @@ export class GameSocket extends WebSocket {
         type: 'accept',
         id: Number(localStorage.getItem('id')),
         opponent: Number(opponent),
-        username: 'Billiam',
+        username: localStorage.getItem('username'),
       })
     );
     this.addEventListener('message', (event) => {

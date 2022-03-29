@@ -71,7 +71,8 @@ axios.get('../socket-url.php').then((res: AxiosResponse) => {
       socket.addEventListener('message', (event) => {
         const data = JSON.parse(event.data);
         if (data.type === 'invite') {
-          menu.appendChild(new InviteWindow(data.userName, data.id, socket));
+          console.log(data);
+          menu.appendChild(new InviteWindow(data.username, data.id, socket));
         }
       });
       const userId = getCookie('id');
