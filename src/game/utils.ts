@@ -65,3 +65,7 @@ export const getPieceListAll = <T>(allPieces: AllPieces<T>) => {
 export const getPieceList = <T>(pieces: Pieces<T>) => {
   return Object.entries(pieces);
 };
+
+export const capitalise = (word: string): string => {
+  return word.charAt(0).toUpperCase() + word.slice(1);
+};

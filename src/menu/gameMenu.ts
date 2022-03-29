@@ -1,5 +1,5 @@
 import { AxiosResponse } from '../../node_modules/axios/index';
-import { getCookie } from '../game/utils';
+import { capitalise, getCookie } from '../game/utils';
 import { getTemplate } from '../templates/invite';
 
 const axios = require('axios').default;
@@ -21,7 +21,7 @@ class InviteWindow extends HTMLDivElement {
 
     const message = shadowRoot.getElementById('message');
     if (message) {
-      message.innerText = `${this.player} wants to play!`;
+      message.innerText = `${capitalise(this.player)} wants to play!`;
     }
 
     const accept = shadowRoot.getElementById('accept');

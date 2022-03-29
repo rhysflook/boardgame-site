@@ -1,3 +1,5 @@
+import { capitalise } from '../game/utils';
+
 export class PlayerCard extends HTMLElement {
   numOfCaptures: number = 0;
   numOfKings: number = 0;
@@ -48,7 +50,7 @@ export class PlayerCard extends HTMLElement {
     <link rel="stylesheet" href="../../menu.css">
     <div id="card" class="player-info">
       <div class="player-card-left">
-        <h2 id="username">${this.name}</h2>
+        <h2 id="username">${capitalise(this.name)}</h2>
             <div class="black-square light-bg">
             <div id="colour" class="${this.colour} select"></div>
         </div>
