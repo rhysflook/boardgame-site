@@ -453,15 +453,23 @@ label {
 }
 
 #chatContent {
-  width: 70%;
+  width: 80%;
+  height: 100px;
+}
+
+.chat-group-inner-open {
+  width: 600px;
+  position: relative;
+}
+
+.chat-group-inner-closed {
+  width: 250px;
+  position: relative;
 }
 
 .chat-group-container {
-  width: 500px;
-}
-
-.chat-group-inner {
-  position: relative;
+  position: absolute;
+  bottom: 1px;
 }
 
 .open {
@@ -482,5 +490,6 @@ label {
   bottom: 5px;
   position: absolute;
   display: flex;
+  justify-content: left;
   height: 100px;
 }

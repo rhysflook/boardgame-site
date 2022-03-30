@@ -4,6 +4,7 @@ import { capitalise, getCookie } from '../game/utils';
 import { MenuSocket } from '../socket/MenuSocket';
 import { getTemplate } from '../templates/invite';
 import { ChatArea } from '../ui/ChatArea';
+import { ChatGroup } from '../ui/ChatGroup';
 import { FriendList } from '../ui/FriendList';
 
 export type FriendShip = [number, number, string, string];
@@ -76,6 +77,6 @@ getPlayerId(username as string, true).then(() => {
     const socket = new MenuSocket(res.data as string);
     menu.append(new FriendList(socket));
     const chatBar = document.getElementById('chat-area-bar');
-    chatBar?.append(new ChatArea(socket));
+    chatBar?.append(new ChatGroup(socket, username as string, 'All', 0));
   });
 });

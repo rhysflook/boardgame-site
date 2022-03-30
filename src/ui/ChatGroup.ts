@@ -15,6 +15,7 @@ export class ChatGroup extends HTMLElement {
     public isGlobal: boolean = true
   ) {
     super();
+    this.style.width = '100px';
     const shadowRoot = this.attachShadow({ mode: 'open' });
     this.localId = Number(localStorage.getItem('id'));
     this.getChatHistory().then((res) => {
@@ -30,6 +31,9 @@ export class ChatGroup extends HTMLElement {
       this.render();
       this.handleIncomingMessage();
       this.toggleChar();
+      this.shadowRoot
+        ?.getElementById('close')
+        ?.addEventListener('click', () => this.remove());
     });
   }
 
@@ -102,11 +106,14 @@ export class ChatGroup extends HTMLElement {
     const button = this.shadowRoot?.getElementById('open');
     if (button) {
       button.addEventListener('click', () => {
+        const frame = this.shadowRoot?.getElementById('frame') as HTMLElement;
         this.collapsed = !this.collapsed;
         if (this.collapsed) {
           button.className = 'popup-button closed';
+          frame.className = 'chat-group-inner-closed';
         } else {
           button.className = 'popup-button short open';
+          frame.className = 'chat-group-inner-open';
         }
         this.renderAllMessage();
         if (!this.collapsed) {
@@ -149,10 +156,12 @@ export class ChatGroup extends HTMLElement {
     const html = `
     <link rel="stylesheet" href="../../menu.css">
       <div id="${this.groupName}" class="chat-group-container">
-        <div class="chat-group-inner">
-            <button id="open" class="popup-button closed">Chat</button>
-            <div id="${this.groupName}-chat">
-            </div>
+        <div id="frame" class="chat-group-inner-closed">
+        <div id="${this.groupName}-chat">
+        </div>
+        <button id="open" class="popup-button closed">${
+          this.groupName
+        }</button>${this.isGlobal ? '' : `<button id="close">✕</button>`}
         </div>
       </div>
       `;
