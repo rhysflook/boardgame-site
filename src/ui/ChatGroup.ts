@@ -124,6 +124,12 @@ export class ChatGroup extends HTMLElement {
             this.sendMessage();
           });
         }
+        const chat = this.shadowRoot?.getElementById(
+          `${this.groupName}-chat-inner`
+        );
+        if (chat) {
+          chat.scrollTop = chat.scrollHeight - chat.clientHeight;
+        }
       });
     }
   };
