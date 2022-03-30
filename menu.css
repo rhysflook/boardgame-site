@@ -413,3 +413,26 @@ label {
   justify-content: left;
   align-items: center;
 }
+
+#chatArea {
+  position: absolute;
+  left: 50px;
+  bottom: 50px;
+  background-color: bisque;
+  border: rgb(125, 57, 173) 5px solid;
+  border-radius: 15px;
+  box-shadow: 3px 0px 4px rgb(179, 145, 202), 0px 3px 4px rgb(179, 145, 202),
+    -3px 0px 4px rgb(179, 145, 202);
+}
+
+#sendBar {
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+  background-color: rgb(226, 182, 128);
+  border-bottom: 3px outset rgb(204, 170, 128);
+  box-shadow: 0 3px 5px rgb(177, 148, 114);
+  padding: 5px;
+  display: flex;
+  justify-content: left;
+  align-items: center;
+}

@@ -3,6 +3,7 @@ import { getFriendList, getPlayerId } from '../api';
 import { capitalise, getCookie } from '../game/utils';
 import { MenuSocket } from '../socket/MenuSocket';
 import { getTemplate } from '../templates/invite';
+import { ChatArea } from '../ui/ChatArea';
 import { FriendList } from '../ui/FriendList';
 
 export type FriendShip = [number, number, string, string];
@@ -74,5 +75,6 @@ getPlayerId(username as string, true).then(() => {
   axios.get('../socket-url.php').then((res: AxiosResponse) => {
     const socket = new MenuSocket(res.data as string);
     menu.append(new FriendList(socket));
+    menu.append(new ChatArea(socket));
   });
 });
