@@ -19,7 +19,7 @@ export class ChatArea extends HTMLElement {
     this.shadowRoot?.appendChild(tmpl.content.cloneNode(true));
     const chat = this.shadowRoot?.getElementById('chatArea');
     const user = localStorage.getItem('username') as string;
-    const globalChat = new ChatGroup(this.socket, user, 'global');
+    const globalChat = new ChatGroup(this.socket, user, 'global', 0);
     chat?.appendChild(globalChat);
   };
 }

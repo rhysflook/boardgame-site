@@ -422,6 +422,7 @@ label {
   position: absolute;
   left: 0;
   bottom: 0;
+  width: 100%;
 }
 
 #sendBar {
@@ -474,4 +475,12 @@ label {
   bottom: 10px;
   top: 0;
   right: 0;
+}
+
+#chat-area-bar {
+  left: 5px;
+  bottom: 5px;
+  position: absolute;
+  display: flex;
+  height: 100px;
 }

@@ -63,7 +63,7 @@ if(isset($_SESSION['type']))
 
                 </div>
             </div>
-            
+           <div id="chat-area-bar"></div> 
         </div>
     </form>
     <script type="module" src="../../dist/gameModeMenu.bundle.js"></script>

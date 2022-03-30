@@ -3,6 +3,7 @@ import { capitalise } from '../game/utils';
 import { Friend } from '../menu/gameMenu';
 import { SiteSocket } from '../socket/MenuSocket';
 import { INewFriend } from '../socket/MessageHandler';
+import { ChatGroup } from './ChatGroup';
 
 export class FriendList extends HTMLElement {
   collapsed: boolean = true;
@@ -96,10 +97,25 @@ export class FriendList extends HTMLElement {
         `;
       }
     }
+    this.friends.forEach((friend) => {
+      const ele = this.shadowRoot?.getElementById(String(friend.id));
+      ele?.addEventListener('click', () => {
+        const chatArea = document.getElementById('chat-area-bar');
+        chatArea?.appendChild(
+          new ChatGroup(
+            this.socket,
+            localStorage.getItem('username') as string,
+            friend.name,
+            friend.id,
+            false
+          )
+        );
+      });
+    });
   };
 
   getFriendRow = (friend: Friend) => {
-    return `<div class="friend-row">
+    return `<div class="friend-row" id="${friend.id}" value="${friend.id}">
       <p class="friend-block">${capitalise(friend.name)}</p>
       <p class="friend-block">${friend.online ? 'Online' : 'Offline'}</p>
       <p class="friend-block">${friend.inGame ? 'In Game' : 'Not playing'}</p>

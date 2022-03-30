@@ -11,6 +11,7 @@ export class ChatGroup extends HTMLElement {
     public socket: SiteSocket,
     public localUser: string,
     public groupName: string,
+    public recipient_id: number,
     public isGlobal: boolean = true
   ) {
     super();
@@ -33,17 +34,30 @@ export class ChatGroup extends HTMLElement {
   }
 
   getChatHistory = () => {
-    return axios.get('../ui/getChatHistory.php?recipient_id=0');
+    if (this.isGlobal) {
+      return axios.get(
+        `../ui/getChatHistory.php?recipient_id=${this.recipient_id}}`
+      );
+    } else {
+      return axios.get(
+        `../ui/getSpecificChatHistory.php?recipient_id=${this.recipient_id}}&user_id=${this.localId}`
+      );
+    }
   };
 
   saveChatMessage = (id: number, sender: string, message: string) => {
-    axios.post('../ui/saveChat.php', { id, message, sender, recipient_id: 0 });
+    axios.post('../ui/saveChat.php', {
+      id,
+      message,
+      sender,
+      recipient_id: this.recipient_id,
+    });
   };
 
   handleIncomingMessage = () => {
     this.socket.addEventListener('message', (event) => {
       const data = JSON.parse(event.data);
-      if (data.type === 'chatMessage') {
+      if (data.type === 'chatMessage' && this.recipient_id === this.localId) {
         const message = new Message(
           data.content,
           capitalise(data.sender),
@@ -68,13 +82,20 @@ export class ChatGroup extends HTMLElement {
         content: chatInput.value,
         sender: this.localUser,
         id: this.localId,
+        recipient_id: this.recipient_id,
       })
     );
     this.saveChatMessage(this.localId, this.localUser, chatInput.value);
-    // const chatBox = this.shadowRoot?.getElementById(this.groupName + '-chat');
-    // const message = new Message(chatInput.value, this.localUser, true);
-    // this.chat.push(message);
-    // chatBox?.appendChild(message.renderMessage());
+    const message = new Message(
+      chatInput.value,
+      capitalise(this.localUser),
+      true
+    );
+    this.chat.push(message.renderMessage());
+    const chatBox = this.shadowRoot?.getElementById(
+      this.groupName + '-chat-inner'
+    );
+    chatBox?.appendChild(message);
   };
 
   toggleChar = (): void => {

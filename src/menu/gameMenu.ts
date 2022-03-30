@@ -75,6 +75,7 @@ getPlayerId(username as string, true).then(() => {
   axios.get('../socket-url.php').then((res: AxiosResponse) => {
     const socket = new MenuSocket(res.data as string);
     menu.append(new FriendList(socket));
-    menu.append(new ChatArea(socket));
+    const chatBar = document.getElementById('chat-area-bar');
+    chatBar?.append(new ChatArea(socket));
   });
 });
