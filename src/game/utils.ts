@@ -67,5 +67,5 @@ export const getPieceList = <T>(pieces: Pieces<T>) => {
 };
 
 export const capitalise = (word: string): string => {
-  return word;
+  return word.charAt(0).toUpperCase() + word.slice(1);
 };
