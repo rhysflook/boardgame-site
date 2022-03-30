@@ -3,6 +3,10 @@ body {
   font-family: 'Fredoka', sans-serif;
 }
 
+form {
+  margin-bottom: 0;
+}
+
 a {
   text-decoration: none;
 }
@@ -416,13 +420,8 @@ label {
 
 #chatArea {
   position: absolute;
-  left: 50px;
-  bottom: 50px;
-  background-color: bisque;
-  border: rgb(125, 57, 173) 5px solid;
-  border-radius: 15px;
-  box-shadow: 3px 0px 4px rgb(179, 145, 202), 0px 3px 4px rgb(179, 145, 202),
-    -3px 0px 4px rgb(179, 145, 202);
+  left: 0;
+  bottom: 0;
 }
 
 #sendBar {
@@ -435,4 +434,44 @@ label {
   display: flex;
   justify-content: left;
   align-items: center;
+}
+
+.chat-group {
+  height: 400px;
+  overflow-y: auto;
+  padding: 10px;
+  word-break: break-all;
+}
+
+.chat-inner-container {
+  background-color: bisque;
+  border: rgb(125, 57, 173) 5px solid;
+  border-radius: 15px;
+  box-shadow: 3px 0px 4px rgb(179, 145, 202), 0px 3px 4px rgb(179, 145, 202),
+    -3px 0px 4px rgb(179, 145, 202);
+}
+
+#chatContent {
+  width: 70%;
+}
+
+.chat-group-container {
+  width: 500px;
+}
+
+.chat-group-inner {
+  position: relative;
+}
+
+.open {
+  top: 10px;
+  right: 10px;
+  bottom: none;
+  position: absolute;
+}
+
+.closed {
+  bottom: 10px;
+  top: 0;
+  right: 0;
 }
