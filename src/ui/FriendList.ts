@@ -6,9 +6,10 @@ import { Friend } from '../menu/gameMenu';
 export class FriendList extends HTMLElement {
   collapsed: boolean = true;
   add: HTMLElement | null = null;
-  constructor(public friends: Friend[]) {
+  constructor(public friends: Friend[], public socket: WebSocket) {
     super();
     const shadowRoot = this.attachShadow({ mode: 'open' });
+
     this.render();
     this.setupToggleButton();
   }
@@ -34,7 +35,7 @@ export class FriendList extends HTMLElement {
       const nameInput = this.shadowRoot?.getElementById(
         'friendName'
       ) as HTMLInputElement;
-      getPlayerId(nameInput.value).then((res: AxiosResponse) => {
+      getPlayerId(nameInput.value, true).then(() => {
         if (!this.alreadyFriends(res.data.id)) {
           addFriend(this.getFriendReq(res.data.id, nameInput.value)).then(
             () => {
