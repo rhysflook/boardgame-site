@@ -480,6 +480,7 @@ label {
 }
 
 .closed {
+  text-overflow: hidden;
   bottom: 10px;
   top: 0;
   right: 0;
