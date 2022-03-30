@@ -65,16 +65,13 @@ customElements.define('x-invite-window', InviteWindow, { extends: 'div' });
 const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
 const player = urlParams.get('user');
+const username = player === null ? localStorage.getItem('username') : player;
 axios
-  .get(
-    `../game/getPlayer.php/?user=${
-      player !== null ? player : localStorage.getItem('username')
-    }`
-  )
+  .get(`../game/getPlayer.php/?user=${username}`)
   .then((res: AxiosResponse) => {
     if (res.data) {
       localStorage.setItem('id', String(res.data.id));
-      localStorage.setItem('username', String(player));
+      localStorage.setItem('username', String(username));
     }
     axios
       .get(`../ui/getFriends.php?id=${Number(localStorage.getItem('id'))}`)
@@ -107,7 +104,6 @@ axios
               socket.addEventListener('message', (event) => {
                 const data = JSON.parse(event.data);
                 if (data.type === 'invite') {
-                  console.log(data);
                   menu.appendChild(
                     new InviteWindow(data.username, data.id, socket)
                   );
@@ -118,7 +114,6 @@ axios
                       friend.inGame = data.players[friend.id].in_game;
                     }
                   });
-                  console.log(friends);
                   const container = document.getElementById('screen');
                   if (container) {
                     container.appendChild(new FriendList(friends));

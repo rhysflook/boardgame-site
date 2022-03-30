@@ -55,7 +55,7 @@ export class Chatbox extends HTMLElement {
     this.messageBox.appendChild(
       new Message(
         this.textInput.value,
-        localStorage.getItem('username') as string,
+        capitalise(localStorage.getItem('username') as string),
         true
       ).renderMessage()
     );
