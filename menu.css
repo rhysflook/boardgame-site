@@ -480,7 +480,8 @@ label {
 }
 
 .closed {
-  text-overflow: hidden;
+  overflow: hidden;
+  text-overflow: ellipsis;
   bottom: 10px;
   top: 0;
   right: 0;
