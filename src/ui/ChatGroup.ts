@@ -100,6 +100,14 @@ export class ChatGroup extends HTMLElement {
       this.groupName + '-chat-inner'
     );
     chatBox?.appendChild(message);
+
+    const chat = this.shadowRoot?.getElementById(
+      `${this.groupName}-chat-inner`
+    );
+    if (chat) {
+      chat.scrollTop = chat.scrollHeight - chat.clientHeight;
+    }
+    chatInput.value = '';
   };
 
   toggleChar = (): void => {
