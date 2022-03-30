@@ -5,7 +5,13 @@ export interface Data {
   type: keyof MessageHandler;
 }
 
-export class MenuSocket extends WebSocket {
+export interface SiteSocket extends WebSocket {
+  getFriendStatus: (id: number, name: string) => void;
+  setupConnection: () => void;
+  setupMessageHandlers: () => void;
+}
+
+export class MenuSocket extends WebSocket implements SiteSocket {
   constructor(url: string) {
     super(url);
     this.addEventListener('open', () => {
@@ -14,7 +20,11 @@ export class MenuSocket extends WebSocket {
     });
   }
 
-  setupConnection = () => {
+  getFriendStatus = (id: number, name: string): void => {
+    this.send(JSON.stringify({ type: 'status', id, name }));
+  };
+
+  setupConnection = (): void => {
     const userId = getCookie('id');
     if (userId) {
       this.send(
@@ -26,12 +36,12 @@ export class MenuSocket extends WebSocket {
     }
   };
 
-  setupMessageHandlers = () => {
+  setupMessageHandlers = (): void => {
     const handler = new MessageHandler();
     this.addEventListener('message', (event) => {
-      const data: Data = JSON.parse(event.data);
+      const data = JSON.parse(event.data);
       if (Object.getOwnPropertyNames(handler).includes(data.type)) {
-        handler[data.type](data as IInviteData, this);
+        handler[data.type as keyof MessageHandler](data, this);
       }
     });
   };

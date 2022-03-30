@@ -73,5 +73,6 @@ const username = player === null ? localStorage.getItem('username') : player;
 getPlayerId(username as string, true).then(() => {
   axios.get('../socket-url.php').then((res: AxiosResponse) => {
     const socket = new MenuSocket(res.data as string);
+    menu.append(new FriendList(socket));
   });
 });

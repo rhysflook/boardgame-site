@@ -34,20 +34,52 @@ export const getPlayerId = (
   return promise;
 };
 
-export const addFriend = async (friendReq: IFriendReq) => {
-  return axios
-    .post('../ui/addFriend.php', friendReq)
-    .then((res: AxiosResponse) => {
-      if (res) {
-        const friends = JSON.parse(localStorage.getItem('friends') as string);
-        friends.push({ id: res.data.id, name: friendReq.friendName });
-        localStorage.setItem('friends', JSON.stringify(friends));
+export const addFriend = async (name: string): Promise<Friend> => {
+  const promise = new Promise<Friend>((resolve) => {
+    axios.get(`../game/getPlayer.php?user=${name}`).then((res) => {
+      if (!alreadyFriends(res.data.id)) {
+        const reqBody = getFriendReq(res.data.id, name);
+        axios
+          .post('../ui/addFriend.php', reqBody)
+          .then((res: AxiosResponse) => {
+            if (res) {
+              const friends = JSON.parse(
+                localStorage.getItem('friends') as string
+              );
+              friends.push({ id: reqBody.friendId, name });
+              localStorage.setItem('friends', JSON.stringify(friends));
+              resolve({
+                id: reqBody.friendId,
+                name,
+                online: false,
+                inGame: false,
+              });
+            }
+          });
       }
     });
+  });
+  return promise;
+};
+
+const alreadyFriends = (id: number): boolean => {
+  const friends = JSON.parse(localStorage.getItem('friends') as string).map(
+    (friend: Friend) => friend.id
+  );
+  return friends?.includes(id);
+};
+
+const getFriendReq = (id: number, name: string): IFriendReq => {
+  return {
+    id: Number(localStorage.getItem('id')),
+    name: localStorage.getItem('username') as string,
+    friendId: id,
+    friendName: name,
+  };
 };
 
 export const getFriendList = () => {
-  axios
+  return axios
     .get(`../ui/getFriends.php?id=${Number(localStorage.getItem('id'))}`)
     .then((res: AxiosResponse) => {
       const friends = [] as Friend[];

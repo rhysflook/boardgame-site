@@ -1,18 +1,41 @@
-import axios, { AxiosResponse } from '../../node_modules/axios/index';
-import { addFriend, getPlayerId, IFriendReq } from '../api';
+import { addFriend, getFriendList } from '../api';
 import { capitalise } from '../game/utils';
 import { Friend } from '../menu/gameMenu';
+import { SiteSocket } from '../socket/MenuSocket';
+import { INewFriend } from '../socket/MessageHandler';
 
 export class FriendList extends HTMLElement {
   collapsed: boolean = true;
   add: HTMLElement | null = null;
-  constructor(public friends: Friend[], public socket: WebSocket) {
+  friends: Friend[] = [];
+
+  constructor(public socket: SiteSocket) {
     super();
     const shadowRoot = this.attachShadow({ mode: 'open' });
-
-    this.render();
-    this.setupToggleButton();
+    getFriendList()
+      .then(() => {
+        this.friends = JSON.parse(localStorage.getItem('friends') as string);
+        this.render();
+        this.setupToggleButton();
+        this.listenForChanges();
+      })
+      .catch(() => {
+        localStorage.setItem('friends', JSON.stringify([]));
+        this.render();
+        this.setupToggleButton();
+        this.listenForChanges();
+      });
   }
+
+  listenForChanges = () => {
+    this.socket.addEventListener('message', (event) => {
+      const data = JSON.parse(event.data) as INewFriend;
+      if (data.type === 'newFriend') {
+        const { id, name, online, in_game } = data;
+        this.createRow({ id, name, online, inGame: in_game });
+      }
+    });
+  };
 
   setupToggleButton = (): void => {
     const button = this.shadowRoot?.getElementById('friend-button');
@@ -35,38 +58,11 @@ export class FriendList extends HTMLElement {
       const nameInput = this.shadowRoot?.getElementById(
         'friendName'
       ) as HTMLInputElement;
-      getPlayerId(nameInput.value, true).then(() => {
-        if (!this.alreadyFriends(res.data.id)) {
-          addFriend(this.getFriendReq(res.data.id, nameInput.value)).then(
-            () => {
-              this.friends.push({
-                id: res.data.id,
-                name: nameInput.value,
-                online: false,
-                inGame: false,
-              });
-              this.renderFriends();
-            }
-          );
-        }
+      addFriend(nameInput.value).then((friend) => {
+        this.friends.push(friend);
+        this.socket.getFriendStatus(friend.id, friend.name);
       });
     });
-  };
-
-  alreadyFriends = (id: number): boolean => {
-    const friends = JSON.parse(localStorage.getItem('friends') as string).map(
-      (friend: Friend) => friend.id
-    );
-    return friends?.includes(id);
-  };
-
-  getFriendReq = (id: number, name: string): IFriendReq => {
-    return {
-      id: Number(localStorage.getItem('id')),
-      name: localStorage.getItem('username') as string,
-      friendId: id,
-      friendName: name,
-    };
   };
 
   render = (): void => {
@@ -80,9 +76,7 @@ export class FriendList extends HTMLElement {
       `;
     const tmpl = document.createElement('template');
     tmpl.innerHTML = html;
-    if (this.shadowRoot) {
-      this.shadowRoot.appendChild(tmpl.content.cloneNode(true));
-    }
+    this.shadowRoot?.appendChild(tmpl.content.cloneNode(true));
   };
 
   renderFriends = () => {
@@ -97,23 +91,27 @@ export class FriendList extends HTMLElement {
             <button id="addFriend" class="popup-button short">Add</button>
           </div>
             <div id="friends">${this.friends
-              .map(
-                (friend) =>
-                  `<div class="friend-row">
-                    <p class="friend-block">${capitalise(friend.name)}</p>
-                    <p class="friend-block">${
-                      friend.online ? 'Online' : 'Offline'
-                    }</p>
-                    <p class="friend-block">${
-                      friend.inGame ? 'In Game' : 'Not playing'
-                    }</p>
-                </div>
-              `
-              )
+              .map((friend) => this.getFriendRow(friend))
               .join('')}</div>
         `;
       }
     }
+  };
+
+  getFriendRow = (friend: Friend) => {
+    return `<div class="friend-row">
+      <p class="friend-block">${capitalise(friend.name)}</p>
+      <p class="friend-block">${friend.online ? 'Online' : 'Offline'}</p>
+      <p class="friend-block">${friend.inGame ? 'In Game' : 'Not playing'}</p>
+      </div>
+    `;
+  };
+
+  createRow = (friend: Friend) => {
+    const friends = this.shadowRoot?.getElementById('friends');
+    const tmpl = document.createElement('template');
+    tmpl.innerHTML = this.getFriendRow(friend);
+    friends?.appendChild(tmpl.content.cloneNode(true));
   };
 }
 
