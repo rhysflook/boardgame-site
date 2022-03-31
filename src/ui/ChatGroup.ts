@@ -9,6 +9,7 @@ export class ChatGroup extends HTMLElement {
   localId: number;
   inputField: HTMLInputElement | null = null;
   message: string = '';
+  dragging: boolean = false;
   constructor(
     public socket: SiteSocket,
     public localUser: string,
@@ -20,6 +21,7 @@ export class ChatGroup extends HTMLElement {
     super();
     this.id = this.groupName;
     this.style.width = '100px';
+    this.style.position = 'absolute';
     const shadowRoot = this.attachShadow({ mode: 'open' });
     this.localId = Number(localStorage.getItem('id'));
     this.getChatHistory().then((res) => {
@@ -33,8 +35,23 @@ export class ChatGroup extends HTMLElement {
         ?.getElementById('close')
         ?.addEventListener('click', () => this.remove());
       this.setUnread && this.setGroupUnread();
+      this.addEvents();
     });
   }
+
+  addEvents = (): void => {
+    this.addEventListener('mousedown', (e) => this.dragStart(e));
+    this.addEventListener('mouseup', () => this.dragEnd());
+
+    document.body.addEventListener('mousemove', (e) => {
+      if (this.dragging) {
+        this.style.left = e.clientX - 70 + 'px';
+        this.style.top = e.clientY + 55 + 'px';
+        // dragger.style.left = e.clientX - 10 + 'px';
+        // dragger.style.top = e.clientY - 10 + 'px';
+      }
+    });
+  };
 
   setGroupUnread = (): void => {
     const button = this.shadowRoot?.getElementById('open');
@@ -199,6 +216,7 @@ export class ChatGroup extends HTMLElement {
     } else if (chatBox) {
       chatBox.innerHTML = `
       <div class="chat-inner-container">
+  
       <div id="sendBar">
         <textarea type="text" id="chatContent"></textarea>
         <button id="sendChat" class="popup-button short">Send</button>
@@ -216,6 +234,7 @@ export class ChatGroup extends HTMLElement {
   render = (): void => {
     const html = `
     <link rel="stylesheet" href="../../menu.css">
+    <div id="dragger"></div>
       <div id="${this.groupName}" class="chat-group-container">
         <div id="frame" class="chat-group-inner-closed">
         <div id="${this.groupName}-chat">
@@ -229,6 +248,24 @@ export class ChatGroup extends HTMLElement {
     const tmpl = document.createElement('template');
     tmpl.innerHTML = html;
     this.shadowRoot?.appendChild(tmpl.content.cloneNode(true));
+  };
+
+  dragStart = (e: MouseEvent): void => {
+    // dragger.style.position = 'absolute';
+    if (e.shiftKey) {
+      this.dragging = true;
+    }
+  };
+  // drag = (event: MouseEvent): void => {
+  //   this.style.left = event.clientX - 60 + 'px';
+  //   this.style.top = event.clientY + 60 + 'px';
+  // };
+  dragEnd = (): void => {
+    // dragger.style.position = 'relative';
+    // dragger.style.left = '65px';
+    // dragger.style.bottom = '60px';
+
+    this.dragging = false;
   };
 }
 

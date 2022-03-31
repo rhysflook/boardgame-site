@@ -38,7 +38,7 @@ export class MessageHandler {
       data.recipient_id !== 0
     ) {
       const chat = document.getElementById('chat-area-bar');
-      chat?.append(
+      document.body.append(
         new ChatGroup(
           socket,
           localStorage.getItem('username') as string,

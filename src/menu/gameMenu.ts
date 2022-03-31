@@ -77,7 +77,7 @@ getPlayerId(username as string, true).then(() => {
     const socket = new MenuSocket(res.data as string);
     menu.append(new FriendList(socket));
     const chatBar = document.getElementById('chat-area-bar');
-    chatBar?.append(new ChatGroup(socket, username as string, 'All', 0));
+    document.body.append(new ChatGroup(socket, username as string, 'All', 0));
     axios
       .get(
         '../ui/getChatHistory.php?recipient_id=' + localStorage.getItem('id')
@@ -95,7 +95,7 @@ getPlayerId(username as string, true).then(() => {
             (friend: Friend) => id === friend.id
           );
           if (friendName) {
-            chatBar?.append(
+            document.body.append(
               new ChatGroup(
                 socket,
                 username as string,
