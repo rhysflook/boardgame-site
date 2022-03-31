@@ -61,7 +61,14 @@ export class ChatGroup extends HTMLElement {
   handleIncomingMessage = () => {
     this.socket.addEventListener('message', (event) => {
       const data = JSON.parse(event.data);
-      if (data.type === 'chatMessage' && this.recipient_id === this.localId) {
+      console.log(data, this.recipient_id);
+      if (
+        (data.type === 'chatMessage' &&
+          data.recipient_id === this.localId &&
+          data.sender_id === this.recipient_id) ||
+        (data.recipient_id === 0 && this.recipient_id === 0)
+      ) {
+        console.log(this.localId);
         const message = new Message(
           data.content,
           capitalise(data.sender),
