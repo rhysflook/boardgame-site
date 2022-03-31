@@ -21,7 +21,6 @@ export class ChatGroup extends HTMLElement {
     const shadowRoot = this.attachShadow({ mode: 'open' });
     this.localId = Number(localStorage.getItem('id'));
     this.getChatHistory().then((res) => {
-      console.log(res.data);
       res.data.forEach((message: any[]) => {
         const msg = new Message(
           message[1],
@@ -49,7 +48,6 @@ export class ChatGroup extends HTMLElement {
         `../ui/getChatHistory.php?recipient_id=${this.recipient_id}}`
       );
     } else {
-      console.log('getting chat');
       return axios.get(
         `../ui/getSpecificChatHistory.php?recipient_id=${this.recipient_id}}&user_id=${this.localId}`
       );

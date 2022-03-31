@@ -91,11 +91,9 @@ getPlayerId(username as string, true).then(() => {
         });
         unreadIds.forEach((id) => {
           const friends = localStorage.getItem('friends') as string;
-          console.log(friends);
           const friendName = JSON.parse(friends).find(
             (friend: Friend) => id === friend.id
           );
-          console.log(friendName);
           if (friendName) {
             chatBar?.append(
               new ChatGroup(
