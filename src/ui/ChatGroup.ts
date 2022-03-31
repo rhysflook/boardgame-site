@@ -35,12 +35,16 @@ export class ChatGroup extends HTMLElement {
       this.shadowRoot
         ?.getElementById('close')
         ?.addEventListener('click', () => this.remove());
-      const button = this.shadowRoot?.getElementById('open');
-      if (button && this.setUnread) {
-        button.classList.add('unread');
-      }
+      this.setUnread && this.setGroupUnread();
     });
   }
+
+  setGroupUnread = (): void => {
+    const button = this.shadowRoot?.getElementById('open');
+    if (button) {
+      button.classList.add('unread');
+    }
+  };
 
   getChatHistory = () => {
     if (this.isGlobal) {
@@ -75,22 +79,8 @@ export class ChatGroup extends HTMLElement {
           data.sender_id === this.recipient_id) ||
         (data.recipient_id === 0 && this.recipient_id === 0)
       ) {
-        if (this.collapsed) {
-          const button = this.shadowRoot?.getElementById('open');
-          if (button) {
-            button.classList.add('unread');
-          }
-        }
-        const message = new Message(
-          data.content,
-          capitalise(data.sender),
-          data.sender === this.localUser
-        );
-        this.chat.push(message.renderMessage());
-        const chatBox = this.shadowRoot?.getElementById(
-          this.groupName + '-chat-inner'
-        );
-        chatBox?.appendChild(message);
+        this.collapsed && this.setGroupUnread();
+        this.storeAndDisplayMessage(data.content, data.sender);
       }
       const chat = this.shadowRoot?.getElementById(
         `${this.groupName}-chat-inner`
@@ -99,6 +89,32 @@ export class ChatGroup extends HTMLElement {
         chat.scrollTop = chat.scrollHeight - chat.clientHeight;
       }
     });
+  };
+
+  storeAndDisplayMessage = (content: string, sender: string): void => {
+    const message = new Message(
+      content,
+      capitalise(sender),
+      sender === this.localUser
+    );
+    this.chat.push(message.renderMessage());
+    this.displayMessage(message);
+  };
+
+  displayMessage = (message: HTMLElement): void => {
+    if (!this.collapsed) {
+      const chatBox = this.shadowRoot?.getElementById(
+        this.groupName + '-chat-inner'
+      );
+      if (chatBox) {
+        chatBox.appendChild(message);
+        this.scrollToBottom(chatBox);
+      }
+    }
+  };
+
+  scrollToBottom = (chat: HTMLElement): void => {
+    chat.scrollTop = chat.scrollHeight - chat.clientHeight;
   };
 
   sendMessage = (): void => {
@@ -119,23 +135,7 @@ export class ChatGroup extends HTMLElement {
             date_sent: Math.floor(new Date().getTime() / 1000),
           })
         );
-        const message = new Message(
-          chatInput.value,
-          capitalise(this.localUser),
-          true
-        );
-        this.chat.push(message.renderMessage());
-        const chatBox = this.shadowRoot?.getElementById(
-          this.groupName + '-chat-inner'
-        );
-        chatBox?.appendChild(message);
-
-        const chat = this.shadowRoot?.getElementById(
-          `${this.groupName}-chat-inner`
-        );
-        if (chat) {
-          chat.scrollTop = chat.scrollHeight - chat.clientHeight;
-        }
+        this.storeAndDisplayMessage(chatInput.value, this.localUser);
         chatInput.value = '';
       }
     );
@@ -191,12 +191,9 @@ export class ChatGroup extends HTMLElement {
         <div id="${this.groupName}-chat-inner" class="chat-group"></div>
       </div>
       `;
-      const chatBoxInner = this.shadowRoot?.getElementById(
-        this.groupName + '-chat-inner'
-      );
 
       this.chat.forEach((message) => {
-        chatBoxInner?.appendChild(message);
+        this.displayMessage(message);
       });
     }
   };
