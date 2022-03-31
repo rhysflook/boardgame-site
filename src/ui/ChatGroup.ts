@@ -51,8 +51,6 @@ export class ChatGroup extends HTMLElement {
           this.style.top = e.clientY + this.size.height / 2 + 'px';
         }
       }
-      // dragger.style.left = e.clientX - 10 + 'px';
-      // dragger.style.top = e.clientY - 10 + 'px';
     });
   };
 
@@ -262,15 +260,8 @@ export class ChatGroup extends HTMLElement {
       this.dragging = true;
     }
   };
-  // drag = (event: MouseEvent): void => {
-  //   this.style.left = event.clientX - 60 + 'px';
-  //   this.style.top = event.clientY + 60 + 'px';
-  // };
-  dragEnd = (): void => {
-    // dragger.style.position = 'relative';
-    // dragger.style.left = '65px';
-    // dragger.style.bottom = '60px';
 
+  dragEnd = (): void => {
     this.dragging = false;
   };
 }

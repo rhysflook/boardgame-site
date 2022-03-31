@@ -30,7 +30,8 @@ const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
 const opponent = urlParams.get('opponent');
 
-if (gameType === 'ai') {
+if (gameType === 'training') {
+} else if (gameType === 'ai') {
   const screen = document.querySelector('.container') as HTMLElement;
   const colourSelection = new ColourSelection(0);
   screen.appendChild(colourSelection);
@@ -49,9 +50,7 @@ if (gameType === 'ai') {
       colour === 'blacks' ? 'Boss A.I' : 'Billiam',
       'white'
     );
-    const area = document.getElementById('scores') as HTMLElement;
-    area.appendChild(cardOne);
-    area.appendChild(cardTwo);
+
     const scoreCard = new ScoreBoard(cardOne, cardTwo);
     GameState.setupDraughtsGame('ai', colour, scoreCard);
     colourSelection.remove();
