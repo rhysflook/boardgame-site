@@ -101,7 +101,7 @@ export class FriendList extends HTMLElement {
       const ele = this.shadowRoot?.getElementById(String(friend.id));
       ele?.addEventListener('click', () => {
         const chatArea = document.getElementById('chat-area-bar');
-        chatArea?.appendChild(
+        document.body.appendChild(
           new ChatGroup(
             this.socket,
             localStorage.getItem('username') as string,
