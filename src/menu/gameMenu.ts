@@ -78,5 +78,36 @@ getPlayerId(username as string, true).then(() => {
     menu.append(new FriendList(socket));
     const chatBar = document.getElementById('chat-area-bar');
     chatBar?.append(new ChatGroup(socket, username as string, 'All', 0));
+    axios
+      .get(
+        '../ui/getChatHistory.php?recipient_id=' + localStorage.getItem('id')
+      )
+      .then((res: AxiosResponse) => {
+        const unreadIds = [] as number[];
+        res.data.forEach((data: any[]) => {
+          if (data[4] === 0 && !unreadIds.includes(data[0])) {
+            unreadIds.push(data[0]);
+          }
+        });
+        unreadIds.forEach((id) => {
+          const friends = localStorage.getItem('friends') as string;
+          console.log(friends);
+          const friendName = JSON.parse(friends).find(
+            (friend: Friend) => id === friend.id
+          );
+          console.log(friendName);
+          if (friendName) {
+            chatBar?.append(
+              new ChatGroup(
+                socket,
+                username as string,
+                friendName.name,
+                id,
+                false
+              )
+            );
+          }
+        });
+      });
   });
 });

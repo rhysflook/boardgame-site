@@ -15,6 +15,7 @@ export class ChatGroup extends HTMLElement {
     public isGlobal: boolean = true
   ) {
     super();
+    this.id = this.groupName;
     this.style.width = '100px';
     const shadowRoot = this.attachShadow({ mode: 'open' });
     this.localId = Number(localStorage.getItem('id'));
@@ -43,6 +44,7 @@ export class ChatGroup extends HTMLElement {
         `../ui/getChatHistory.php?recipient_id=${this.recipient_id}}`
       );
     } else {
+      console.log('getting chat');
       return axios.get(
         `../ui/getSpecificChatHistory.php?recipient_id=${this.recipient_id}}&user_id=${this.localId}`
       );
@@ -50,11 +52,13 @@ export class ChatGroup extends HTMLElement {
   };
 
   saveChatMessage = (id: number, sender: string, message: string) => {
-    axios.post('../ui/saveChat.php', {
+    return axios.post('../ui/saveChat.php', {
       id,
       message,
       sender,
       recipient_id: this.recipient_id,
+      is_read: false,
+      date_sent: Math.floor(new Date().getTime() / 1000),
     });
   };
 
@@ -93,34 +97,40 @@ export class ChatGroup extends HTMLElement {
     const chatInput = this.shadowRoot?.getElementById(
       'chatContent'
     ) as HTMLInputElement;
-    this.socket.send(
-      JSON.stringify({
-        type: 'chatMessage',
-        content: chatInput.value,
-        sender: this.localUser,
-        id: this.localId,
-        recipient_id: this.recipient_id,
-      })
-    );
-    this.saveChatMessage(this.localId, this.localUser, chatInput.value);
-    const message = new Message(
-      chatInput.value,
-      capitalise(this.localUser),
-      true
-    );
-    this.chat.push(message.renderMessage());
-    const chatBox = this.shadowRoot?.getElementById(
-      this.groupName + '-chat-inner'
-    );
-    chatBox?.appendChild(message);
 
-    const chat = this.shadowRoot?.getElementById(
-      `${this.groupName}-chat-inner`
+    this.saveChatMessage(this.localId, this.localUser, chatInput.value).then(
+      () => {
+        this.socket.send(
+          JSON.stringify({
+            type: 'chatMessage',
+            content: chatInput.value,
+            sender: this.localUser,
+            id: this.localId,
+            recipient_id: this.recipient_id,
+            is_read: false,
+            date_sent: Math.floor(new Date().getTime() / 1000),
+          })
+        );
+        const message = new Message(
+          chatInput.value,
+          capitalise(this.localUser),
+          true
+        );
+        this.chat.push(message.renderMessage());
+        const chatBox = this.shadowRoot?.getElementById(
+          this.groupName + '-chat-inner'
+        );
+        chatBox?.appendChild(message);
+
+        const chat = this.shadowRoot?.getElementById(
+          `${this.groupName}-chat-inner`
+        );
+        if (chat) {
+          chat.scrollTop = chat.scrollHeight - chat.clientHeight;
+        }
+        chatInput.value = '';
+      }
     );
-    if (chat) {
-      chat.scrollTop = chat.scrollHeight - chat.clientHeight;
-    }
-    chatInput.value = '';
   };
 
   toggleChar = (): void => {
@@ -138,6 +148,10 @@ export class ChatGroup extends HTMLElement {
         }
         this.renderAllMessage();
         if (!this.collapsed) {
+          axios.patch('../ui/markAsRead.php', {
+            user_id: this.recipient_id,
+            recipient_id: this.localId,
+          });
           const send = this.shadowRoot?.getElementById(
             'sendChat'
           ) as HTMLElement;
