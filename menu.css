@@ -86,6 +86,19 @@ label {
   /* box-shadow: 0 5px indigo; */
 }
 
+.chat-button {
+  font-family: 'Fredoka', sans-serif;
+  height: 50px;
+  margin-top: 1.5rem;
+  font-size: 1.7rem;
+  font-weight: bolder;
+  background-color: bisque;
+  border: 1px rgb(185, 121, 231) solid;
+  border-radius: 5px;
+  /* border-top: 0; */
+  /* box-shadow: 0 5px indigo; */
+}
+
 .unread {
   color: rgb(185, 121, 231);
   box-shadow: 1px 1px 5px rgb(134, 67, 182), -1px 1px 5px rgb(134, 67, 182);
@@ -114,6 +127,14 @@ label {
 }
 
 .popup-button:active {
+  box-shadow: 1px 1px 5px rgb(134, 67, 182), -1px 1px 5px rgb(134, 67, 182);
+}
+
+.chat-button:hover {
+  color: rgb(185, 121, 231);
+}
+
+.chat-button:active {
   box-shadow: 1px 1px 5px rgb(134, 67, 182), -1px 1px 5px rgb(134, 67, 182);
 }
 
@@ -467,7 +488,7 @@ label {
 }
 
 .chat-group-inner-closed {
-  width: 250px;
+  width: 100px;
   position: relative;
 }
 

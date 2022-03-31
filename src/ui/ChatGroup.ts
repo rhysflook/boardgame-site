@@ -10,6 +10,7 @@ export class ChatGroup extends HTMLElement {
   inputField: HTMLInputElement | null = null;
   message: string = '';
   dragging: boolean = false;
+  size: DOMRect | null = null;
   constructor(
     public socket: SiteSocket,
     public localUser: string,
@@ -20,7 +21,7 @@ export class ChatGroup extends HTMLElement {
   ) {
     super();
     this.id = this.groupName;
-    this.style.width = '100px';
+
     this.style.position = 'absolute';
     const shadowRoot = this.attachShadow({ mode: 'open' });
     this.localId = Number(localStorage.getItem('id'));
@@ -45,11 +46,13 @@ export class ChatGroup extends HTMLElement {
 
     document.body.addEventListener('mousemove', (e) => {
       if (this.dragging) {
-        this.style.left = e.clientX - 70 + 'px';
-        this.style.top = e.clientY + 55 + 'px';
-        // dragger.style.left = e.clientX - 10 + 'px';
-        // dragger.style.top = e.clientY - 10 + 'px';
+        if (this.size) {
+          this.style.left = e.clientX - this.size.width / 2 + 'px';
+          this.style.top = e.clientY + this.size.height / 2 + 'px';
+        }
       }
+      // dragger.style.left = e.clientX - 10 + 'px';
+      // dragger.style.top = e.clientY - 10 + 'px';
     });
   };
 
@@ -168,10 +171,10 @@ export class ChatGroup extends HTMLElement {
         this.collapsed = !this.collapsed;
         if (this.collapsed) {
           this.inputField = null;
-          button.className = 'popup-button closed';
+          button.className = 'chat-button closed';
           frame.className = 'chat-group-inner-closed';
         } else {
-          button.className = 'popup-button short open';
+          button.className = 'chat-button short open';
           frame.className = 'chat-group-inner-open';
         }
         this.renderAllMessage();
@@ -239,7 +242,7 @@ export class ChatGroup extends HTMLElement {
         <div id="frame" class="chat-group-inner-closed">
         <div id="${this.groupName}-chat">
         </div>
-        <button id="open" class="popup-button closed">${
+        <button id="open" class="chat-button closed">${
           this.groupName
         }</button>${this.isGlobal ? '' : `<button id="close">✕</button>`}
         </div>
@@ -251,7 +254,10 @@ export class ChatGroup extends HTMLElement {
   };
 
   dragStart = (e: MouseEvent): void => {
-    // dragger.style.position = 'absolute';
+    const chatArea = this.shadowRoot?.getElementById(this.groupName);
+    if (chatArea) {
+      this.size = chatArea?.getBoundingClientRect();
+    }
     if (e.shiftKey) {
       this.dragging = true;
     }
