@@ -103,7 +103,8 @@ getPlayerId(username as string, true).then(() => {
                 username as string,
                 friendName.name,
                 id,
-                false
+                false,
+                true
               )
             );
           }

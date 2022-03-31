@@ -44,7 +44,8 @@ export class MessageHandler {
           localStorage.getItem('username') as string,
           data.sender,
           data.sender_id,
-          false
+          false,
+          true
         )
       );
     }

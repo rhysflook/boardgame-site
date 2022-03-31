@@ -86,6 +86,10 @@ label {
   /* box-shadow: 0 5px indigo; */
 }
 
+.unread {
+  color: rgb(185, 121, 231);
+  box-shadow: 1px 1px 5px rgb(134, 67, 182), -1px 1px 5px rgb(134, 67, 182);
+}
 .short {
   height: auto;
   width: auto;

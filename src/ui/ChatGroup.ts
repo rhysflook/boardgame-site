@@ -12,7 +12,8 @@ export class ChatGroup extends HTMLElement {
     public localUser: string,
     public groupName: string,
     public recipient_id: number,
-    public isGlobal: boolean = true
+    public isGlobal: boolean = true,
+    public setUnread: boolean = false
   ) {
     super();
     this.id = this.groupName;
@@ -35,6 +36,10 @@ export class ChatGroup extends HTMLElement {
       this.shadowRoot
         ?.getElementById('close')
         ?.addEventListener('click', () => this.remove());
+      const button = this.shadowRoot?.getElementById('open');
+      if (button && this.setUnread) {
+        button.classList.add('unread');
+      }
     });
   }
 
@@ -65,14 +70,19 @@ export class ChatGroup extends HTMLElement {
   handleIncomingMessage = () => {
     this.socket.addEventListener('message', (event) => {
       const data = JSON.parse(event.data);
-      console.log(data, this.recipient_id);
+
       if (
         (data.type === 'chatMessage' &&
           data.recipient_id === this.localId &&
           data.sender_id === this.recipient_id) ||
         (data.recipient_id === 0 && this.recipient_id === 0)
       ) {
-        console.log(this.localId);
+        if (this.collapsed) {
+          const button = this.shadowRoot?.getElementById('open');
+          if (button) {
+            button.classList.add('unread');
+          }
+        }
         const message = new Message(
           data.content,
           capitalise(data.sender),
