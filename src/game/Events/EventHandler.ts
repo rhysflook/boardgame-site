@@ -68,23 +68,25 @@ export class EventHandler<T extends GamePiece> {
   }
 
   handleDragEnd(e: MouseEvent, piece: T, game: GameState<T>) {
-    const ele = piece.element;
-    piece.moving = false;
-    if (this.space === null) {
-      // ele.style.left = '0';
-      ele.style.left = piece.left + 'px';
-      ele.style.top = piece.top + 'px';
-      ele.style.position = 'fixed';
-    } else {
-      getSquare(piece.pos.x, piece.pos.y).innerHTML = '';
-      this.space.classList.remove('destination');
-      this.space.appendChild(piece.createHTMLElement());
-      game.movePiece(piece, this.target);
+    if (piece.moving) {
+      const ele = piece.element;
+      piece.moving = false;
+      if (this.space === null) {
+        // ele.style.left = '0';
+        ele.style.left = piece.left + 'px';
+        ele.style.top = piece.top + 'px';
+        ele.style.position = 'fixed';
+      } else {
+        getSquare(piece.pos.x, piece.pos.y).innerHTML = '';
+        this.space.classList.remove('destination');
+        this.space.appendChild(piece.createHTMLElement());
+        game.movePiece(piece, this.target);
+      }
+      this.dragging = false;
+      this.draggedEle = null;
+      this.draggedPiece = null;
+      this.space = null;
     }
-    this.dragging = false;
-    this.draggedEle = null;
-    this.draggedPiece = null;
-    this.space = null;
   }
 
   handleDrag(e: MouseEvent, piece: T, moves: number[][]) {
