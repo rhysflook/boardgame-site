@@ -7,6 +7,8 @@ export class ChatGroup extends HTMLElement {
   collapsed: boolean = true;
   chat: HTMLElement[] = [];
   localId: number;
+  inputField: HTMLInputElement | null = null;
+  message: string = '';
   constructor(
     public socket: SiteSocket,
     public localUser: string,
@@ -22,12 +24,7 @@ export class ChatGroup extends HTMLElement {
     this.localId = Number(localStorage.getItem('id'));
     this.getChatHistory().then((res) => {
       res.data.forEach((message: any[]) => {
-        const msg = new Message(
-          message[1],
-          capitalise(message[2]),
-          message[0] === this.localId
-        );
-        this.chat.push(msg.renderMessage());
+        this.storeAndDisplayMessage(message[1], message[2], false);
       });
       this.render();
       this.handleIncomingMessage();
@@ -80,7 +77,7 @@ export class ChatGroup extends HTMLElement {
         (data.recipient_id === 0 && this.recipient_id === 0)
       ) {
         this.collapsed && this.setGroupUnread();
-        this.storeAndDisplayMessage(data.content, data.sender);
+        this.storeAndDisplayMessage(data.content, data.sender, !this.collapsed);
       }
       const chat = this.shadowRoot?.getElementById(
         `${this.groupName}-chat-inner`
@@ -91,14 +88,18 @@ export class ChatGroup extends HTMLElement {
     });
   };
 
-  storeAndDisplayMessage = (content: string, sender: string): void => {
+  storeAndDisplayMessage = (
+    content: string,
+    sender: string,
+    show: boolean
+  ): void => {
     const message = new Message(
       content,
       capitalise(sender),
       sender === this.localUser
     );
     this.chat.push(message.renderMessage());
-    this.displayMessage(message);
+    show && this.displayMessage(message);
   };
 
   displayMessage = (message: HTMLElement): void => {
@@ -135,7 +136,7 @@ export class ChatGroup extends HTMLElement {
             date_sent: Math.floor(new Date().getTime() / 1000),
           })
         );
-        this.storeAndDisplayMessage(chatInput.value, this.localUser);
+        this.storeAndDisplayMessage(chatInput.value, this.localUser, true);
         chatInput.value = '';
       }
     );
@@ -148,6 +149,7 @@ export class ChatGroup extends HTMLElement {
         const frame = this.shadowRoot?.getElementById('frame') as HTMLElement;
         this.collapsed = !this.collapsed;
         if (this.collapsed) {
+          this.inputField = null;
           button.className = 'popup-button closed';
           frame.className = 'chat-group-inner-closed';
         } else {
@@ -160,6 +162,7 @@ export class ChatGroup extends HTMLElement {
             user_id: this.recipient_id,
             recipient_id: this.localId,
           });
+
           const send = this.shadowRoot?.getElementById(
             'sendChat'
           ) as HTMLElement;
@@ -172,6 +175,17 @@ export class ChatGroup extends HTMLElement {
         );
         if (chat) {
           chat.scrollTop = chat.scrollHeight - chat.clientHeight;
+        }
+        this.inputField = this.shadowRoot?.getElementById(
+          'chatContent'
+        ) as HTMLInputElement;
+        if (this.inputField) {
+          this.inputField.value = this.message;
+          this.inputField.addEventListener('input', () => {
+            if (this.inputField) {
+              this.message = this.inputField.value;
+            }
+          });
         }
       });
     }
