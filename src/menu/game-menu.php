@@ -9,6 +9,16 @@ if (isset($_POST['ai'])){
     header('location: ../../src/game/draughts.php');
 }
 
+if (isset($_POST['training'])) {
+    if(isset($_SESSION['ai'])) {   
+        unset($_SESSION['ai']);
+    }  
+    setCookies(
+        ['player-1'=>true, 'new-game'=>true, 'type'=>'training']
+    );
+    header('location: ../../src/game/draughts.php');
+}
+
 if (isset($_POST['vs-player'])) {
     if(isset($_SESSION['ai']))
         {   
@@ -56,6 +66,7 @@ if(isset($_SESSION['type']))
                         <h1>Game Type</h1>
                         <button class="popup-button" id="vs-ai" name="ai">A.I</button>
                         <button class="popup-button" id="vs-player" name="vs-player">Invite</button>
+                        <button class="popup-button" id="training" name="training">Training</button>
  
                         <!-- <h3>Input a player name to join their game</h3>
                         <input type="text" name="username">

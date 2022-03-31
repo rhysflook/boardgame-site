@@ -86,36 +86,60 @@ export default class GameState<T extends GamePiece> {
   }
 
   initGame = (): void => {
-    this.moves = [];
-    this.moves = this.calculator.calc('blacks', this.pieces);
-    this.addEvents();
-    if (this.gameMode === 'ai' && this.opponentColour === 'blacks') {
-      this.computerTurn();
-    } else {
-      this.socket?.addEventListener('message', (event) => {
-        const data = JSON.parse(event.data);
-        if (data.type === 'move') {
-          const move = JSON.parse(data.move);
-          if (move.colour !== this.playerColour) {
-            let x = reverseCoord(move.pos.x);
-            let y = reverseCoord(move.pos.y);
-            let newX = reverseCoord(move.newPos.x);
-            let newY = reverseCoord(move.newPos.y);
-
-            const piece = this.getPiece(move.colour, 13 - move.key);
-            const opponentMove = {
-              pos: { x, y },
-              newPos: { x: newX, y: newY },
-              isCapture: move.isCapture,
-              key: 13 - move.key,
-              colour: move.colour,
-              captureKey: 13 - move.captureKey,
-            };
-
-            this.makeMove(opponentMove, piece);
-          }
+    if (this.gameMode === 'training') {
+      this.pieces.blacks[2].element.style.backgroundColor =
+        'rgb(198, 165, 221)';
+      const destination = getSquare(4, 1) as HTMLElement;
+      const flash = setInterval(() => {
+        if (destination.style.backgroundColor === 'rgb(37, 35, 35)') {
+          destination.style.backgroundColor = 'rgb(198, 165, 221)';
+        } else {
+          destination.style.backgroundColor = 'rgb(37, 35, 35)';
         }
-      });
+      }, 500);
+      this.moves = [
+        {
+          pos: { x: 5, y: 2 },
+          newPos: { x: 4, y: 1 },
+          isCapture: false,
+          key: 2,
+          colour: 'blacks',
+          captureKey: 0,
+        },
+      ];
+      this.addEvents();
+    } else {
+      this.moves = [];
+      this.moves = this.calculator.calc('blacks', this.pieces);
+      this.addEvents();
+      if (this.gameMode === 'ai' && this.opponentColour === 'blacks') {
+        this.computerTurn();
+      } else {
+        this.socket?.addEventListener('message', (event) => {
+          const data = JSON.parse(event.data);
+          if (data.type === 'move') {
+            const move = JSON.parse(data.move);
+            if (move.colour !== this.playerColour) {
+              let x = reverseCoord(move.pos.x);
+              let y = reverseCoord(move.pos.y);
+              let newX = reverseCoord(move.newPos.x);
+              let newY = reverseCoord(move.newPos.y);
+
+              const piece = this.getPiece(move.colour, 13 - move.key);
+              const opponentMove = {
+                pos: { x, y },
+                newPos: { x: newX, y: newY },
+                isCapture: move.isCapture,
+                key: 13 - move.key,
+                colour: move.colour,
+                captureKey: 13 - move.captureKey,
+              };
+
+              this.makeMove(opponentMove, piece);
+            }
+          }
+        });
+      }
     }
   };
 

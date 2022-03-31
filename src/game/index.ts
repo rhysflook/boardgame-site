@@ -31,6 +31,16 @@ const urlParams = new URLSearchParams(queryString);
 const opponent = urlParams.get('opponent');
 
 if (gameType === 'training') {
+  const chatMenu = document.getElementById('chat-menu') as HTMLElement;
+  chatMenu.appendChild(new Chatbox());
+  const cardOne = new PlayerCard(
+    localStorage.getItem('username') as string,
+    'black'
+  );
+  cardOne.select();
+  const cardTwo = new PlayerCard('Boss A.I', 'white');
+  const scoreCard = new ScoreBoard(cardOne, cardTwo);
+  GameState.setupDraughtsGame('training', 'blacks', scoreCard);
 } else if (gameType === 'ai') {
   const screen = document.querySelector('.container') as HTMLElement;
   const colourSelection = new ColourSelection(0);
@@ -42,12 +52,16 @@ if (gameType === 'training') {
     localStorage.setItem('playerColour', colour);
 
     const cardOne = new PlayerCard(
-      colour === 'blacks' ? 'Billiam' : 'Boss A.I',
+      colour === 'blacks'
+        ? (localStorage.getItem('username') as string)
+        : 'Boss A.I',
       'black'
     );
     cardOne.select();
     const cardTwo = new PlayerCard(
-      colour === 'blacks' ? 'Boss A.I' : 'Billiam',
+      colour === 'blacks'
+        ? 'Boss A.I'
+        : (localStorage.getItem('username') as string),
       'white'
     );
 
