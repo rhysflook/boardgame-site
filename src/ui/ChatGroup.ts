@@ -137,6 +137,7 @@ export class ChatGroup extends HTMLElement {
           })
         );
         this.storeAndDisplayMessage(chatInput.value, this.localUser, true);
+        this.message = '';
         chatInput.value = '';
       }
     );
