@@ -7,24 +7,31 @@ export class ScoreBoard {
     const playerOne = colour === 'blacks' ? localUser : opponent;
     const playerTwo = playerOne === localUser ? opponent : localUser;
     const cardOne = new PlayerCard(playerOne, 'black');
-    cardOne.select();
+    cardOne.toggle();
     const cardTwo = new PlayerCard(playerTwo, 'white');
     return new ScoreBoard(cardOne, cardTwo);
   };
 
-  movingPlayer: PlayerCard;
-  waitingPlayer: PlayerCard;
-  constructor(public playerOne: PlayerCard, public playerTwo: PlayerCard) {
-    this.movingPlayer = playerOne;
-    this.waitingPlayer = playerTwo;
-  }
+  constructor(public playerOne: PlayerCard, public playerTwo: PlayerCard) {}
+
+  countCapture = (colour: string, isKing: boolean): void => {
+    if (colour === 'black') {
+      this.playerOne.incrementCaptures();
+      isKing && this.playerOne.decrementKings();
+    } else {
+      this.playerTwo.incrementCaptures();
+      isKing && this.playerTwo.decrementKings();
+    }
+  };
+
+  countKing = (colour: string): void => {
+    colour === 'black'
+      ? this.playerOne.incrementKings()
+      : this.playerTwo.incrementKings();
+  };
 
   switchPlayers = (): void => {
-    console.log('switching');
-    this.movingPlayer.toggle();
-    this.waitingPlayer.toggle();
-    const temp = this.movingPlayer;
-    this.movingPlayer = this.waitingPlayer;
-    this.waitingPlayer = temp;
+    this.playerOne.toggle();
+    this.playerTwo.toggle();
   };
 }

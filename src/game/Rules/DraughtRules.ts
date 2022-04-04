@@ -9,10 +9,7 @@ export class DraughtRules<T extends DraughtGamePiece> implements Rules<T> {
 
   handleCapture = (capturingPiece: T, capturedPiece: T): BoardSpace => {
     this.capturingPiece = capturingPiece;
-    this.scoreboard.movingPlayer.incrementCaptures();
-    if (capturedPiece.isKing) {
-      this.scoreboard.waitingPlayer.decrementKings();
-    }
+    this.scoreboard.countCapture(capturingPiece.colour, capturedPiece.isKing);
     const { x, y } = capturedPiece.pos;
     const square = document.getElementById(`${x}-${y}`) as HTMLElement;
     square.innerHTML = '';
@@ -38,6 +35,7 @@ export class DraughtRules<T extends DraughtGamePiece> implements Rules<T> {
           game.gameMode === 'ai' &&
           game.movingPlayer === game.opponentColour
         ) {
+          console.log('HANNIN!');
           game.computerTurn();
         }
       }
@@ -53,7 +51,7 @@ export class DraughtRules<T extends DraughtGamePiece> implements Rules<T> {
       (piece.colour + 's' !== game.opponentColour && piece.pos.x === 0)
     ) {
       piece.isKing = true;
-      this.scoreboard.movingPlayer.incrementKings();
+      this.scoreboard.countKing(piece.colour);
       const ele = getSquare(piece.pos.x, piece.pos.y)
         .children[0] as HTMLElement;
       ele.classList.add(`${piece.colour}-king`);

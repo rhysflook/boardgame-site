@@ -257,6 +257,7 @@ export default class GameState<T extends GamePiece> {
 
     this.moves = this.calculator.calc(this.movingPlayer, this.pieces);
     this.addEvents();
+    console.log('switching bitching');
     this.scoreboard.switchPlayers();
     if (this.gameMode === 'ai' && this.movingPlayer === this.opponentColour) {
       this.computerTurn();

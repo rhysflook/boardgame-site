@@ -15,9 +15,12 @@ export class PlayerCard extends HTMLElement {
   }
 
   rerender = (): void => {
-    if (this.shadowRoot) {
-      this.shadowRoot.innerHTML = '';
-      this.shadowRoot.appendChild(this.renderHtml());
+    const scores = this.shadowRoot?.getElementById('captures');
+    if (scores) {
+      scores.innerHTML = `
+      <h3>Captures: ${this.numOfCaptures}</h3>
+      <h3>Kings: ${this.numOfKings}</h3>
+      `;
     }
   };
 

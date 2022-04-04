@@ -45,7 +45,7 @@ const computerMoves: SetMove[] = [
 
 const messages: string[] = [
   'Welcome! In draughts you can move your pieces forward diagonally one space at a time. Give it a try!',
-  'When an opponent piece is next to yours, if the the landing space is clear, you have to jump it and capture it.',
+  "When an opponent piece is next to yours, if the the landing space is clear, you have to jump it and capture it.<br><br> If you capture all of your opponent's pieces, you win.",
   "But remember, your opponent can do the same to you. Let's try moving another piece.",
   'When moving, try to move to a space where your other pieces can block captures.',
   "You can capture another of your opponent's pieces, let's go!",
