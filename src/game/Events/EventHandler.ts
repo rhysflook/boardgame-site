@@ -2,6 +2,8 @@ import GameState, { BoardSpace } from '../Draughts';
 import { GamePiece } from '../Pieces/Piece';
 import { getSquare, isInSquare } from '../utils';
 
+export type Callback = () => void;
+
 export class EventHandler<T extends GamePiece> {
   target: BoardSpace = { x: 0, y: 0 };
   space: HTMLElement | null = null;
@@ -10,24 +12,28 @@ export class EventHandler<T extends GamePiece> {
   dragging: boolean = false;
   draggedEle: HTMLElement | null = null;
   draggedPiece: GamePiece | null = null;
+  isTraining: boolean = false;
+  action: Callback = () => {};
+  actionNum: number = 0;
+
   constructor() {
-    const scaling = window.outerWidth / window.innerWidth;
     const boardEle = document.querySelector('.board') as HTMLElement;
     boardEle.addEventListener('mousemove', (e) => {
       if (this.dragging && this.draggedEle && this.draggedPiece) {
-        const { width, height, left, top } =
-          this.draggedEle.getBoundingClientRect();
+        const { width, height } = this.draggedEle.getBoundingClientRect();
         if (this.draggedPiece.moving) {
           this.draggedEle.style.left = e.clientX - width / 2 + 'px';
           this.draggedEle.style.top = e.clientY - height + 'px';
-          // moves.forEach((move) => {
-          //   this.handleDestinationHover(e, move, piece);
-          // });
         }
       }
     });
     this.board = boardEle.getBoundingClientRect();
   }
+
+  setupTraining = (action: Callback) => {
+    this.isTraining = true;
+    this.action = action;
+  };
 
   applyEvents(piece: T, moves: number[][], game: GameState<T>): void {
     const ele = piece.element;
@@ -81,6 +87,9 @@ export class EventHandler<T extends GamePiece> {
         this.space.classList.remove('destination');
         this.space.appendChild(piece.createHTMLElement());
         game.movePiece(piece, this.target);
+        if (this.isTraining) {
+          this.action();
+        }
       }
       this.dragging = false;
       this.draggedEle = null;

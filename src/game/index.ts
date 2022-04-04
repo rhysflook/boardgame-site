@@ -31,8 +31,6 @@ const urlParams = new URLSearchParams(queryString);
 const opponent = urlParams.get('opponent');
 
 if (gameType === 'training') {
-  const chatMenu = document.getElementById('chat-menu') as HTMLElement;
-  chatMenu.appendChild(new Chatbox());
   const cardOne = new PlayerCard(
     localStorage.getItem('username') as string,
     'black'

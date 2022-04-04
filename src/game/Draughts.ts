@@ -1,6 +1,7 @@
 import { Chatbox } from '../chatbox/Chatbox';
 import { ScoreBoard } from '../scoreboard/ScoreBoard';
 import { GameSocket } from '../socket/GameSocket';
+import { DraughtTraining } from './DraughtTraining';
 import { EventHandler } from './Events/EventHandler';
 import {
   DraughtGamePiece,
@@ -8,6 +9,7 @@ import {
 } from './MoveCalculators/DraughtMovesCalculator';
 import { AllPieces, MoveCalculator } from './MoveCalculators/MoveCalculator';
 import { PieceMaker } from './PieceMaker';
+import { DraughtPiece } from './Pieces/DraughtsPiece';
 import { GamePiece } from './Pieces/Piece';
 import { DraughtRules } from './Rules/DraughtRules';
 
@@ -87,27 +89,7 @@ export default class GameState<T extends GamePiece> {
 
   initGame = (): void => {
     if (this.gameMode === 'training') {
-      this.pieces.blacks[2].element.style.backgroundColor =
-        'rgb(198, 165, 221)';
-      const destination = getSquare(4, 1) as HTMLElement;
-      const flash = setInterval(() => {
-        if (destination.style.backgroundColor === 'rgb(37, 35, 35)') {
-          destination.style.backgroundColor = 'rgb(198, 165, 221)';
-        } else {
-          destination.style.backgroundColor = 'rgb(37, 35, 35)';
-        }
-      }, 500);
-      this.moves = [
-        {
-          pos: { x: 5, y: 2 },
-          newPos: { x: 4, y: 1 },
-          isCapture: false,
-          key: 2,
-          colour: 'blacks',
-          captureKey: 0,
-        },
-      ];
-      this.addEvents();
+      new DraughtTraining(this);
     } else {
       this.moves = [];
       this.moves = this.calculator.calc('blacks', this.pieces);

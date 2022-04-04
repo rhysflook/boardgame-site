@@ -36,6 +36,14 @@ export class PlayerCard extends HTMLElement {
     this.rerender();
   };
 
+  toggle = (): void => {
+    if (this.card.className === 'player-info') {
+      this.card.className = 'player-info-moving';
+    } else {
+      this.card.className = 'player-info';
+    }
+  };
+
   select = (): void => {
     this.card.className = 'player-info-moving';
   };

@@ -521,3 +521,13 @@ label {
   justify-content: left;
   height: 100px;
 }
+
+.tutorial {
+  left: 250px;
+  top: 600px;
+  padding: 10px;
+  text-align: center;
+  font-size: 12px;
+  width: 40%;
+  height: 30%;
+}

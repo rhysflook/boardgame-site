@@ -20,8 +20,9 @@ export class ScoreBoard {
   }
 
   switchPlayers = (): void => {
-    this.movingPlayer.deselect();
-    this.waitingPlayer.select();
+    console.log('switching');
+    this.movingPlayer.toggle();
+    this.waitingPlayer.toggle();
     const temp = this.movingPlayer;
     this.movingPlayer = this.waitingPlayer;
     this.waitingPlayer = temp;
