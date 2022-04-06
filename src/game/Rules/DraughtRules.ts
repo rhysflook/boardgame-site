@@ -35,7 +35,6 @@ export class DraughtRules<T extends DraughtGamePiece> implements Rules<T> {
           game.gameMode === 'ai' &&
           game.movingPlayer === game.opponentColour
         ) {
-          console.log('HANNIN!');
           game.computerTurn();
         }
       }

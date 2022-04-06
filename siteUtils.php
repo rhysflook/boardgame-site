@@ -24,10 +24,33 @@ function sendRequest($sql, $params) {
     return $stmt->get_result();
 }
 
+function executeQuery($sql, $params) {
+    $mysqli = getConnection();
+    $stmt = mysqli_prepare($mysqli, $sql);
+    $stmt->bind_param(...$params);
+    $stmt->execute();
+    return $stmt;
+}
+
 function setCookies($cookies) {
     foreach ($cookies as $key => $value) {
         setcookie($key, $value, 0, '/');
     }
+}
+
+function errorResponse($error, $status) {
+    header("HTTP/1.0 {$status}");
+    echo json_encode($error);
+}
+
+
+function getUser($user) {
+    $result = sendRequest(
+        'SELECT username, id, in_game FROM users WHERE username = ?',
+        ['s', $user]
+    )->fetch_row();
+    return $result;
+
 }
 
 ?>

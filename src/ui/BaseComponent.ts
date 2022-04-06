@@ -12,4 +12,19 @@ export class BaseComponent extends HTMLElement implements Component {
     tmpl.innerHTML = template;
     this.shadowRoot?.appendChild(tmpl.content.cloneNode(true));
   };
+
+  getById = (id: string): HTMLElement | undefined | null => {
+    return this.shadowRoot?.getElementById(id);
+  };
+
+  getByIdAndBind = (
+    id: string,
+    eventType: string,
+    callback: (e: Event) => void
+  ): void => {
+    const element = this.shadowRoot?.getElementById(id);
+    if (element) {
+      element.addEventListener(eventType, (e) => callback(e));
+    }
+  };
 }

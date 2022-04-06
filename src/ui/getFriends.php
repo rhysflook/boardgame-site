@@ -6,7 +6,7 @@
         ["ii", $_GET['id'], $_GET['id']]
     )->fetch_all();
     if (!$result) {
-        http_response_code(400);  
+        echo json_encode([]);  
     } else {
         echo json_encode($result);
     }

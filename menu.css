@@ -50,7 +50,8 @@ a:active {
   align-items: center;
 }
 
-input {
+input[type='text'],
+input[type='password'] {
   font-family: 'Fredoka', sans-serif;
   width: 30%;
   height: 50px;
@@ -115,6 +116,10 @@ label {
   position: relative;
   width: 100%;
   height: 100%;
+}
+
+#popup {
+  max-width: 40%;
 }
 
 .corner {
@@ -405,15 +410,23 @@ label {
   justify-content: center;
 }
 
-#friend-box {
+.collapsing {
   position: absolute;
-  right: 5px;
-  top: 5px;
   background-color: bisque;
   border: rgb(125, 57, 173) 5px solid;
   border-radius: 15px;
   box-shadow: 3px 0px 4px rgb(179, 145, 202), 0px 3px 4px rgb(179, 145, 202),
     -3px 0px 4px rgb(179, 145, 202);
+}
+
+.top-right {
+  right: 5px;
+  top: 5px;
+}
+
+.bottom-right {
+  right: 5px;
+  bottom: 25px;
 }
 
 .friend-row {
@@ -530,4 +543,48 @@ label {
   font-size: 12px;
   width: 40%;
   height: 30%;
+}
+
+input[type='radio'] {
+  size: 10px;
+}
+
+.settings {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.settings .popup-button {
+  font-size: 16px;
+  margin-top: 10px;
+}
+
+.settings input[type='text'],
+.settings input[type='password'] {
+  font-size: 15px;
+  height: 20px;
+  margin: 0 15px;
+}
+
+.setting-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.setting-label {
+  margin-left: 8px;
+  font-size: 14px;
+  line-height: 0;
+}
+
+.separator {
+  width: 100%;
+  height: 2px;
+  border-top: 2px rgb(125, 57, 173) solid;
+  margin: 10px auto;
 }

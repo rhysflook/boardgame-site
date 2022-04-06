@@ -1,5 +1,6 @@
 import axios, { AxiosResponse } from '../node_modules/axios/index';
 import { Friend, FriendShip } from './menu/gameMenu';
+import { SiteSocket } from './socket/MenuSocket';
 
 export interface IFriendReq {
   id: number;
@@ -46,7 +47,7 @@ export const addFriend = async (name: string): Promise<Friend> => {
               const friends = JSON.parse(
                 localStorage.getItem('friends') as string
               );
-              friends.push({ id: reqBody.friendId, name });
+              friends[reqBody.friendId] = { id: reqBody.friendId, name };
               localStorage.setItem('friends', JSON.stringify(friends));
               resolve({
                 id: reqBody.friendId,
@@ -63,10 +64,12 @@ export const addFriend = async (name: string): Promise<Friend> => {
 };
 
 const alreadyFriends = (id: number): boolean => {
-  const friends = JSON.parse(localStorage.getItem('friends') as string).map(
-    (friend: Friend) => friend.id
-  );
-  return friends?.includes(id);
+  const friends = Object.values(
+    JSON.parse(localStorage.getItem('friends') as string)
+  ) as Friend[];
+
+  friends.map((friend: Friend) => friend.id);
+  return Object.keys(friends).includes(String(id));
 };
 
 const getFriendReq = (id: number, name: string): IFriendReq => {
@@ -78,29 +81,16 @@ const getFriendReq = (id: number, name: string): IFriendReq => {
   };
 };
 
-export const getFriendList = () => {
-  return axios
-    .get(`../ui/getFriends.php?id=${Number(localStorage.getItem('id'))}`)
-    .then((res: AxiosResponse) => {
-      const friends = [] as Friend[];
-      const userId = Number(localStorage.getItem('id'));
-      res.data.forEach((friendship: FriendShip) => {
-        friends.push(
-          friendship[0] === userId
-            ? {
-                id: friendship[1],
-                name: friendship[3],
-                online: false,
-                inGame: false,
-              }
-            : {
-                id: friendship[0],
-                name: friendship[2],
-                online: false,
-                inGame: false,
-              }
-        );
-      });
-      localStorage.setItem('friends', JSON.stringify(friends));
-    });
+export const getFriendList = (socket: SiteSocket) => {
+  return axios.get(
+    `../ui/getFriends.php?id=${Number(localStorage.getItem('id'))}`
+  );
+};
+
+export const changeUserDetails = (newName: string, password: string) => {
+  return axios.patch('../account/changeUser.php', {
+    username: localStorage.getItem('username'),
+    newName,
+    password,
+  });
 };

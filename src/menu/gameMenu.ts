@@ -6,6 +6,7 @@ import { getTemplate } from '../templates/invite';
 import { ChatArea } from '../ui/ChatArea';
 import { ChatGroup } from '../ui/ChatGroup';
 import { FriendList } from '../ui/FriendList';
+import { UserSettings } from '../ui/UserSettings';
 
 export type FriendShip = [number, number, string, string];
 
@@ -71,6 +72,9 @@ const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
 const player = urlParams.get('user');
 const username = player === null ? localStorage.getItem('username') : player;
+
+const screen = document.getElementById('screen');
+screen?.appendChild(new UserSettings());
 
 getPlayerId(username as string, true).then(() => {
   axios.get('../socket-url.php').then((res: AxiosResponse) => {
