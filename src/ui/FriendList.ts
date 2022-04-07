@@ -41,6 +41,7 @@ export class FriendList extends CollapsingComponent {
                 };
         });
         this.listenForChanges();
+        console.log('WHERE MY FRIENDS AT?');
         const ids = Object.keys(this.friends).map((friend) => Number(friend));
         socket.send(
           JSON.stringify({
