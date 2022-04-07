@@ -56,7 +56,8 @@ export class FriendList extends CollapsingComponent {
 
         this.setContent();
       })
-      .catch(() => {
+      .catch((e) => {
+        console.log(e);
         // localStorage.setItem('friends', JSON.stringify([]));
       });
   }
