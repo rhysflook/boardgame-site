@@ -1,4 +1,6 @@
 import { FriendList, Friends } from '../components/FriendList';
+import { PopupMessage } from '../components/PopupMessage';
+import { capitalise } from '../game/utils';
 import { SiteSocket } from './MenuSocket';
 import { MessageHandler } from './MessageHandler';
 
@@ -42,13 +44,15 @@ export class FriendHandler extends MessageHandler {
   };
 
   login = (data: IAuthStatus): void => {
-    console.log('in');
+    const message = `${capitalise(
+      this.friendList.friends[data.id].name
+    )} has logged in!`;
+    document.getElementById('screen')?.appendChild(new PopupMessage(message));
     this.friendList.friends[data.id].online = true;
     this.friendList.updateFriendRow(data.id, { online: 'Online' });
   };
 
   logout = (data: IAuthStatus): void => {
-    console.log('out');
     this.friendList.friends[data.id].online = false;
     this.friendList.updateFriendRow(data.id, { online: 'Offline' });
   };

@@ -25,6 +25,7 @@ export class PopupMessage extends BaseComponent {
         });
       }
     }
+    setTimeout(() => this.remove(), 5000);
   }
 }
 
