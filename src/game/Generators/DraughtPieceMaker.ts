@@ -1,4 +1,4 @@
-import { PieceGenerator, Pieces } from '../PieceMaker';
+import { PieceGenerator, Pieces } from './PieceMaker';
 import { DraughtPiece } from '../Pieces/DraughtsPiece';
 import { GamePiece } from '../Pieces/Piece';
 

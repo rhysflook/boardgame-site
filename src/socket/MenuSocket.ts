@@ -1,5 +1,6 @@
 import { getCookie } from '../game/utils';
-import { IInviteData, MessageHandler } from './MessageHandler';
+import { GeneralHandler } from './GeneralHandler';
+import { MessageHandler } from './MessageHandler';
 
 export interface Data {
   type: keyof MessageHandler;
@@ -8,7 +9,6 @@ export interface Data {
 export interface SiteSocket extends WebSocket {
   getFriendStatus: (id: number, name: string) => void;
   setupConnection: () => void;
-  setupMessageHandlers: () => void;
 }
 
 export class MenuSocket extends WebSocket implements SiteSocket {
@@ -16,7 +16,7 @@ export class MenuSocket extends WebSocket implements SiteSocket {
     super(url);
     this.addEventListener('open', () => {
       this.setupConnection();
-      this.setupMessageHandlers();
+      new GeneralHandler(this);
     });
   }
 
@@ -34,15 +34,5 @@ export class MenuSocket extends WebSocket implements SiteSocket {
         })
       );
     }
-  };
-
-  setupMessageHandlers = (): void => {
-    const handler = new MessageHandler();
-    this.addEventListener('message', (event) => {
-      const data = JSON.parse(event.data);
-      if (Object.getOwnPropertyNames(handler).includes(data.type)) {
-        handler[data.type as keyof MessageHandler](data, this);
-      }
-    });
   };
 }

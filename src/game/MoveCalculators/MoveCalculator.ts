@@ -1,5 +1,5 @@
 import { Move } from '../Draughts';
-import { Pieces } from '../PieceMaker';
+import { Pieces } from '../Generators/PieceMaker';
 
 export interface AllPieces<T> {
   blacks: Pieces<T>;

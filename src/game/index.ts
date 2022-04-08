@@ -1,8 +1,8 @@
 import { AxiosResponse } from '../../node_modules/axios/index';
-import { Chatbox } from '../chatbox/Chatbox';
-import { ColourSelection } from '../matchmaking/ColourSelection';
-import { PlayerCard } from '../scoreboard/PlayerCard';
-import { ScoreBoard } from '../scoreboard/ScoreBoard';
+import { Chatbox } from '../components/chatbox/Chatbox';
+import { ColourSelection } from '../components/matchmaking/ColourSelection';
+import { PlayerCard } from '../components/scoreboard/PlayerCard';
+import { ScoreBoard } from '../components/scoreboard/ScoreBoard';
 import { GameSocket } from '../socket/GameSocket';
 import GameState from './Draughts';
 import { getCookie } from './utils';

@@ -1,4 +1,4 @@
-import { ScoreBoard } from '../../scoreboard/ScoreBoard';
+import { ScoreBoard } from '../../components/scoreboard/ScoreBoard';
 import GameState, { BoardSpace, Move, Rules } from '../Draughts';
 import { DraughtGamePiece } from '../MoveCalculators/DraughtMovesCalculator';
 import { getSquare } from '../utils';

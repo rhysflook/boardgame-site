@@ -21,7 +21,7 @@ export const getPlayerId = (
   const promise = new Promise<void>((resolve) => {
     if (name) {
       axios
-        .get(`../game/getPlayer.php?user=${name}`)
+        .get(`../utils/getPlayer.php?user=${name}`)
         .then((res: AxiosResponse) => {
           if (isLocal) {
             savePlayerLocally(res.data.id, name);
@@ -37,11 +37,11 @@ export const getPlayerId = (
 
 export const addFriend = async (name: string): Promise<Friend> => {
   const promise = new Promise<Friend>((resolve) => {
-    axios.get(`../game/getPlayer.php?user=${name}`).then((res) => {
+    axios.get(`../utils/getPlayer.php?user=${name}`).then((res) => {
       if (!alreadyFriends(res.data.id)) {
         const reqBody = getFriendReq(res.data.id, name);
         axios
-          .post('../ui/addFriend.php', reqBody)
+          .post('../friends/addFriend.php', reqBody)
           .then((res: AxiosResponse) => {
             if (res) {
               const friends = JSON.parse(
@@ -83,12 +83,12 @@ const getFriendReq = (id: number, name: string): IFriendReq => {
 
 export const getFriendList = (socket: SiteSocket) => {
   return axios.get(
-    `../ui/getFriends.php?id=${Number(localStorage.getItem('id'))}`
+    `../friends/getFriends.php?id=${Number(localStorage.getItem('id'))}`
   );
 };
 
 export const changeUserDetails = (newName: string, password: string) => {
-  return axios.patch('../account/changeUser.php', {
+  return axios.patch('../user/changeUser.php', {
     username: localStorage.getItem('username'),
     newName,
     password,

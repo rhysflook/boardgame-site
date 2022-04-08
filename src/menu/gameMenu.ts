@@ -1,12 +1,10 @@
 import { AxiosResponse } from '../../node_modules/axios/index';
-import { getFriendList, getPlayerId } from '../api';
-import { capitalise, getCookie } from '../game/utils';
+import { getPlayerId } from '../api';
+import { capitalise } from '../game/utils';
 import { MenuSocket } from '../socket/MenuSocket';
 import { getTemplate } from '../templates/invite';
-import { ChatArea } from '../ui/ChatArea';
-import { ChatGroup } from '../ui/ChatGroup';
-import { FriendList } from '../ui/FriendList';
-import { UserSettings } from '../ui/UserSettings';
+import { ChatGroup } from '../components/ChatGroup';
+import { UserSettings } from '../components/UserSettings';
 
 export type FriendShip = [number, number, string, string];
 
@@ -77,14 +75,13 @@ const screen = document.getElementById('screen');
 screen?.appendChild(new UserSettings());
 
 getPlayerId(username as string, true).then(() => {
-  axios.get('../socket-url.php').then((res: AxiosResponse) => {
+  axios.get('../auth/socket-url.php').then((res: AxiosResponse) => {
     const socket = new MenuSocket(res.data as string);
-    menu.append(new FriendList(socket));
-    const chatBar = document.getElementById('chat-area-bar');
     document.body.append(new ChatGroup(socket, username as string, 'All', 0));
     axios
       .get(
-        '../ui/getChatHistory.php?recipient_id=' + localStorage.getItem('id')
+        '../friends/getChatHistory.php?recipient_id=' +
+          localStorage.getItem('id')
       )
       .then((res: AxiosResponse) => {
         const unreadIds = [] as number[];

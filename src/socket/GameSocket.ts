@@ -1,8 +1,8 @@
-import { Chatbox } from '../chatbox/Chatbox';
+import { Chatbox } from '../components/chatbox/Chatbox';
 import GameState from '../game/Draughts';
-import { ColourSelection } from '../matchmaking/ColourSelection';
-import { InvitePlayerWindow } from '../matchmaking/InvitePlayerWindow';
-import { ScoreBoard } from '../scoreboard/ScoreBoard';
+import { ColourSelection } from '../components/matchmaking/ColourSelection';
+import { InvitePlayerWindow } from '../components/matchmaking/InvitePlayerWindow';
+import { ScoreBoard } from '../components/scoreboard/ScoreBoard';
 
 interface Player {
   id: number;

@@ -1,5 +1,5 @@
 import { AllPieces, GamePiece } from './MoveCalculators/MoveCalculator';
-import { Pieces } from './PieceMaker';
+import { Pieces } from './Generators/PieceMaker';
 
 export const isInSquare = (
   x: number,

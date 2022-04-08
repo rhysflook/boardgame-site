@@ -588,3 +588,7 @@ input[type='radio'] {
   border-top: 2px rgb(125, 57, 173) solid;
   margin: 10px auto;
 }
+
+.spaced {
+  margin-top: 15px;
+}

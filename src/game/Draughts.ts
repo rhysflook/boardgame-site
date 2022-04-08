@@ -1,14 +1,14 @@
-import { Chatbox } from '../chatbox/Chatbox';
-import { ScoreBoard } from '../scoreboard/ScoreBoard';
+import { Chatbox } from '../components/chatbox/Chatbox';
+import { ScoreBoard } from '../components/scoreboard/ScoreBoard';
 import { GameSocket } from '../socket/GameSocket';
-import { DraughtTraining } from './DraughtTraining';
+import { DraughtTraining } from './training/DraughtTraining';
 import { EventHandler } from './Events/EventHandler';
 import {
   DraughtGamePiece,
   DraughtMovesCalculator,
 } from './MoveCalculators/DraughtMovesCalculator';
 import { AllPieces, MoveCalculator } from './MoveCalculators/MoveCalculator';
-import { PieceMaker } from './PieceMaker';
+import { PieceMaker } from './Generators/PieceMaker';
 import { DraughtPiece } from './Pieces/DraughtsPiece';
 import { GamePiece } from './Pieces/Piece';
 import { DraughtRules } from './Rules/DraughtRules';
