@@ -21,7 +21,7 @@ export class FriendList extends CollapsingComponent {
 
   constructor(public socket: SiteSocket, public friends: Friends) {
     super('Friends', 'top-right', () => {
-      this.renderFriends;
+      this.renderFriends();
       this.add = this.shadowRoot?.getElementById('addFriend') as HTMLElement;
       this.setupAddButton();
     });
@@ -48,7 +48,9 @@ export class FriendList extends CollapsingComponent {
       ) as HTMLInputElement;
       addFriend(nameInput.value).then((friend) => {
         this.friends[friend.id] = friend;
-        this.socket.getFriendStatus(friend.id, friend.name);
+        this.socket.send(
+          JSON.stringify({ type: 'status', id: friend.id, name: friend.name })
+        );
       });
     });
   };

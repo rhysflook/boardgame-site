@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from '../node_modules/axios/index';
-import { Friend, FriendShip } from './menu/gameMenu';
+import { Friend } from './menu/gameMenu';
 import { SiteSocket } from './socket/MenuSocket';
 
 export interface IFriendReq {

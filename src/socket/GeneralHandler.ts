@@ -1,11 +1,11 @@
 import { ChatGroup } from '../components/ChatGroup';
 import { Friends, FriendList } from '../components/FriendList';
 import { InviteWindow } from '../menu/gameMenu';
-import { SiteSocket } from './MenuSocket';
+import { MenuSocket, SiteSocket } from './MenuSocket';
 import { MessageHandler } from './MessageHandler';
 
 export interface IInviteData {
-  type: keyof MessageHandler;
+  type: keyof MessageHandler<MenuSocket>;
   id: number;
   target: number;
   username: string;
@@ -32,8 +32,8 @@ export interface IFriendsList {
   friends: Friends;
 }
 
-export class GeneralHandler extends MessageHandler {
-  constructor(socket: SiteSocket) {
+export class GeneralHandler extends MessageHandler<MenuSocket> {
+  constructor(socket: MenuSocket) {
     super(socket);
   }
 

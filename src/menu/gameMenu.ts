@@ -51,7 +51,7 @@ export class InviteWindow extends HTMLDivElement {
   acceptInvite = (): void => {
     localStorage.setItem('opponentId', String(this.userId));
     localStorage.setItem('opponentName', this.player);
-    window.location.href = `../../src/game/draughts.php?opponent=${this.userId}`;
+    window.location.href = `../../backend/game/draughts.php?opponent=${this.userId}`;
   };
 
   rejectInvite = (): void => {

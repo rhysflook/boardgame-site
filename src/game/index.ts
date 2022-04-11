@@ -20,7 +20,7 @@ const axios = require('axios').default;
 
 const quitButton = document.getElementById('quit');
 quitButton?.addEventListener('click', () => {
-  window.location.href = '../menu/game-menu.php';
+  window.location.href = '../../backend/menus/game-menu.php';
 });
 
 const gameType = getCookie('type') as string;
@@ -68,13 +68,13 @@ if (gameType === 'training') {
     colourSelection.remove();
   });
 } else if (opponent) {
-  axios.get('../socket-url.php').then((res: AxiosResponse) => {
+  axios.get('../../backend/auth/socket-url.php').then((res: AxiosResponse) => {
     if (res) {
       new GameSocket(res.data, false);
     }
   });
 } else {
-  axios.get('../socket-url.php').then((res: AxiosResponse) => {
+  axios.get('../../backend/auth/socket-url.php').then((res: AxiosResponse) => {
     if (res) {
       new GameSocket(res.data, true);
     }

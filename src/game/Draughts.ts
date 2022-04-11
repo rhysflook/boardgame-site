@@ -19,6 +19,7 @@ import {
   getSquare,
   reverseCoord,
 } from './utils';
+import { GameHandler } from '../socket/GameHandler';
 
 export interface BoardSpace {
   x: number;
@@ -97,30 +98,7 @@ export default class GameState<T extends GamePiece> {
       if (this.gameMode === 'ai' && this.opponentColour === 'blacks') {
         this.computerTurn();
       } else {
-        this.socket?.addEventListener('message', (event) => {
-          const data = JSON.parse(event.data);
-          if (data.type === 'move') {
-            const move = JSON.parse(data.move);
-            if (move.colour !== this.playerColour) {
-              let x = reverseCoord(move.pos.x);
-              let y = reverseCoord(move.pos.y);
-              let newX = reverseCoord(move.newPos.x);
-              let newY = reverseCoord(move.newPos.y);
-
-              const piece = this.getPiece(move.colour, 13 - move.key);
-              const opponentMove = {
-                pos: { x, y },
-                newPos: { x: newX, y: newY },
-                isCapture: move.isCapture,
-                key: 13 - move.key,
-                colour: move.colour,
-                captureKey: 13 - move.captureKey,
-              };
-
-              this.makeMove(opponentMove, piece);
-            }
-          }
-        });
+        this.socket && new GameHandler(this.socket, this);
       }
     }
   };
@@ -155,45 +133,51 @@ export default class GameState<T extends GamePiece> {
     return pieces;
   };
 
-  movePiece = (piece: T, target: BoardSpace): void => {
-    const { x, y } = target;
-
-    const chosenMove = this.moves.find(
+  findMove = (piece: T, x: number, y: number): Move => {
+    return this.moves.find(
       (move: Move) =>
         move.pos.x === piece.pos.x &&
         move.pos.y === piece.pos.y &&
         x === move.newPos.x &&
         y === move.newPos.y
-    );
+    ) as Move;
+  };
 
+  capture = (piece: T, captureKey: number): void => {
+    const capturedColour = this.movingPlayer === 'blacks' ? 'whites' : 'blacks';
+    this.rules.handleCapture(piece, this.getPiece(capturedColour, captureKey));
+    delete this.pieces[capturedColour][captureKey];
+    this.calculator.allPieces = getPieceListAll(this.pieces);
+  };
+
+  isOnlineGame = (): boolean => {
+    return this.gameMode === 'vs' && this.movingPlayer === this.playerColour;
+  };
+
+  movePiece = (piece: T, target: BoardSpace): void => {
+    const chosenMove = this.findMove(piece, target.x, target.y);
     if (chosenMove?.isCapture) {
-      const capturedColour =
-        this.movingPlayer === 'blacks' ? 'whites' : 'blacks';
-      this.rules.handleCapture(
-        piece,
-        this.getPiece(capturedColour, chosenMove?.captureKey)
-      );
-      delete this.pieces[capturedColour][chosenMove.captureKey];
-
-      this.calculator.allPieces = getPieceListAll(this.pieces);
+      this.capture(piece, chosenMove.captureKey);
     }
-    if (this.gameMode === 'vs' && this.movingPlayer === this.playerColour) {
-      const move = {
-        pos: { x: piece.pos.x, y: piece.pos.y },
-        newPos: {
-          x: x,
-          y: y,
-        },
-        isCapture: chosenMove?.isCapture as boolean,
-        key: chosenMove?.key as number,
-        colour: chosenMove?.colour as 'blacks' | 'whites',
-        captureKey: chosenMove?.captureKey as number,
-      };
-      this.sendMove(move);
+    if (this.isOnlineGame()) {
+      // const move = {
+      //   pos: { x: piece.pos.x, y: piece.pos.y },
+      //   newPos: {
+      //     x: target.x,
+      //     y: target.y,
+      //   },
+      //   isCapture: chosenMove?.isCapture as boolean,
+      //   key: chosenMove?.key as number,
+      //   colour: chosenMove?.colour as 'blacks' | 'whites',
+      //   captureKey: chosenMove?.captureKey as number,
+      // };
+
+      // need to test this
+      this.sendMove(chosenMove);
     }
 
-    piece.pos.x = x;
-    piece.pos.y = y;
+    piece.pos.x = target.x;
+    piece.pos.y = target.y;
     this.rules.endTurn(this, piece);
   };
 
@@ -257,7 +241,7 @@ export default class GameState<T extends GamePiece> {
 
     this.moves = this.calculator.calc(this.movingPlayer, this.pieces);
     this.addEvents();
-    console.log('switching bitching');
+
     this.scoreboard.switchPlayers();
     if (this.gameMode === 'ai' && this.movingPlayer === this.opponentColour) {
       this.computerTurn();

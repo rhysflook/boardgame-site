@@ -1,9 +1,9 @@
 import { SiteSocket } from './MenuSocket';
 
-export type Handler = keyof Omit<MessageHandler, 'socket'>;
+export type Handler = keyof Omit<MessageHandler<SiteSocket>, 'socket'>;
 
-export abstract class MessageHandler {
-  constructor(public socket: SiteSocket) {
+export abstract class MessageHandler<T extends SiteSocket> {
+  constructor(public socket: T) {
     this.socket.addEventListener('message', (event) => {
       const data = JSON.parse(event.data);
       if (this.hasProperty(data.type)) {

@@ -3,6 +3,10 @@ import GameState from '../game/Draughts';
 import { ColourSelection } from '../components/matchmaking/ColourSelection';
 import { InvitePlayerWindow } from '../components/matchmaking/InvitePlayerWindow';
 import { ScoreBoard } from '../components/scoreboard/ScoreBoard';
+import { SiteSocket } from './MenuSocket';
+import { getCookie } from '../game/utils';
+import { InviteHandler } from './InviteHandler';
+import { GamePiece } from '../game/Pieces/Piece';
 
 interface Player {
   id: number;
@@ -10,13 +14,17 @@ interface Player {
   colour: string;
 }
 
-export class GameSocket extends WebSocket {
+export class GameSocket extends WebSocket implements SiteSocket {
   chatBox: Chatbox | null = null;
   playerOne: Player | null = null;
   playerTwo: Player | null = null;
+  inviteUi: InvitePlayerWindow | null = null;
   constructor(url: string, public isChallenger: boolean) {
     super(url);
+
     this.addEventListener('open', () => {
+      new InviteHandler(this);
+      this.setupConnection();
       if (isChallenger) {
         this.setupChallenger();
       } else {
@@ -25,11 +33,21 @@ export class GameSocket extends WebSocket {
     });
   }
 
+  setupConnection = (): void => {
+    const userId = getCookie('id');
+    if (userId) {
+      this.send(
+        JSON.stringify({
+          type: 'start',
+          id: Number(userId),
+        })
+      );
+    }
+  };
+
   setupChallenger = (): void => {
-    this.send(
-      JSON.stringify({ type: 'start', id: Number(localStorage.getItem('id')) })
-    );
     const screen = document.querySelector('.container') as HTMLElement;
+    this.inviteUi = new InvitePlayerWindow(this, screen);
     if (screen) {
       screen.appendChild(new InvitePlayerWindow(this, screen));
     }
@@ -64,9 +82,6 @@ export class GameSocket extends WebSocket {
     const opponent = urlParams.get('opponent');
 
     this.send(
-      JSON.stringify({ type: 'start', id: Number(localStorage.getItem('id')) })
-    );
-    this.send(
       JSON.stringify({
         type: 'accept',
         id: Number(localStorage.getItem('id')),
@@ -74,12 +89,5 @@ export class GameSocket extends WebSocket {
         username: localStorage.getItem('username'),
       })
     );
-    this.addEventListener('message', (event) => {
-      const data = JSON.parse(event.data);
-      if (data.type === 'coinFlip') {
-        const coinFlip = data.coinFlip === 1 ? 0 : 1;
-        this.handleColourChoice(coinFlip);
-      }
-    });
   };
 }

@@ -6,7 +6,7 @@ $id = $_COOKIE['id'];
 if (isset($_POST['ai'])){
     $_SESSION['ai'] = true;
     setCookies(['new-game'=>true, 'type'=>'ai', 'colour'=>$_POST['colour']]);
-    header('location: ../../src/game/draughts.php');
+    header('location: ../backend/game/draughts.php');
 }
 
 if (isset($_POST['logout'])) {
@@ -21,7 +21,7 @@ if (isset($_POST['training'])) {
     setCookies(
         ['player-1'=>true, 'new-game'=>true, 'type'=>'training']
     );
-    header('location: ../../src/game/draughts.php');
+    header('location: ../game/draughts.php');
 }
 
 if (isset($_POST['vs-player'])) {
@@ -35,7 +35,7 @@ if (isset($_POST['vs-player'])) {
         ['player-1'=>true, 'new-game'=>true, 'type'=>'vs', 'colour'=>$_POST['colour']]
     );
     $_SESSION['player-1'] = true;
-    header('location: ../../src/game/draughts.php');
+    header('location: ../game/draughts.php');
 }
 
 if (isset($_POST['join-game'])) {
@@ -47,7 +47,7 @@ if (isset($_POST['join-game'])) {
     sendRequest("INSERT INTO games (player_2_id) VALUES (?)", ["i", $id]);
     sendRequest("UPDATE users SET in_game=1 WHERE id=?", ["i", $id]);
     setCookies(['opponent'=>$opponent, 'new-game'=>true, 'type'=>'vs', 'colour'=>$_POST['colour']]);
-    header('location: src/game/draughts.php');
+    header('location: ../game/draughts.php');
 }
 if(isset($_SESSION['type']))
 {   

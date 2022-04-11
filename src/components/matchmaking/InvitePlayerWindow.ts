@@ -1,4 +1,4 @@
-import { AxiosError, AxiosResponse } from '../../../node_modules/axios/index';
+import { AxiosResponse } from '../../../node_modules/axios/index';
 import { GameSocket } from '../../socket/GameSocket';
 import { getTemplate } from '../../templates/invite';
 import { PopupMessage } from '../PopupMessage';
@@ -26,7 +26,7 @@ export class InvitePlayerWindow extends HTMLElement {
     if (inviteButton) {
       inviteButton.addEventListener('click', () => {
         axios
-          .get(`getPlayer.php/?user=${opponentInput?.value}`)
+          .get(`../utils/getPlayer.php/?user=${opponentInput?.value}`)
           .then((res: AxiosResponse) => {
             if (res.data) {
               this.socket.send(
@@ -43,7 +43,6 @@ export class InvitePlayerWindow extends HTMLElement {
               this.shadowRoot.appendChild(getTemplate('inviteWait'));
             }
             this.waitForOpponent();
-            this.handleResponse();
           })
           .catch(() => {
             new PopupMessage('Player not found!');
@@ -78,29 +77,6 @@ export class InvitePlayerWindow extends HTMLElement {
     if (cancelButton) {
       cancelButton.addEventListener('click', () => this.cancelInvite());
     }
-  };
-
-  handleResponse = (): void => {
-    this.socket.addEventListener('message', (event) => {
-      const data = JSON.parse(event.data);
-      if (data.type === 'accept') {
-        localStorage.setItem('opponentId', String(data.id));
-        localStorage.setItem('opponentName', data.username);
-        if (this.timer) {
-          clearTimeout(this.timer);
-        }
-        const coinFlip = Math.floor(Math.random() * 2);
-        this.socket.send(JSON.stringify({ type: 'coinFlip', coinFlip }));
-
-        this.socket.handleColourChoice(coinFlip);
-
-        this.remove();
-      }
-
-      if (data.type === 'reject') {
-        this.cancelInvite();
-      }
-    });
   };
 }
 

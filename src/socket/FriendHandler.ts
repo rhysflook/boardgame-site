@@ -1,7 +1,6 @@
 import { FriendList, Friends } from '../components/FriendList';
 import { PopupMessage } from '../components/PopupMessage';
 import { capitalise } from '../game/utils';
-import { SiteSocket } from './MenuSocket';
 import { MessageHandler } from './MessageHandler';
 
 export interface INewFriend {
@@ -19,6 +18,11 @@ export interface IPlayers {
 
 export interface IAuthStatus {
   type: 'login' | 'logout';
+  id: number;
+}
+
+export interface IGameStatus {
+  type: 'joinGame' | 'leaveGame';
   id: number;
 }
 
@@ -55,5 +59,15 @@ export class FriendHandler extends MessageHandler {
   logout = (data: IAuthStatus): void => {
     this.friendList.friends[data.id].online = false;
     this.friendList.updateFriendRow(data.id, { online: 'Offline' });
+  };
+
+  joinGame = (data: IGameStatus): void => {
+    this.friendList.friends[data.id].inGame = true;
+    this.friendList.updateFriendRow(data.id, { inGame: 'Playing' });
+  };
+
+  leaveGame = (data: IGameStatus): void => {
+    this.friendList.friends[data.id].inGame = false;
+    this.friendList.updateFriendRow(data.id, { inGame: '' });
   };
 }
