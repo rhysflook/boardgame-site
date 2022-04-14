@@ -159,6 +159,7 @@ label {
   inset: 0;
   border: 4px rgb(125, 57, 173) solid;
   box-shadow: 3px 3px 10px rgb(134, 67, 182), -3px 3px 10px rgb(134, 67, 182);
+  z-index: 1000;
 }
 
 .popup {

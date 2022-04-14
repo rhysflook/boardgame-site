@@ -1,3 +1,4 @@
+import { Disconnect } from '../components/game/Disconnect';
 import GameState from '../game/Draughts';
 import { GamePiece } from '../game/Pieces/Piece';
 import { reverseCoord } from '../game/utils';
@@ -13,6 +14,10 @@ export interface IInGameMessage {
   type: 'message';
   message: string;
   sender: string;
+}
+
+export interface IDisconnect {
+  type: 'disconnect';
 }
 
 export class GameHandler<
@@ -46,5 +51,11 @@ export class GameHandler<
 
   chat = (data: IInGameMessage): void => {
     this.socket.chatBox?.handleMessage(data.message, data.sender);
+  };
+
+  disconnect = (data: IDisconnect): void => {
+    console.log('user dced');
+    const screen = document.getElementById('left-side');
+    screen?.appendChild(new Disconnect());
   };
 }
