@@ -49,6 +49,7 @@ export class InviteWindow extends HTMLDivElement {
   }
 
   acceptInvite = (): void => {
+    document.cookie = 'type=vs';
     localStorage.setItem('opponentId', String(this.userId));
     localStorage.setItem('opponentName', this.player);
     window.location.href = `../../backend/game/draughts.php?opponent=${this.userId}`;

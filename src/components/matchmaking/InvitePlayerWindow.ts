@@ -59,9 +59,6 @@ export class InvitePlayerWindow extends HTMLElement {
   };
 
   cancelInvite = () => {
-    this.socket.send(
-      JSON.stringify({ type: 'end', id: localStorage.getItem('id') })
-    );
     if (this.timer) {
       clearTimeout(this.timer);
     }

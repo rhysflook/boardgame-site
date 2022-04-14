@@ -2,11 +2,11 @@
 namespace draughts;
 include "../utils/siteUtils.php";
 checkSession();
-$id = $_COOKIE['id'];
+removeCookies(['type', 'new-game', 'player-1']);
 if (isset($_POST['ai'])){
     $_SESSION['ai'] = true;
     setCookies(['new-game'=>true, 'type'=>'ai', 'colour'=>$_POST['colour']]);
-    header('location: ../backend/game/draughts.php');
+    header('location: ../game/draughts.php');
 }
 
 if (isset($_POST['logout'])) {

@@ -124,24 +124,25 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 100;
 }
 
-.black-piece {
+.blacks-piece {
   background-color: rgb(100, 93, 79);
 }
 
-.white-piece {
+.whites-piece {
   background-color: rgb(216, 186, 147);
 }
 
 /* .king {
 } */
 
-.white-king {
+.whites-king {
   background-color: gold;
 }
 
-.black-king {
+.blacks-king {
   background-color: silver;
 }
 

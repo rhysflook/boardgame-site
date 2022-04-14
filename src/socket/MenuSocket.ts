@@ -26,6 +26,7 @@ export class MenuSocket extends WebSocket implements SiteSocket {
         JSON.stringify({
           type: 'start',
           id: Number(userId),
+          location: 'menu',
         })
       );
     }

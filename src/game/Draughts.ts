@@ -7,276 +7,134 @@ import {
   DraughtGamePiece,
   DraughtMovesCalculator,
 } from './MoveCalculators/DraughtMovesCalculator';
-import { AllPieces, MoveCalculator } from './MoveCalculators/MoveCalculator';
-import { PieceMaker } from './Generators/PieceMaker';
-import { DraughtPiece } from './Pieces/DraughtsPiece';
+import { MoveCalculator } from './MoveCalculators/MoveCalculator';
+import { PieceGenerator } from './Generators/PieceMaker';
 import { GamePiece } from './Pieces/Piece';
-import { DraughtRules } from './Rules/DraughtRules';
-
-import {
-  getPieceList,
-  getPieceListAll,
-  getSquare,
-  reverseCoord,
-} from './utils';
+import { DraughtRules, Rules } from './Rules/DraughtRules';
 import { GameHandler } from '../socket/GameHandler';
-
+import { DraughtsPieceMaker } from './Generators/DraughtPieceMaker';
+import { GameColours } from './index';
+import {
+  Player,
+  LocalPlayer,
+  OnlinePlayer,
+  ComputerPlayer,
+} from './Players/index';
 export interface BoardSpace {
   x: number;
   y: number;
 }
 
-export interface Move {
-  pos: BoardSpace;
-  newPos: BoardSpace;
-  isCapture: boolean;
-  key: number;
-  colour: 'blacks' | 'whites';
-  captureKey: number;
-}
-
-export interface Rules<T extends GamePiece> {
-  scoreboard: ScoreBoard;
-  handleCapture(capturingPiece: T, capturedPiece: T): BoardSpace;
-  endTurn(game: GameState<T>, movedPiece: T): void;
-}
-
 export default class GameState<T extends GamePiece> {
-  movingPlayer: 'blacks' | 'whites' = 'blacks';
-  opponentColour: 'blacks' | 'whites';
-  moves: Move[];
+  attacker: Player<T>;
+  opponentColour: GameColours;
   chatbox: Chatbox;
+  localPlayer: Player<T>;
+  opponent: Player<T>;
 
   static setupDraughtsGame(
     gameMode: string,
-    playerColour: string,
+    playerColour: GameColours,
     scorecard: ScoreBoard,
     socket: GameSocket | null = null
   ): GameState<DraughtGamePiece> {
-    const pieces = PieceMaker.setupDraughtsBoard(playerColour);
     return new GameState<DraughtGamePiece>(
       gameMode,
       playerColour,
-      new DraughtMovesCalculator(pieces),
+      new DraughtMovesCalculator(playerColour),
       new EventHandler<DraughtGamePiece>(),
-      pieces,
       new DraughtRules(scorecard),
       scorecard,
-      socket
+      socket,
+      new DraughtsPieceMaker()
     );
   }
 
   constructor(
     public gameMode: string,
-    public playerColour: string,
+    public playerColour: GameColours,
     public calculator: MoveCalculator<T>,
     public events: EventHandler<T>,
-    public pieces: AllPieces<T>,
     public rules: Rules<T>,
     public scoreboard: ScoreBoard,
-    public socket: GameSocket | null = null
+    public socket: GameSocket | null = null,
+    public generator: PieceGenerator<T>
   ) {
-    this.moves = [];
-    this.opponentColour = this.playerColour === 'blacks' ? 'whites' : 'blacks';
     localStorage.setItem('movingColour', 'blacks');
+    this.opponentColour = this.playerColour === 'blacks' ? 'whites' : 'blacks';
     this.chatbox = new Chatbox(this.gameMode === 'vs' ? this.socket : null);
-    const scores = document.getElementById('scores');
-    if (scores) {
-      scores.appendChild(this.scoreboard.playerOne);
-      scores.appendChild(this.scoreboard.playerTwo);
-    }
+    this.localPlayer = new LocalPlayer(this, this.playerColour, this.generator);
+    this.opponent = this.setOpponent();
+    this.attacker =
+      this.playerColour === 'blacks' ? this.localPlayer : this.opponent;
     this.initGame();
   }
+
+  setOpponent = (): Player<T> => {
+    if (this.gameMode === 'ai') {
+      return new ComputerPlayer(this.opponentColour, this, this.generator);
+    } else {
+      return new OnlinePlayer(this, this.opponentColour, this.generator);
+    }
+  };
 
   initGame = (): void => {
     if (this.gameMode === 'training') {
       new DraughtTraining(this);
     } else {
-      this.moves = [];
-      this.moves = this.calculator.calc('blacks', this.pieces);
-      this.addEvents();
+      this.calculator.calc(this.attacker.colour, this.attacker.pieces);
+      this.events.applyEvents(this.attacker);
       if (this.gameMode === 'ai' && this.opponentColour === 'blacks') {
-        this.computerTurn();
+        this.opponent.move();
       } else {
         this.socket && new GameHandler(this.socket, this);
       }
     }
   };
 
-  getPiece = (colour: keyof AllPieces<T>, key: number): T => {
-    return this.pieces[colour][key];
+  getAllPieces = (): T[] => {
+    return [
+      ...Object.values(this.localPlayer.pieces),
+      ...Object.values(this.opponent.pieces),
+    ];
   };
 
-  addEvents = (): void => {
-    this.events.cleanUpEvents();
-    const pieces = this.getMovablePieces();
-    Object.values(pieces).forEach((data) => {
-      const { piece, moves } = data;
-      this.events.applyEvents(piece, moves, this);
-    });
-  };
-
-  getMovablePieces = (): { [key: string]: { moves: number[][]; piece: T } } => {
-    const pieces: { [key: string]: { moves: number[][]; piece: T } } = {};
-    this.moves.forEach((move: Move) => {
-      const piece = this.getPiece(move.colour, move.key);
-
-      if (piece) {
-        const key = `${piece.pos.x}-${piece.pos.y}`;
-        if (pieces[key]) {
-          pieces[key].moves.push([move.newPos.x, move.newPos.y]);
-        } else {
-          pieces[key] = { moves: [[move.newPos.x, move.newPos.y]], piece };
-        }
-      }
-    });
-    return pieces;
-  };
-
-  findMove = (piece: T, x: number, y: number): Move => {
-    return this.moves.find(
-      (move: Move) =>
-        move.pos.x === piece.pos.x &&
-        move.pos.y === piece.pos.y &&
-        x === move.newPos.x &&
-        y === move.newPos.y
-    ) as Move;
-  };
-
-  capture = (piece: T, captureKey: number): void => {
-    const capturedColour = this.movingPlayer === 'blacks' ? 'whites' : 'blacks';
-    this.rules.handleCapture(piece, this.getPiece(capturedColour, captureKey));
-    delete this.pieces[capturedColour][captureKey];
-    this.calculator.allPieces = getPieceListAll(this.pieces);
+  nextTurn = (): void => {
+    this.rules.winnerCheck(this.attacker);
+    this.attacker = this.rules.getDefender(this);
+    this.calculator.calc(this.attacker.colour, this.attacker.pieces);
+    localStorage.setItem('movingColour', this.attacker.colour);
+    this.events.applyEvents(this.attacker);
+    this.scoreboard.switchPlayers();
+    this.computerIsAttacking() && this.opponent.move();
   };
 
   isOnlineGame = (): boolean => {
-    return this.gameMode === 'vs' && this.movingPlayer === this.playerColour;
-  };
-
-  movePiece = (piece: T, target: BoardSpace): void => {
-    const chosenMove = this.findMove(piece, target.x, target.y);
-    if (chosenMove?.isCapture) {
-      this.capture(piece, chosenMove.captureKey);
-    }
-    if (this.isOnlineGame()) {
-      // const move = {
-      //   pos: { x: piece.pos.x, y: piece.pos.y },
-      //   newPos: {
-      //     x: target.x,
-      //     y: target.y,
-      //   },
-      //   isCapture: chosenMove?.isCapture as boolean,
-      //   key: chosenMove?.key as number,
-      //   colour: chosenMove?.colour as 'blacks' | 'whites',
-      //   captureKey: chosenMove?.captureKey as number,
-      // };
-
-      // need to test this
-      this.sendMove(chosenMove);
-    }
-
-    piece.pos.x = target.x;
-    piece.pos.y = target.y;
-    this.rules.endTurn(this, piece);
-  };
-
-  sendMove = (move: Move) => {
-    this.socket?.send(
-      JSON.stringify({ type: 'move', move: JSON.stringify(move) })
+    return (
+      this.gameMode === 'vs' &&
+      this.attacker.colour === this.playerColour &&
+      this.socket !== null
     );
   };
 
-  switchColour(): void {
-    this.movingPlayer === 'blacks'
-      ? (this.movingPlayer = 'whites')
-      : (this.movingPlayer = 'blacks');
-
-    localStorage.setItem(
-      'movingColour',
-      this.movingPlayer === 'blacks' ? 'blacks' : 'whites'
+  computerIsAttacking = (): boolean => {
+    return (
+      this.gameMode === 'ai' && this.attacker.colour === this.opponentColour
     );
-  }
-
-  winnerCheck(): void {
-    const container = document.querySelector('.container') as HTMLElement;
-    if (this.scoreboard.playerOne.numOfCaptures === 12) {
-      const winnerMessage = document.createElement('h1');
-      winnerMessage.innerText = `${this.movingPlayer.toUpperCase()} WIN!`;
-      container.appendChild(winnerMessage);
-    }
-  }
-
-  makeMove = (move: Move, piece: T): void => {
-    const currentSpace = getSquare(move.pos.x, move.pos.y) as HTMLElement;
-    const targetSpace = getSquare(move.newPos.x, move.newPos.y) as HTMLElement;
-    this.dragPiece(
-      currentSpace.children[0] as HTMLElement,
-      targetSpace as HTMLElement
-    );
-    setTimeout(() => {
-      currentSpace.innerHTML = '';
-      targetSpace.appendChild(piece.createHTMLElement());
-      this.movePiece(piece as T, { x: move.newPos.x, y: move.newPos.y });
-    }, 290);
   };
 
-  computerTurn = (): void => {
-    if (this.moves.length > 0) {
-      const move = this.moves[Math.floor(Math.random() * this.moves.length)];
-      const piece = this.getPiece(move.colour, move.key);
+  // updateStoredData(): void {
+  //   localStorage.setItem('moving', this.attacker);
 
-      if (piece) {
-        this.makeMove(move, piece);
-      }
-    } else {
-      this.switchPlayer();
-    }
-  };
-
-  switchPlayer = (): void => {
-    this.moves = [];
-    this.winnerCheck();
-    this.switchColour();
-
-    this.moves = this.calculator.calc(this.movingPlayer, this.pieces);
-    this.addEvents();
-
-    this.scoreboard.switchPlayers();
-    if (this.gameMode === 'ai' && this.movingPlayer === this.opponentColour) {
-      this.computerTurn();
-    }
-  };
-
-  dragPiece(ele: HTMLElement, destination: HTMLElement): void {
-    const pos = ele.getBoundingClientRect();
-    const newPos = destination.getBoundingClientRect();
-    ele.animate(
-      [
-        {
-          transform: `translate(${newPos.x - pos.x + 5}px, ${
-            newPos.y - pos.y + 5
-          }px)`,
-        },
-      ],
-      {
-        duration: 300,
-      }
-    );
-  }
-
-  updateStoredData(): void {
-    localStorage.setItem('moving', this.movingPlayer);
-
-    const whiteData = getPieceList(this.pieces.whites).map((piece) => {
-      const { x, y, colour, isKing } = piece[1];
-      return { x, y, colour, isKing };
-    });
-    const blackData = getPieceList(this.pieces.blacks).map((piece) => {
-      const { x, y, colour, isKing } = piece[1];
-      return { x, y, colour, isKing };
-    });
-    const piecesJson = JSON.stringify({ whites: whiteData, blacks: blackData });
-    localStorage.setItem('pieces', piecesJson);
-  }
+  //   const whiteData = getPieceList(this.pieces.whites).map((piece) => {
+  //     const { x, y, colour, isKing } = piece[1];
+  //     return { x, y, colour, isKing };
+  //   });
+  //   const blackData = getPieceList(this.pieces.blacks).map((piece) => {
+  //     const { x, y, colour, isKing } = piece[1];
+  //     return { x, y, colour, isKing };
+  //   });
+  //   const piecesJson = JSON.stringify({ whites: whiteData, blacks: blackData });
+  //   localStorage.setItem('pieces', piecesJson);
+  // }
 }

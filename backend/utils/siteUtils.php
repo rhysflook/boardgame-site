@@ -62,4 +62,14 @@ function checkSession() {
     }
 }
 
+function removeCookies($cookies) {
+    foreach ($cookies as $cookie) {
+        if (isset($_COOKIE[$cookie])) {
+            unset($_COOKIE[$cookie]);
+            setcookie($cookie, null, -1, '/');
+        }
+    }
+}
+
+
 ?>

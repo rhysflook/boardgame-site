@@ -1,4 +1,4 @@
-import { DraughtsPieceMaker } from './DraughtPieceMaker';
+import { DraughtsPieceMaker, StartingPos } from './DraughtPieceMaker';
 import { DraughtPiece } from '../Pieces/DraughtsPiece';
 import { GamePiece } from '../Pieces/Piece';
 
@@ -7,34 +7,11 @@ export interface Pieces<T> {
 }
 
 export interface PieceGenerator<T> {
-  makePieces(
-    start: number,
-    finish: number,
-    colour: 'black' | 'white',
-    side: 'top' | 'bottom'
-  ): Pieces<T>;
+  makePieces(pos: StartingPos): Pieces<T>;
 }
 
 export class PieceMaker<T extends GamePiece> {
-  static setupDraughtsBoard = (
-    colour: string
-  ): { blacks: Pieces<DraughtPiece>; whites: Pieces<DraughtPiece> } => {
-    return new PieceMaker<DraughtPiece>(
-      new DraughtsPieceMaker(),
-      colour
-    ).getPieces();
-  };
-
   constructor(public generator: PieceGenerator<T>, public colour: string) {}
-
-  getPieces = (): { blacks: Pieces<T>; whites: Pieces<T> } => {
-    const pieces = this.createPieces();
-    this.setPieces([
-      ...Object.values(pieces.blacks),
-      ...Object.values(pieces.whites),
-    ]);
-    return pieces;
-  };
 
   setPieces = (pieces: T[]): void => {
     pieces.forEach((piece) => {
@@ -44,19 +21,5 @@ export class PieceMaker<T extends GamePiece> {
       ) as HTMLElement;
       square.appendChild(piece.element);
     });
-  };
-
-  createPieces = (): { blacks: Pieces<T>; whites: Pieces<T> } => {
-    if (this.colour === 'blacks') {
-      return {
-        blacks: this.generator.makePieces(5, 8, 'black', 'bottom'),
-        whites: this.generator.makePieces(0, 3, 'white', 'top'),
-      };
-    } else {
-      return {
-        blacks: this.generator.makePieces(0, 3, 'black', 'top'),
-        whites: this.generator.makePieces(5, 8, 'white', 'bottom'),
-      };
-    }
   };
 }

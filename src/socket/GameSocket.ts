@@ -7,6 +7,8 @@ import { SiteSocket } from './MenuSocket';
 import { getCookie } from '../game/utils';
 import { InviteHandler } from './InviteHandler';
 import { GamePiece } from '../game/Pieces/Piece';
+import { GameColours } from '../game/index';
+import { Move } from '../game/Players/Player';
 
 interface Player {
   id: number;
@@ -40,6 +42,7 @@ export class GameSocket extends WebSocket implements SiteSocket {
         JSON.stringify({
           type: 'start',
           id: Number(userId),
+          location: 'game',
         })
       );
     }
@@ -49,8 +52,15 @@ export class GameSocket extends WebSocket implements SiteSocket {
     const screen = document.querySelector('.container') as HTMLElement;
     this.inviteUi = new InvitePlayerWindow(this, screen);
     if (screen) {
-      screen.appendChild(new InvitePlayerWindow(this, screen));
+      screen.appendChild(this.inviteUi);
     }
+  };
+
+  startGame = (colour: GameColours, isChoosing: boolean): void => {
+    const scoreboard = ScoreBoard.SetupScoreBoard(colour);
+    isChoosing && this.send(JSON.stringify({ type: 'colourChoice', colour }));
+    localStorage.setItem('playerColour', colour);
+    GameState.setupDraughtsGame('vs', colour, scoreboard, this);
   };
 
   handleColourChoice = (coinFlip: number): void => {
@@ -59,18 +69,12 @@ export class GameSocket extends WebSocket implements SiteSocket {
     screen.appendChild(colourSelection);
     if (coinFlip === 0) {
       colourSelection.getSelection().then((colour) => {
-        const scoreboard = ScoreBoard.SetupScoreBoard(colour);
-
-        localStorage.setItem('playerColour', colour);
-        this.send(JSON.stringify({ type: 'colourChoice', colour }));
-        GameState.setupDraughtsGame('vs', colour, scoreboard, this);
+        this.startGame(colour as GameColours, true);
         colourSelection.remove();
       });
     } else {
       colourSelection.waitForPlayer(this).then((colour) => {
-        const scoreboard = ScoreBoard.SetupScoreBoard(colour);
-        localStorage.setItem('playerColour', colour);
-        GameState.setupDraughtsGame('vs', colour, scoreboard, this);
+        this.startGame(colour as GameColours, false);
         colourSelection.remove();
       });
     }
@@ -89,5 +93,9 @@ export class GameSocket extends WebSocket implements SiteSocket {
         username: localStorage.getItem('username'),
       })
     );
+  };
+
+  sendMove = (move: Move) => {
+    this.send(JSON.stringify({ type: 'move', move: JSON.stringify(move) }));
   };
 }

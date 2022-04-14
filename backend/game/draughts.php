@@ -17,6 +17,7 @@
             <div id="quit"><button class="popup-button">Back</button></div>
             <div class="container">
                 <div class="board">        
+                    
                     <?php for($i=0; $i < 8; $i++ ): ?> 
                         <?php for($j=0; $j < 8; $j++): ?>
                             <?php if ($i % 2 == 1 && $j % 2 == 0 || $i % 2 == 0 && $j % 2 == 1): ?>

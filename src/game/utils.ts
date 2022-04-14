@@ -1,5 +1,6 @@
-import { AllPieces, GamePiece } from './MoveCalculators/MoveCalculator';
+import { AllPieces } from './MoveCalculators/MoveCalculator';
 import { Pieces } from './Generators/PieceMaker';
+import { GamePiece } from './Pieces/Piece';
 
 export const isInSquare = (
   x: number,
@@ -12,6 +13,19 @@ export const isInSquare = (
 
 export const getSquare = (x: number, y: number): HTMLElement => {
   return document.getElementById(`${x}-${y}`) as HTMLElement;
+};
+
+export const placePiece = <T extends GamePiece>(
+  x: number,
+  y: number,
+  piece: T
+): void => {
+  const space = getSquare(x, y);
+  space.appendChild(piece.element);
+};
+
+export const getPieceEle = (colour: string, key: number): HTMLElement => {
+  return document.getElementById(`${colour}-${key}`) as HTMLElement;
 };
 
 export const detectPiece = <T extends GamePiece>(
@@ -33,15 +47,12 @@ export const isOutOfBounds = (x: number, y: number): boolean => {
   return outsideSpaces.includes(x) || outsideSpaces.includes(y);
 };
 
-export const isOpenSpace = <T extends GamePiece>(
-  x: number,
-  y: number,
-  pieces: T[]
-): boolean => {
+export const isOpenSpace = (x: number, y: number): boolean => {
   if (isOutOfBounds(x, y)) {
     return false;
   }
-  return !pieces.some((piece: T) => piece.pos.x === x && piece.pos.y === y);
+  const square = getSquare(x, y) as HTMLElement;
+  return square.children[0] === undefined;
 };
 
 export const getCookie = (name: string): string | undefined => {

@@ -1,5 +1,4 @@
 import { AxiosResponse } from '../../node_modules/axios/index';
-import { Chatbox } from '../components/chatbox/Chatbox';
 import { ColourSelection } from '../components/matchmaking/ColourSelection';
 import { PlayerCard } from '../components/scoreboard/PlayerCard';
 import { ScoreBoard } from '../components/scoreboard/ScoreBoard';
@@ -17,6 +16,8 @@ const axios = require('axios').default;
 //     piece.remove();
 //   });
 // };
+
+export type GameColours = 'blacks' | 'whites';
 
 const quitButton = document.getElementById('quit');
 quitButton?.addEventListener('click', () => {
@@ -43,9 +44,6 @@ if (gameType === 'training') {
   const screen = document.querySelector('.container') as HTMLElement;
   const colourSelection = new ColourSelection(0);
   screen.appendChild(colourSelection);
-  const chatMenu = document.getElementById('chat-menu') as HTMLElement;
-
-  chatMenu.appendChild(new Chatbox());
   colourSelection.getSelection().then((colour) => {
     localStorage.setItem('playerColour', colour);
 
@@ -64,7 +62,7 @@ if (gameType === 'training') {
     );
 
     const scoreCard = new ScoreBoard(cardOne, cardTwo);
-    GameState.setupDraughtsGame('ai', colour, scoreCard);
+    GameState.setupDraughtsGame('ai', colour as GameColours, scoreCard);
     colourSelection.remove();
   });
 } else if (opponent) {

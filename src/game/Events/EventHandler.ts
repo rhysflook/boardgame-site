@@ -1,5 +1,6 @@
-import GameState, { BoardSpace } from '../Draughts';
-import { GamePiece } from '../Pieces/Piece';
+import { BoardSpace } from '../Draughts';
+import { GamePiece, Moves } from '../Pieces/Piece';
+import { Move, Player } from '../Players/Player';
 import { getSquare, isInSquare } from '../utils';
 
 export type Callback = () => void;
@@ -15,6 +16,9 @@ export class EventHandler<T extends GamePiece> {
   isTraining: boolean = false;
   action: Callback = () => {};
   actionNum: number = 0;
+  moveKey: number = 0;
+  pieceKey: number = 0;
+  movingPlayer: Player<T> | null = null;
 
   constructor() {
     const boardEle = document.querySelector('.board') as HTMLElement;
@@ -35,13 +39,23 @@ export class EventHandler<T extends GamePiece> {
     this.action = action;
   };
 
-  applyEvents(piece: T, moves: number[][], game: GameState<T>): void {
-    const ele = piece.element;
-    ele.onmousedown = (e) => this.handleDragStart(e, piece);
-    ele.onmousemove = (e) => this.handleDrag(e, piece, moves);
-    ele.onmouseup = (e) => this.handleDragEnd(e, piece, game);
-    this.eventBoundPieces.push(ele);
+  applyEvents(player: Player<T>): void {
+    this.movingPlayer = player;
+    this.cleanUpEvents();
+    Object.values(player.pieces).forEach((piece: T) => {
+      this.addEvents(piece, piece.moves);
+    });
   }
+
+  addEvents = (piece: T, moves: Moves): void => {
+    if (Object.keys(moves).length > 0) {
+      const ele = piece.element;
+      ele.onmousedown = (e) => this.handleDragStart(e, piece);
+      ele.onmousemove = (e) => this.handleDrag(e, piece, moves);
+      ele.onmouseup = (e) => this.handleDragEnd(e, piece);
+      this.eventBoundPieces.push(ele);
+    }
+  };
 
   cleanUpEvents = () => {
     this.eventBoundPieces.forEach((element) => {
@@ -73,12 +87,11 @@ export class EventHandler<T extends GamePiece> {
     }
   }
 
-  handleDragEnd(e: MouseEvent, piece: T, game: GameState<T>) {
+  handleDragEnd(e: MouseEvent, piece: T) {
     if (piece.moving) {
       const ele = piece.element;
       piece.moving = false;
       if (this.space === null) {
-        // ele.style.left = '0';
         ele.style.left = piece.left + 'px';
         ele.style.top = piece.top + 'px';
         ele.style.position = 'fixed';
@@ -86,7 +99,12 @@ export class EventHandler<T extends GamePiece> {
         getSquare(piece.pos.x, piece.pos.y).innerHTML = '';
         this.space.classList.remove('destination');
         this.space.appendChild(piece.createHTMLElement());
-        game.movePiece(piece, this.target);
+        this.movingPlayer?.updatePieceInfo(
+          piece,
+          piece.moves[this.moveKey],
+          this.target
+        );
+
         if (this.isTraining) {
           this.action();
         }
@@ -98,23 +116,34 @@ export class EventHandler<T extends GamePiece> {
     }
   }
 
-  handleDrag(e: MouseEvent, piece: T, moves: number[][]) {
+  handleDrag(e: MouseEvent, piece: T, moves: Moves) {
     if (piece.moving) {
-      moves.forEach((move) => {
-        this.handleDestinationHover(e, move, piece);
+      Object.entries(moves).forEach((data: [string, Move]) => {
+        const [key, move] = data;
+        this.handleDestinationHover(e, move, piece.id, Number(key));
       });
     }
   }
 
-  handleDestinationHover(e: MouseEvent, move: number[], piece: T) {
-    const [x, y] = move;
+  handleDestinationHover(
+    e: MouseEvent,
+    move: Move,
+    pieceKey: number,
+    moveKey: number
+  ) {
+    const { x, y } = move.newPos;
+    console.log(x, y);
     const square = document.getElementById(`${x}-${y}`) as HTMLElement;
     if (isInSquare(e.pageX, e.pageY, square)) {
       square.classList.add('destination');
       this.space = square;
       this.target = { x, y };
+      this.moveKey = moveKey;
+      this.pieceKey = pieceKey;
     } else {
       if (this.space === square) {
+        this.moveKey = 0;
+        this.pieceKey = 0;
         square.classList.remove('destination');
         this.space = null;
         this.target = { x, y };
@@ -125,8 +154,6 @@ export class EventHandler<T extends GamePiece> {
   isPlayersPiece = (piece: T): boolean => {
     const movingColour = localStorage.getItem('movingColour');
     const playerColour = localStorage.getItem('playerColour');
-    return (
-      piece.colour + 's' === movingColour && piece.colour + 's' === playerColour
-    );
+    return piece.colour === movingColour && piece.colour === playerColour;
   };
 }

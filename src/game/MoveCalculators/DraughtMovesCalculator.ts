@@ -1,73 +1,113 @@
-import { Move } from '../Draughts';
-import { GamePiece } from '../Pieces/Piece';
+import { BoardSpace } from '../Draughts';
+import { Pieces } from '../Generators/PieceMaker';
+import { GameColours } from '../index';
+import { GamePiece, Moves } from '../Pieces/Piece';
+import { Move } from '../Players/Player';
 import {
-  detectPiece,
   getPieceList,
-  getPieceListAll,
+  getSquare,
   isOpenSpace,
   isOutOfBounds,
+  placePiece,
 } from '../utils';
-import { AllPieces, MoveCalculator } from './MoveCalculator';
+import { MoveCalculator } from './MoveCalculator';
 
 export interface DraughtGamePiece extends GamePiece {
   isKing: boolean;
+}
+
+export interface Spaces<T extends GamePiece> {
+  [x: number]: {
+    [y: number]: T | null;
+  };
 }
 
 export class DraughtMovesCalculator
   implements MoveCalculator<DraughtGamePiece>
 {
   moving: 'blacks' | 'whites';
-  constructor(public pieces: AllPieces<DraughtGamePiece>) {
+  defending: 'blacks' | 'whites';
+  captureAvailable: boolean = false;
+  spaces: Spaces<DraughtGamePiece>;
+  constructor(public playerColour: GameColours) {
     this.moving = 'blacks';
+    this.defending = 'whites';
+    this.spaces = this.setSpaces();
   }
-  allPieces = getPieceListAll<DraughtGamePiece>(this.pieces);
 
-  calc(
-    colour: 'blacks' | 'whites',
-    allPieces: AllPieces<DraughtGamePiece>
-  ): Move[] {
-    this.moving = colour;
-    this.pieces = allPieces;
-    this.allPieces = getPieceListAll<DraughtGamePiece>(allPieces);
-    const pieces = this.pieces[colour];
-
-    let moves: Move[] = [];
-    getPieceList(pieces).forEach((data: [string, DraughtGamePiece]) => {
-      moves = [...moves, ...this.findCaptures(data[1], Number(data[0]))];
-    });
-    if (moves.length === 0) {
-      getPieceList(pieces).forEach((data: [string, DraughtGamePiece]) => {
-        moves = [...moves, ...this.findMoves(data[1], Number(data[0]))];
-      });
+  setSpaces = (): Spaces<DraughtGamePiece> => {
+    const spaces: Spaces<DraughtGamePiece> = {};
+    for (let i = 0; i < 8; i++) {
+      spaces[i] = {};
+      for (let j = 0; j < 8; j++) {
+        spaces[i][j] = null;
+      }
     }
 
-    return moves;
+    return spaces;
+  };
+
+  setPieces = (pieces: DraughtGamePiece[]): void => {
+    pieces.forEach((piece) => {
+      console.log(piece);
+      const { x, y } = piece.pos;
+      this.spaces[piece.pos.x][piece.pos.y] = piece;
+      placePiece(x, y, piece);
+    });
+  };
+
+  changeSpace = (piece: DraughtGamePiece, newX: number, newY: number): void => {
+    const { x, y } = piece.pos;
+    this.removeFromSpace(x, y);
+    this.spaces[newX][newY] = piece;
+  };
+
+  removeFromSpace = (x: number, y: number): void => {
+    this.spaces[x][y] = null;
+  };
+
+  calc(colour: GameColours, pieces: Pieces<DraughtGamePiece>): void {
+    this.captureAvailable = false;
+    this.moving = colour;
+    this.defending = colour === 'blacks' ? 'whites' : 'blacks';
+    console.log(this.spaces);
+    getPieceList(pieces).forEach((data: [string, DraughtGamePiece]) => {
+      const [key, piece] = data;
+      piece.moves = this.findCaptures(piece, Number(key));
+      if (Object.keys(piece.moves).length > 0 && !this.captureAvailable) {
+        this.captureAvailable = true;
+      }
+    });
+    if (!this.captureAvailable) {
+      getPieceList(pieces).forEach((data: [string, DraughtGamePiece]) => {
+        const [key, piece] = data;
+        piece.moves = this.findMoves(piece, Number(key));
+      });
+    }
   }
 
-  findMoves(piece: DraughtGamePiece, key: number): Move[] {
-    const moves: Move[] = [];
-    this.getMoves(piece).forEach((move) => {
-      if (isOpenSpace(move[0], move[1], this.allPieces)) {
-        moves.push({
-          pos: { x: piece.pos.x, y: piece.pos.y },
-          newPos: { x: move[0], y: move[1] },
-          isCapture: false,
-          key,
-          colour: this.moving,
-          captureKey: 0,
-        });
+  findMoves(piece: DraughtGamePiece, key: number): Moves {
+    const moves: Moves = {};
+    this.getMoves(piece).forEach((move, index) => {
+      if (this.isOpenSpace(move[0], move[1])) {
+        console.log('really?');
+        moves[index] = this.getMoveInfo(piece, move, key);
       }
     });
     return moves;
   }
 
   captureIsLegal(x: number, y: number, piece: DraughtGamePiece) {
-    const open = isOpenSpace(x, y, this.allPieces);
-    const outOfBounds = isOutOfBounds(x, y);
-    const canCapture = this.canCapture(x, y, piece);
-
-    return !open && !outOfBounds && canCapture;
+    return (
+      !this.isOpenSpace(x, y) &&
+      !isOutOfBounds(x, y) &&
+      this.canCapture(x, y, piece)
+    );
   }
+
+  isOpenSpace = (x: number, y: number): boolean => {
+    return this.spaces[x][y] === null;
+  };
 
   getMoves(piece: DraughtGamePiece): number[][] {
     const xMovement = this.getXDirection(piece);
@@ -93,58 +133,62 @@ export class DraughtMovesCalculator
     }
   }
 
-  findCaptures(piece: DraughtGamePiece, key: number): Move[] {
-    const captures: Move[] = [];
-    this.getMoves(piece).forEach((move) => {
+  findCaptures(piece: DraughtGamePiece, key: number): Moves {
+    const captures: Moves = {};
+    this.getMoves(piece).forEach((move, index) => {
       if (this.captureIsLegal(move[0], move[1], piece)) {
-        const newSpace = this.spaceAfterCapture(move[0], move[1], piece);
-        captures.push({
-          pos: { x: piece.pos.x, y: piece.pos.y },
-          newPos: { x: newSpace[0], y: newSpace[1] },
-          isCapture: true,
-          key,
-          colour: this.moving,
-          captureKey: this.getCaptureKey(move[0], move[1]),
-        });
+        captures[index] = this.getMoveInfo(piece, move, key, true);
       }
     });
     return captures;
   }
 
+  getMoveInfo = (
+    piece: DraughtGamePiece,
+    move: number[],
+    key: number,
+    isCapture: boolean = false
+  ): Move => {
+    const newXY = isCapture
+      ? this.spaceAfterCapture(move[0], move[1], piece)
+      : { x: move[0], y: move[1] };
+    return {
+      pos: { x: piece.pos.x, y: piece.pos.y },
+      newPos: { ...newXY },
+      isCapture: isCapture,
+      key,
+      colour: this.moving,
+      captureKey: isCapture ? this.getCaptureKey(move[0], move[1]) : 0,
+    };
+  };
+
   getCaptureKey = (moveX: number, moveY: number): number => {
-    const enemy = detectPiece<DraughtGamePiece>(moveX, moveY, this.allPieces);
-    const enemyColour = this.moving === 'blacks' ? 'whites' : 'blacks';
-    let captureKey = 0;
-    Object.entries(this.pieces[enemyColour]).forEach(
-      (data: [string, DraughtGamePiece]) => {
-        const [key, piece] = data;
-        if (piece.pos.x === enemy?.pos.x && piece.pos.y === enemy.pos.y) {
-          captureKey = Number(key);
-        }
-      }
-    );
-    return captureKey;
+    const space = getSquare(moveX, moveY);
+    const [_, id] = space.children[0].id.split('-');
+    return Number(id);
   };
 
   canCapture(moveX: number, moveY: number, piece: DraughtGamePiece): boolean {
-    const enemy = detectPiece(moveX, moveY, this.allPieces);
-    const enemyColour = piece.colour === 'black' ? 'white' : 'black';
-
-    const targetSpace = this.spaceAfterCapture(moveX, moveY, piece);
-    if (enemy && enemy.colour === enemyColour) {
-      return isOpenSpace(targetSpace[0], targetSpace[1], this.allPieces);
-    } else {
-      return false;
+    if (this.spaces[moveX][moveY]?.colour === this.defending) {
+      const { x, y } = this.spaceAfterCapture(moveX, moveY, piece);
+      console.log(x, y);
+      return isOpenSpace(x, y);
     }
+    return false;
   }
+
+  isOutOfBounds = (x: number, y: number): boolean => {
+    const outOfBounds = [-1, -2, 8, 9];
+    return outOfBounds.includes(x) || outOfBounds.includes(y);
+  };
 
   spaceAfterCapture(
     moveX: number,
     moveY: number,
     piece: DraughtGamePiece
-  ): number[] {
-    const newX = moveX === 0 ? -1 : Math.abs(piece.pos.x - moveX * 2);
-    const newY = moveY === 0 ? -1 : Math.abs(piece.pos.y - moveY * 2);
-    return [newX, newY];
+  ): BoardSpace {
+    const x = moveX === 0 ? -1 : Math.abs(piece.pos.x - moveX * 2);
+    const y = moveY === 0 ? -1 : Math.abs(piece.pos.y - moveY * 2);
+    return { x, y };
   }
 }

@@ -12,7 +12,13 @@ export class ScoreBoard {
     return new ScoreBoard(cardOne, cardTwo);
   };
 
-  constructor(public playerOne: PlayerCard, public playerTwo: PlayerCard) {}
+  constructor(public playerOne: PlayerCard, public playerTwo: PlayerCard) {
+    const scores = document.getElementById('scores');
+    if (scores) {
+      scores.appendChild(this.playerOne);
+      scores.appendChild(this.playerTwo);
+    }
+  }
 
   countCapture = (colour: string, isKing: boolean): void => {
     if (colour === 'black') {

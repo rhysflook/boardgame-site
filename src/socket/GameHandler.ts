@@ -1,4 +1,4 @@
-import GameState, { Move } from '../game/Draughts';
+import GameState from '../game/Draughts';
 import { GamePiece } from '../game/Pieces/Piece';
 import { reverseCoord } from '../game/utils';
 import { GameSocket } from './GameSocket';
@@ -6,7 +6,7 @@ import { MessageHandler } from './MessageHandler';
 
 export interface IMove {
   type: 'move';
-  move: Move;
+  move: string;
 }
 
 export class GameHandler<
@@ -17,14 +17,14 @@ export class GameHandler<
   }
 
   move = (data: IMove): void => {
-    const move = data.move;
+    const move = JSON.parse(data.move);
     if (move.colour !== this.game.playerColour) {
       let x = reverseCoord(move.pos.x);
       let y = reverseCoord(move.pos.y);
       let newX = reverseCoord(move.newPos.x);
       let newY = reverseCoord(move.newPos.y);
 
-      const piece = this.game.getPiece(move.colour, 13 - move.key);
+      const piece = this.game.opponent.pieces[13 - move.key];
       const opponentMove = {
         pos: { x, y },
         newPos: { x: newX, y: newY },
@@ -34,7 +34,7 @@ export class GameHandler<
         captureKey: 13 - move.captureKey,
       };
 
-      this.game.makeMove(opponentMove, piece);
+      this.game.opponent.makeMove(opponentMove, piece);
     }
   };
 }
