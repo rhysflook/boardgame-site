@@ -1,4 +1,3 @@
-import { Chatbox } from '../components/chatbox/Chatbox';
 import { ScoreBoard } from '../components/scoreboard/ScoreBoard';
 import { GameSocket } from '../socket/GameSocket';
 import { DraughtTraining } from './training/DraughtTraining';
@@ -28,7 +27,6 @@ export interface BoardSpace {
 export default class GameState<T extends GamePiece> {
   attacker: Player<T>;
   opponentColour: GameColours;
-  chatbox: Chatbox;
   localPlayer: Player<T>;
   opponent: Player<T>;
 
@@ -62,7 +60,6 @@ export default class GameState<T extends GamePiece> {
   ) {
     localStorage.setItem('movingColour', 'blacks');
     this.opponentColour = this.playerColour === 'blacks' ? 'whites' : 'blacks';
-    this.chatbox = new Chatbox(this.gameMode === 'vs' ? this.socket : null);
     this.localPlayer = new LocalPlayer(this, this.playerColour, this.generator);
     this.opponent = this.setOpponent();
     this.attacker =

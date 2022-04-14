@@ -21,12 +21,14 @@ export class GameSocket extends WebSocket implements SiteSocket {
   playerOne: Player | null = null;
   playerTwo: Player | null = null;
   inviteUi: InvitePlayerWindow | null = null;
+
   constructor(url: string, public isChallenger: boolean) {
     super(url);
 
     this.addEventListener('open', () => {
       new InviteHandler(this);
       this.setupConnection();
+      this.chatBox = new Chatbox(this);
       if (isChallenger) {
         this.setupChallenger();
       } else {
@@ -97,5 +99,15 @@ export class GameSocket extends WebSocket implements SiteSocket {
 
   sendMove = (move: Move) => {
     this.send(JSON.stringify({ type: 'move', move: JSON.stringify(move) }));
+  };
+
+  sendMessage = (message: string) => {
+    this.send(
+      JSON.stringify({
+        type: 'chat',
+        message,
+        sender: localStorage.getItem('username'),
+      })
+    );
   };
 }

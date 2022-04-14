@@ -1,32 +1,31 @@
 import { capitalise } from '../../game/utils';
 import { GameSocket } from '../../socket/GameSocket';
-import { getTemplate } from '../../templates/invite';
+import { BaseComponent } from '../BaseComponent';
 import { Message } from './Message';
 
-export class Chatbox extends HTMLElement {
+export class Chatbox extends BaseComponent {
+  html = `
+  <link rel="stylesheet" href="../../menu.css">
+  <div id="chat-box">
+      <div id="messages"></div>
+      <div id="type-area">
+      <div id="type-input">
+        <textarea id="new-message"></textarea>
+        <button id="send-message" class="popup-button">^</button>
+      </div>
+      </div>
+  </div>
+`;
+
   messageBox: HTMLElement;
   textInput: HTMLTextAreaElement;
-  sendButton: HTMLElement;
+
   constructor(public socket: GameSocket | null = null) {
     super();
-    const shadowRoot = this.attachShadow({ mode: 'open' });
-    shadowRoot.appendChild(getTemplate('chatBox'));
-    this.messageBox = this.shadowRoot?.getElementById(
-      'messages'
-    ) as HTMLElement;
-    this.textInput = this.shadowRoot?.getElementById(
-      'new-message'
-    ) as HTMLTextAreaElement;
-    this.sendButton = this.shadowRoot?.getElementById(
-      'send-message'
-    ) as HTMLElement;
-    this.sendButton.addEventListener('click', () => {
-      this.sendMessage();
-    });
-
-    if (this.socket) {
-      this.connectChatbox();
-    }
+    this.render(this.html);
+    this.messageBox = this.getById('messages') as HTMLElement;
+    this.textInput = this.getById('new-message') as HTMLTextAreaElement;
+    this.getByIdAndBind('send-message', 'click', () => this.sendMessage());
 
     const chatArea = document.getElementById('chat-menu');
     if (chatArea) {
@@ -40,17 +39,6 @@ export class Chatbox extends HTMLElement {
     );
   };
 
-  connectChatbox = (): void => {
-    if (this.socket) {
-      this.socket.addEventListener('message', (event) => {
-        const data = JSON.parse(event.data);
-        if (data.type === 'chat') {
-          this.handleMessage(data.message, data.sender);
-        }
-      });
-    }
-  };
-
   sendMessage = (): void => {
     this.messageBox.appendChild(
       new Message(
@@ -59,15 +47,7 @@ export class Chatbox extends HTMLElement {
         true
       ).renderMessage()
     );
-    if (this.socket) {
-      this.socket.send(
-        JSON.stringify({
-          type: 'chat',
-          message: this.textInput.value,
-          sender: localStorage.getItem('username'),
-        })
-      );
-    }
+    this.socket?.sendMessage(this.textInput.value);
     this.textInput.value = '';
   };
 }

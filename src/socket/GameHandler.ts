@@ -9,6 +9,12 @@ export interface IMove {
   move: string;
 }
 
+export interface IInGameMessage {
+  type: 'message';
+  message: string;
+  sender: string;
+}
+
 export class GameHandler<
   T extends GamePiece
 > extends MessageHandler<GameSocket> {
@@ -36,5 +42,9 @@ export class GameHandler<
 
       this.game.opponent.makeMove(opponentMove, piece);
     }
+  };
+
+  chat = (data: IInGameMessage): void => {
+    this.socket.chatBox?.handleMessage(data.message, data.sender);
   };
 }
