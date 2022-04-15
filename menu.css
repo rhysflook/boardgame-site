@@ -681,4 +681,35 @@ input[type='radio'] {
   #captures {
     font-size: 0.9em;
   }
+
+  .invite-menu {
+    height: 50%;
+  }
+  .popup-message {
+    font-size: 1.1em;
+  }
+  #playerName {
+    height: 40px;
+  }
+
+  .invite-menu .popup-button,
+  .tutorial .popup-button {
+    font-size: 1.1em;
+    height: 30px;
+  }
+  .tutorial-outer {
+    width: 100%;
+    position: absolute;
+  }
+  .tutorial h2 {
+    font-size: 1.3em;
+  }
+  .tutorial {
+    height: initial;
+    width: 80%;
+    top: initial;
+    left: initial;
+    margin: auto;
+    position: relative;
+  }
 }

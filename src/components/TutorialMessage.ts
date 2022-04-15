@@ -4,6 +4,7 @@ export class TutorialMessage extends BaseComponent {
   constructor(public message: string) {
     super();
     this.render(this.template);
+    this.classList.add('tutorial-outer');
   }
 
   connectedCallback(): void {

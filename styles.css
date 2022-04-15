@@ -219,4 +219,10 @@ body {
     width: 90%;
     height: auto;
   }
+
+  .tutorial-outer {
+    margin-top: 20px;
+    width: 100%;
+    position: absolute;
+  }
 }
