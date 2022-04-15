@@ -173,9 +173,19 @@ body {
   box-shadow: 1px 1px 5px rgb(134, 67, 182), -1px 1px 5px rgb(134, 67, 182);
 }
 
+.card-comp {
+  width: 35%;
+  height: 65%;
+  margin: 0 2%;
+}
+
 @media (max-width: 600px) {
   .screen {
     flex-direction: column;
+  }
+
+  .card-comp {
+    width: 40%;
   }
 
   #left-side {
@@ -185,5 +195,28 @@ body {
   .board {
     width: 90vw;
     height: 90vw;
+  }
+
+  #quit {
+    width: auto;
+    height: auto;
+  }
+
+  .container {
+    display: initial;
+    height: initial;
+    margin-top: 50px;
+  }
+
+  #left-side {
+    justify-content: initial;
+  }
+  #scores {
+    justify-content: space-evenly;
+  }
+
+  #chat-menu {
+    width: 90%;
+    height: auto;
   }
 }

@@ -1,4 +1,5 @@
 import { AxiosResponse } from '../../node_modules/axios/index';
+import { Chatbox } from '../components/chatbox/Chatbox';
 import { ColourSelection } from '../components/matchmaking/ColourSelection';
 import { PlayerCard } from '../components/scoreboard/PlayerCard';
 import { ScoreBoard } from '../components/scoreboard/ScoreBoard';
@@ -81,6 +82,7 @@ if (gameType === 'training') {
       );
 
       const scoreCard = new ScoreBoard(cardOne, cardTwo);
+      const chatBox = new Chatbox();
       GameState.setupDraughtsGame('ai', colour as GameColours, scoreCard);
       colourSelection.remove();
     });

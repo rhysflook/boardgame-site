@@ -599,6 +599,12 @@ input[type='radio'] {
   position: absolute;
 }
 
+.card-comp {
+  width: 35%;
+  height: 65%;
+  margin: 0 2%;
+}
+
 @media (max-width: 600px) {
   .popup {
     width: 90%;
@@ -666,5 +672,13 @@ input[type='radio'] {
     display: flex;
     flex-direction: column;
     align-items: center;
+  }
+
+  #username {
+    font-size: 1.1em;
+  }
+
+  #captures {
+    font-size: 0.9em;
   }
 }
