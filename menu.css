@@ -593,3 +593,28 @@ input[type='radio'] {
 .spaced {
   margin-top: 15px;
 }
+
+.chat-group-ele {
+  position: absolute;
+}
+
+@media (max-width: 600px) {
+  .popup {
+    width: 90%;
+    height: 85%;
+  }
+
+  .popup-button,
+  input[type='text'],
+  input[type='password'] {
+    width: 60%;
+  }
+  .chat-group-inner-open {
+    width: 90%;
+  }
+
+  .chat-group-container,
+  .chat-group-ele {
+    width: 100%;
+  }
+}

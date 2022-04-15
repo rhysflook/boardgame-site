@@ -21,8 +21,7 @@ export class ChatGroup extends HTMLElement {
   ) {
     super();
     this.id = this.groupName;
-
-    this.style.position = 'absolute';
+    this.className = 'chat-group-ele';
     const shadowRoot = this.attachShadow({ mode: 'open' });
     this.localId = Number(localStorage.getItem('id'));
     this.getChatHistory().then((res) => {
