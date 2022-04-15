@@ -51,11 +51,11 @@ export class EventHandler<T extends GamePiece> {
     if (Object.keys(moves).length > 0) {
       const ele = piece.element;
       ele.onmousedown = (e) => this.handleDragStart(e, piece);
-      ele.ontouchstart = (e) => this.handleDragStart(e, piece);
+      ele.ontouchstart = (e) => this.handleTouchStart(e, piece);
       ele.onmousemove = (e) => this.handleDrag(e, piece, moves);
-      ele.ontouchmove = (e) => this.handleDrag(e, piece, moves);
+      ele.ontouchmove = (e) => this.handleTouchMove(e, piece, moves);
       ele.onmouseup = (e) => this.handleDragEnd(e, piece);
-      ele.ontouchend = (e) => this.handleDragEnd(e, piece);
+      ele.ontouchend = (e) => this.handleTouchEnd(e, piece);
       this.eventBoundPieces.push(ele);
     }
   };
@@ -68,6 +68,37 @@ export class EventHandler<T extends GamePiece> {
     });
     this.eventBoundPieces = [];
   };
+
+  handleTouchStart(e: TouchEvent, piece: T) {
+    e.preventDefault();
+    const ele = piece.element;
+    console.log(e.touches);
+
+    if (this.isPlayersPiece(piece)) {
+      if (this.isPlayersPiece(piece)) {
+        this.draggedEle = piece.element;
+        this.draggedPiece = piece;
+        const { width, height, left, top } = ele.getBoundingClientRect();
+        const square = getSquare(piece.pos.x, piece.pos.y) as HTMLElement;
+        const squareHieght = square.getBoundingClientRect().height;
+        console.log(ele.style.top);
+        ele.style.left = e.touches[0].pageX - width / 2 + 'px';
+        ele.style.top = e.touches[0].pageY - height + 'px';
+        ele.style.width = `${width}px`;
+        ele.style.height = `${height}px`;
+        ele.style.position = 'absolute';
+        // ele.style.left = e.clientX - width / 2 + 'px';
+        console.log(ele.style.top);
+        piece.left = left;
+        piece.top = top;
+        piece.width = width;
+        piece.height = height;
+
+        piece.moving = true;
+        this.dragging = true;
+      }
+    }
+  }
 
   handleDragStart(e: MouseEvent, piece: T) {
     const ele = piece.element;
@@ -87,6 +118,35 @@ export class EventHandler<T extends GamePiece> {
 
       piece.moving = true;
       this.dragging = true;
+    }
+  }
+
+  handleTouchEnd(e: TouchEvent, piece: T) {
+    if (piece.moving) {
+      const ele = piece.element;
+      piece.moving = false;
+      if (this.space === null) {
+        ele.style.left = piece.left + 'px';
+        ele.style.top = piece.top + 'px';
+        ele.style.position = 'fixed';
+      } else {
+        getSquare(piece.pos.x, piece.pos.y).innerHTML = '';
+        this.space.classList.remove('destination');
+        this.space.appendChild(piece.createHTMLElement());
+        this.movingPlayer?.updatePieceInfo(
+          piece,
+          piece.moves[this.moveKey],
+          this.target
+        );
+
+        if (this.isTraining) {
+          this.action();
+        }
+      }
+      this.dragging = false;
+      this.draggedEle = null;
+      this.draggedPiece = null;
+      this.space = null;
     }
   }
 
@@ -119,24 +179,51 @@ export class EventHandler<T extends GamePiece> {
     }
   }
 
+  handleTouchMove(e: TouchEvent, piece: T, moves: Moves) {
+    e.preventDefault();
+    if (piece.moving) {
+      const ele = piece.element;
+      const { width, height } = ele.getBoundingClientRect();
+      ele.style.left = e.touches[0].pageX - width / 2 + 'px';
+      ele.style.top = e.touches[0].pageY - height + 'px';
+      Object.entries(moves).forEach((data: [string, Move]) => {
+        const [key, move] = data;
+        this.handleDestinationHover(
+          e.touches[0].pageX,
+          e.touches[0].pageY,
+          move,
+          piece.id,
+          Number(key)
+        );
+      });
+    }
+  }
+
   handleDrag(e: MouseEvent, piece: T, moves: Moves) {
     if (piece.moving) {
       Object.entries(moves).forEach((data: [string, Move]) => {
         const [key, move] = data;
-        this.handleDestinationHover(e, move, piece.id, Number(key));
+        this.handleDestinationHover(
+          e.pageX,
+          e.pageY,
+          move,
+          piece.id,
+          Number(key)
+        );
       });
     }
   }
 
   handleDestinationHover(
-    e: MouseEvent,
+    pageX: number,
+    pageY: number,
     move: Move,
     pieceKey: number,
     moveKey: number
   ) {
     const { x, y } = move.newPos;
     const square = document.getElementById(`${x}-${y}`) as HTMLElement;
-    if (isInSquare(e.pageX, e.pageY, square)) {
+    if (isInSquare(pageX, pageY, square)) {
       square.classList.add('destination');
       this.space = square;
       this.target = { x, y };
