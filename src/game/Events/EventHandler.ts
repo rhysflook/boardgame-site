@@ -83,7 +83,7 @@ export class EventHandler<T extends GamePiece> {
         const squareHieght = square.getBoundingClientRect().height;
         console.log(ele.style.top);
         ele.style.left = e.touches[0].pageX - width / 2 + 'px';
-        ele.style.top = e.touches[0].pageY - height + 'px';
+        ele.style.top = e.touches[0].pageY - height * 2 + 'px';
         ele.style.width = `${width}px`;
         ele.style.height = `${height}px`;
         ele.style.position = 'absolute';
@@ -185,7 +185,7 @@ export class EventHandler<T extends GamePiece> {
       const ele = piece.element;
       const { width, height } = ele.getBoundingClientRect();
       ele.style.left = e.touches[0].pageX - width / 2 + 'px';
-      ele.style.top = e.touches[0].pageY - height + 'px';
+      ele.style.top = e.touches[0].pageY - height * 2 + 'px';
       Object.entries(moves).forEach((data: [string, Move]) => {
         const [key, move] = data;
         this.handleDestinationHover(
