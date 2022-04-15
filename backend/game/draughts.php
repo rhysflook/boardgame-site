@@ -13,7 +13,7 @@
     <script>var exports = {};</script>
     <script type="module" src="../../dist/game.bundle.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <div class="screen">
+    <div class="screen gameview-screen">
         <div id="left-side">
             <div id="quit"><button class="popup-button">Back</button></div>
             <div class="container">

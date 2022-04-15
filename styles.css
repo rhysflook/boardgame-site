@@ -172,3 +172,18 @@ body {
 .popup-button:active {
   box-shadow: 1px 1px 5px rgb(134, 67, 182), -1px 1px 5px rgb(134, 67, 182);
 }
+
+@media (max-width: 600px) {
+  .screen {
+    flex-direction: column;
+  }
+
+  #left-side {
+    width: 100%;
+  }
+
+  .board {
+    width: 90vw;
+    height: 90vw;
+  }
+}

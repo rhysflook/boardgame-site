@@ -507,7 +507,8 @@ label {
   position: relative;
 }
 
-.chat-group-container {
+.chat-group-container-open,
+.chat-group-container-closed {
   position: absolute;
   bottom: 1px;
 }
@@ -601,7 +602,7 @@ input[type='radio'] {
 @media (max-width: 600px) {
   .popup {
     width: 90%;
-    height: 85%;
+    height: 75%;
   }
 
   .popup-button,
@@ -610,11 +611,60 @@ input[type='radio'] {
     width: 60%;
   }
   .chat-group-inner-open {
-    width: 90%;
+    width: 100%;
+    height: 100%;
   }
 
-  .chat-group-container,
-  .chat-group-ele {
+  .chat-group-container-open {
     width: 100%;
+  }
+
+  .chat-group-ele {
+    position: initial;
+    width: 100%;
+    height: 95%;
+  }
+
+  .chat-group-inner-open {
+    margin: 0 auto;
+    width: 95%;
+    height: 100%;
+  }
+
+  .chat-group-inner-closed {
+    width: 60px;
+    bottom: 1px;
+  }
+
+  .chat-inner-container {
+    height: 100%;
+  }
+
+  .chat-button {
+    font-size: 1.2rem;
+    margin-top: initial;
+  }
+
+  .short {
+    font-size: 1.2rem;
+    height: initial;
+    width: initial;
+    margin-top: 0;
+  }
+  .bottom-right {
+    margin-bottom: 20px;
+  }
+  .c-open {
+    width: 60%;
+  }
+
+  .setting-row {
+    text-align: center;
+    flex-direction: column;
+  }
+  #language {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 }

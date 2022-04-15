@@ -165,14 +165,20 @@ export class ChatGroup extends HTMLElement {
     if (button) {
       button.addEventListener('click', () => {
         const frame = this.shadowRoot?.getElementById('frame') as HTMLElement;
+        const group = this.shadowRoot?.getElementById(
+          `${this.groupName}`
+        ) as HTMLElement;
         this.collapsed = !this.collapsed;
         if (this.collapsed) {
           this.inputField = null;
+
           button.className = 'chat-button closed';
           frame.className = 'chat-group-inner-closed';
+          group.className = 'chat-group-container-closed';
         } else {
           button.className = 'chat-button short open';
           frame.className = 'chat-group-inner-open';
+          group.className = 'chat-group-container-open';
         }
         this.renderAllMessage();
         if (!this.collapsed) {
@@ -235,7 +241,7 @@ export class ChatGroup extends HTMLElement {
     const html = `
     <link rel="stylesheet" href="../../menu.css">
     <div id="dragger"></div>
-      <div id="${this.groupName}" class="chat-group-container">
+      <div id="${this.groupName}" class="chat-group-container-closed">
         <div id="frame" class="chat-group-inner-closed">
         <div id="${this.groupName}-chat">
         </div>

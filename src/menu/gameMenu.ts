@@ -80,7 +80,8 @@ screen?.appendChild(new UserSettings());
 getPlayerId(username as string, true).then(() => {
   axios.get('../auth/socket-url.php').then((res: AxiosResponse) => {
     const socket = new MenuSocket(res.data as string);
-    document.body.append(new ChatGroup(socket, username as string, 'All', 0));
+
+    screen?.appendChild(new ChatGroup(socket, username as string, 'Chat', 0));
     axios
       .get(
         '../friends/getChatHistory.php?recipient_id=' +

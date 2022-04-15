@@ -51,8 +51,11 @@ export class EventHandler<T extends GamePiece> {
     if (Object.keys(moves).length > 0) {
       const ele = piece.element;
       ele.onmousedown = (e) => this.handleDragStart(e, piece);
+      ele.ontouchstart = (e) => this.handleDragStart(e, piece);
       ele.onmousemove = (e) => this.handleDrag(e, piece, moves);
+      ele.ontouchmove = (e) => this.handleDrag(e, piece, moves);
       ele.onmouseup = (e) => this.handleDragEnd(e, piece);
+      ele.ontouchend = (e) => this.handleDragEnd(e, piece);
       this.eventBoundPieces.push(ele);
     }
   };

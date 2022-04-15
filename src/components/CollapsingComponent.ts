@@ -3,7 +3,7 @@ import { BaseComponent } from './BaseComponent';
 export class CollapsingComponent extends BaseComponent {
   base = `
     <link rel="stylesheet" href="../../menu.css">
-    <div  class="collapsing ${this.customClasses}">
+    <div id="collapsable" class="collapsing ${this.customClasses}">
     <button id="showButton" class="popup-button short corner">${this.buttonLabel}</button>
     <div id="main" >
     </div>
@@ -32,10 +32,14 @@ export class CollapsingComponent extends BaseComponent {
 
   toggleComponent = (): void => {
     const main = this.shadowRoot?.getElementById('main');
+    const box = this.getById('collapsable');
     if (main) {
       main.innerHTML = this.collapsed ? '' : this.innerContent;
       if (!this.collapsed) {
+        box?.classList.add('c-open');
         this.buttonAction();
+      } else {
+        box?.classList.remove('c-open');
       }
     }
   };
