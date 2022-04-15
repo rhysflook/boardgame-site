@@ -1,5 +1,6 @@
 import { BoardSpace } from '../Draughts';
 import { GameColours } from '../index';
+import { getSquare } from '../utils';
 import { GamePiece, Moves } from './Piece';
 
 export class DraughtPiece implements GamePiece {

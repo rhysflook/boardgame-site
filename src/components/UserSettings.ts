@@ -47,7 +47,6 @@ export class UserSettings extends CollapsingComponent {
 
   changeLanguage = (e: Event): void => {
     const element = e.currentTarget as HTMLInputElement;
-    console.log(element.value);
   };
 
   changeDetails = (): void => {

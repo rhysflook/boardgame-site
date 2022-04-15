@@ -1,9 +1,10 @@
 import { TutorialMessage } from '../../components/TutorialMessage';
-import GameState, { Move } from '../Draughts';
+import GameState from '../Draughts';
 import { GamePiece } from '../Pieces/Piece';
+import { Move } from '../Players/index';
 import { getSquare } from '../utils';
 
-// posX, posY, newX, newY, isCapture, key, colour, captureKey
+// posX, posY, newX, newY, isCapture, key,, captureKey
 
 export type SetMove = [number, number, number, number, boolean, number, number];
 
@@ -77,7 +78,6 @@ export class DraughtTraining<T extends GamePiece> {
   }
 
   setupMove = (): void => {
-    console.log(this.messageCount);
     if (this.tutorialMessage) {
       this.tutorialMessage.remove();
     }
@@ -119,17 +119,22 @@ export class DraughtTraining<T extends GamePiece> {
   };
 
   playerMove = (move: SetMove): void => {
-    this.markPiece('blacks', move[5]);
+    this.markPiece(move[5]);
     this.startFlashingPiece(move[2], move[3]);
-    this.game.moves = this.getMove(move);
-    this.game.addEvents();
+    const moves = {
+      0: this.getMove(move),
+    };
+    this.game.localPlayer.pieces[move[5]].moves = moves;
+    this.game.events.addEvents(this.game.localPlayer.pieces[move[5]], moves);
     this.togglePlayer();
   };
 
   computerMove = (move: SetMove): void => {
     this.clearFlashingPiece();
-    this.game.moves = this.getMove(move);
-    this.game.makeMove(this.game.moves[0], this.game.pieces.whites[move[5]]);
+    this.game.opponent.makeMove(
+      this.getMove(move),
+      this.game.opponent.pieces[move[5]]
+    );
     this.togglePlayer();
   };
 
@@ -160,22 +165,20 @@ export class DraughtTraining<T extends GamePiece> {
     }, 500);
   };
 
-  markPiece = (colour: 'blacks' | 'whites', key: number): void => {
-    this.game.pieces[colour][key].element.style.backgroundColor =
+  markPiece = (key: number): void => {
+    this.game.localPlayer.pieces[key].element.style.backgroundColor =
       'rgb(198, 165, 221)';
   };
 
-  getMove = (move: SetMove): Move[] => {
-    return [
-      {
-        pos: { x: move[0], y: move[1] },
-        newPos: { x: move[2], y: move[3] },
-        isCapture: move[4],
-        key: move[5],
-        colour: this.playerMoving ? 'blacks' : 'whites',
-        captureKey: move[6],
-      },
-    ];
+  getMove = (move: SetMove): Move => {
+    return {
+      pos: { x: move[0], y: move[1] },
+      newPos: { x: move[2], y: move[3] },
+      isCapture: move[4],
+      key: move[5],
+      colour: this.playerMoving ? 'blacks' : 'whites',
+      captureKey: move[6],
+    };
   };
 
   togglePlayer = (): void => {

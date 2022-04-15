@@ -1,6 +1,7 @@
 import { DraughtsPieceMaker, StartingPos } from './DraughtPieceMaker';
 import { DraughtPiece } from '../Pieces/DraughtsPiece';
 import { GamePiece } from '../Pieces/Piece';
+import { GameColours } from '../index';
 
 export interface Pieces<T> {
   [key: number]: T;
@@ -8,6 +9,13 @@ export interface Pieces<T> {
 
 export interface PieceGenerator<T> {
   makePieces(pos: StartingPos): Pieces<T>;
+  makePiece(
+    x: number,
+    y: number,
+    colour: GameColours,
+    side: 'bottom' | 'top',
+    id: number
+  ): T;
 }
 
 export class PieceMaker<T extends GamePiece> {

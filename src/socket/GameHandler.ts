@@ -23,6 +23,7 @@ export interface IDisconnect {
 export class GameHandler<
   T extends GamePiece
 > extends MessageHandler<GameSocket> {
+  dcPopup: Disconnect | null = null;
   constructor(socket: GameSocket, public game: GameState<T>) {
     super(socket);
   }
@@ -53,9 +54,14 @@ export class GameHandler<
     this.socket.chatBox?.handleMessage(data.message, data.sender);
   };
 
-  disconnect = (data: IDisconnect): void => {
-    console.log('user dced');
+  disconnect = (): void => {
     const screen = document.getElementById('left-side');
-    screen?.appendChild(new Disconnect());
+    this.dcPopup = new Disconnect();
+    screen?.appendChild(this.dcPopup);
+  };
+
+  reconnect = (): void => {
+    this.dcPopup?.reconnect();
+    this.dcPopup?.remove();
   };
 }

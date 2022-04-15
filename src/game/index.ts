@@ -41,12 +41,8 @@ if (gameType === 'training') {
   const scoreCard = new ScoreBoard(cardOne, cardTwo);
   GameState.setupDraughtsGame('training', 'blacks', scoreCard);
 } else if (gameType === 'ai') {
-  const screen = document.querySelector('.container') as HTMLElement;
-  const colourSelection = new ColourSelection(0);
-  screen.appendChild(colourSelection);
-  colourSelection.getSelection().then((colour) => {
-    localStorage.setItem('playerColour', colour);
-
+  if (localStorage.getItem('gameInProgress')) {
+    const colour = localStorage.getItem('playerColour');
     const cardOne = new PlayerCard(
       colour === 'blacks'
         ? (localStorage.getItem('username') as string)
@@ -63,8 +59,32 @@ if (gameType === 'training') {
 
     const scoreCard = new ScoreBoard(cardOne, cardTwo);
     GameState.setupDraughtsGame('ai', colour as GameColours, scoreCard);
-    colourSelection.remove();
-  });
+  } else {
+    const screen = document.querySelector('.container') as HTMLElement;
+    const colourSelection = new ColourSelection(0);
+    screen.appendChild(colourSelection);
+    colourSelection.getSelection().then((colour) => {
+      localStorage.setItem('playerColour', colour);
+
+      const cardOne = new PlayerCard(
+        colour === 'blacks'
+          ? (localStorage.getItem('username') as string)
+          : 'Boss A.I',
+        'black'
+      );
+      cardOne.select();
+      const cardTwo = new PlayerCard(
+        colour === 'blacks'
+          ? 'Boss A.I'
+          : (localStorage.getItem('username') as string),
+        'white'
+      );
+
+      const scoreCard = new ScoreBoard(cardOne, cardTwo);
+      GameState.setupDraughtsGame('ai', colour as GameColours, scoreCard);
+      colourSelection.remove();
+    });
+  }
 } else if (opponent) {
   axios.get('../../backend/auth/socket-url.php').then((res: AxiosResponse) => {
     if (res) {

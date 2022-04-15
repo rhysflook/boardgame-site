@@ -21,17 +21,17 @@ export class ScoreBoard {
   }
 
   countCapture = (colour: string, isKing: boolean): void => {
-    if (colour === 'black') {
+    if (colour === 'blacks') {
       this.playerOne.incrementCaptures();
-      isKing && this.playerOne.decrementKings();
+      isKing && this.playerTwo.decrementKings();
     } else {
       this.playerTwo.incrementCaptures();
-      isKing && this.playerTwo.decrementKings();
+      isKing && this.playerOne.decrementKings();
     }
   };
 
   countKing = (colour: string): void => {
-    colour === 'black'
+    colour === 'blacks'
       ? this.playerOne.incrementKings()
       : this.playerTwo.incrementKings();
   };

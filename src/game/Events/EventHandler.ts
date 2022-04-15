@@ -132,7 +132,6 @@ export class EventHandler<T extends GamePiece> {
     moveKey: number
   ) {
     const { x, y } = move.newPos;
-    console.log(x, y);
     const square = document.getElementById(`${x}-${y}`) as HTMLElement;
     if (isInSquare(e.pageX, e.pageY, square)) {
       square.classList.add('destination');

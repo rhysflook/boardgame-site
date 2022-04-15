@@ -49,7 +49,6 @@ export class DraughtMovesCalculator
 
   setPieces = (pieces: DraughtGamePiece[]): void => {
     pieces.forEach((piece) => {
-      console.log(piece);
       const { x, y } = piece.pos;
       this.spaces[piece.pos.x][piece.pos.y] = piece;
       placePiece(x, y, piece);
@@ -70,7 +69,6 @@ export class DraughtMovesCalculator
     this.captureAvailable = false;
     this.moving = colour;
     this.defending = colour === 'blacks' ? 'whites' : 'blacks';
-    console.log(this.spaces);
     getPieceList(pieces).forEach((data: [string, DraughtGamePiece]) => {
       const [key, piece] = data;
       piece.moves = this.findCaptures(piece, Number(key));
@@ -90,7 +88,6 @@ export class DraughtMovesCalculator
     const moves: Moves = {};
     this.getMoves(piece).forEach((move, index) => {
       if (this.isOpenSpace(move[0], move[1])) {
-        console.log('really?');
         moves[index] = this.getMoveInfo(piece, move, key);
       }
     });
@@ -99,13 +96,16 @@ export class DraughtMovesCalculator
 
   captureIsLegal(x: number, y: number, piece: DraughtGamePiece) {
     return (
-      !this.isOpenSpace(x, y) &&
       !isOutOfBounds(x, y) &&
+      !this.isOpenSpace(x, y) &&
       this.canCapture(x, y, piece)
     );
   }
 
   isOpenSpace = (x: number, y: number): boolean => {
+    if (isOutOfBounds(x, y)) {
+      return false;
+    }
     return this.spaces[x][y] === null;
   };
 
@@ -171,7 +171,6 @@ export class DraughtMovesCalculator
   canCapture(moveX: number, moveY: number, piece: DraughtGamePiece): boolean {
     if (this.spaces[moveX][moveY]?.colour === this.defending) {
       const { x, y } = this.spaceAfterCapture(moveX, moveY, piece);
-      console.log(x, y);
       return isOpenSpace(x, y);
     }
     return false;

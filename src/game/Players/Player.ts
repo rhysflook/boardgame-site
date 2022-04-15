@@ -25,6 +25,13 @@ export interface Player<T extends GamePiece> {
   pieceMaker: PieceGenerator<T>;
 }
 
+export interface SavedPiece {
+  x: number;
+  y: number;
+  colour: GameColours;
+  isKing: boolean;
+}
+
 export abstract class Player<T extends GamePiece> implements Player<T> {
   moves: Move[] = [];
   constructor(
@@ -37,10 +44,40 @@ export abstract class Player<T extends GamePiece> implements Player<T> {
     const startingPos: StartingPos = this.isLocal
       ? { start: 5, finish: 8, colour: pieceColour, side: 'bottom' }
       : { start: 0, finish: 3, colour: pieceColour, side: 'top' };
-    this.pieces = this.pieceMaker.makePieces(startingPos);
-    console.log(this.pieces);
-    this.game.calculator.setPieces(Object.values(this.pieces));
+
+    if (
+      localStorage.getItem('gameInProgress') &&
+      this.game.gameMode !== 'training'
+    ) {
+      this.pieces = this.replacePieces();
+      this.game.calculator.setPieces(Object.values(this.pieces));
+    } else {
+      this.pieces = this.pieceMaker.makePieces(startingPos);
+      this.game.calculator.setPieces(Object.values(this.pieces));
+    }
   }
+
+  replacePieces = (): Pieces<T> => {
+    const pieces = JSON.parse(
+      localStorage.getItem(`${this.colour}-pieces`) as string
+    );
+    const newPieces: Pieces<T> = {};
+
+    pieces.forEach((piece: SavedPiece) => {
+      const key = Object.keys(newPieces).length + 1;
+      newPieces[key] = this.pieceMaker.makePiece(
+        piece.x,
+        piece.y,
+        piece.colour,
+        this.isLocal ? 'bottom' : 'top',
+        key
+      );
+      if (piece.isKing) {
+        this.game.rules.crownPiece(newPieces[key]);
+      }
+    });
+    return newPieces;
+  };
 
   updatePieceInfo = (piece: T, move: Move, target: BoardSpace): void => {
     if (move.isCapture) {
@@ -55,7 +92,6 @@ export abstract class Player<T extends GamePiece> implements Player<T> {
 
   makeMove = (move: Move, piece: T): void => {
     const targetSpace = getSquare(move.newPos.x, move.newPos.y) as HTMLElement;
-    console.log(targetSpace);
     piece.dragPiece(targetSpace as HTMLElement);
     setTimeout(() => {
       piece.replacePiece(targetSpace);
@@ -66,27 +102,19 @@ export abstract class Player<T extends GamePiece> implements Player<T> {
     }, 290);
   };
 
-  dragPiece(ele: HTMLElement, destination: HTMLElement): void {
-    const pos = ele.getBoundingClientRect();
-    const newPos = destination.getBoundingClientRect();
-    ele.animate(
-      [
-        {
-          transform: `translate(${newPos.x - pos.x + 5}px, ${
-            newPos.y - pos.y + 5
-          }px)`,
-        },
-      ],
-      {
-        duration: 300,
-      }
-    );
-  }
-
   canMove = (): boolean => {
     return Object.values(this.pieces).some((piece) => {
       return Object.keys(piece.moves).length > 0;
     });
+  };
+
+  updateSavedData = (): void => {
+    const saveData = Object.values(this.pieces).map((piece) => {
+      const { x, y } = piece.pos;
+      const { colour, isKing } = piece;
+      return { x, y, colour, isKing };
+    });
+    localStorage.setItem(this.colour + '-pieces', JSON.stringify(saveData));
   };
 
   abstract move(): void;

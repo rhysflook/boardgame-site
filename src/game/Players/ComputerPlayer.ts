@@ -13,6 +13,7 @@ export class ComputerPlayer<T extends GamePiece> extends Player<T> {
   }
 
   move = (): void => {
+    console.log('??');
     if (this.canMove()) {
       const { piece, move } = this.getRandomMove();
       this.makeMove(move, piece);
@@ -25,7 +26,6 @@ export class ComputerPlayer<T extends GamePiece> extends Player<T> {
     const pieceList = Object.values(this.pieces).filter(
       (piece) => Object.keys(piece.moves).length > 0
     );
-    console.log(pieceList);
     const piece = pieceList[Math.floor(Math.random() * pieceList.length)];
     const moveList = Object.values(piece.moves);
     const move = moveList[Math.floor(Math.random() * moveList.length)] as Move;

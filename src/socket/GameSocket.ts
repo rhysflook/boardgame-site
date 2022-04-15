@@ -29,10 +29,16 @@ export class GameSocket extends WebSocket implements SiteSocket {
       new InviteHandler(this);
       this.setupConnection();
       this.chatBox = new Chatbox(this);
-      if (isChallenger) {
-        this.setupChallenger();
+      if (!localStorage.getItem('gameInProgress')) {
+        if (isChallenger) {
+          this.setupChallenger();
+        } else {
+          this.setupOpponent();
+        }
       } else {
-        this.setupOpponent();
+        const colour = localStorage.getItem('playerColour') as GameColours;
+        const scoreboard = ScoreBoard.SetupScoreBoard(colour);
+        GameState.setupDraughtsGame('vs', colour, scoreboard, this);
       }
     });
   }

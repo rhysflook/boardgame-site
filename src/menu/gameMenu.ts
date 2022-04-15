@@ -15,6 +15,8 @@ export interface Friend {
   inGame: boolean;
 }
 
+localStorage.removeItem('gameInProgress');
+
 const axios = require('axios').default;
 
 const menu = document.querySelector('.menu-container') as HTMLElement;

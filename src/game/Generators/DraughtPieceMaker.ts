@@ -11,14 +11,15 @@ export interface StartingPos {
 }
 
 export class DraughtsPieceMaker implements PieceGenerator<DraughtPiece> {
-  makePieces(pos: StartingPos): Pieces<DraughtPiece> {
+  makePieces = (pos: StartingPos): Pieces<DraughtPiece> => {
     const pieces: Pieces<DraughtPiece> = {};
 
     for (let i = pos.start; i < pos.finish; i++) {
       for (let j = 0; j < 4; j++) {
         const yAxis = i % 2 == 0 ? j * 2 + 1 : j * 2;
-        pieces[Object.keys(pieces).length + 1] = new DraughtPiece(
-          { x: i, y: yAxis },
+        pieces[Object.keys(pieces).length + 1] = this.makePiece(
+          i,
+          yAxis,
           pos.colour,
           pos.side,
           Object.keys(pieces).length + 1
@@ -26,5 +27,17 @@ export class DraughtsPieceMaker implements PieceGenerator<DraughtPiece> {
       }
     }
     return pieces;
-  }
+  };
+
+  makePiece = (
+    x: number,
+    y: number,
+    colour: GameColours,
+    side: 'top' | 'bottom',
+    id: number
+  ): DraughtPiece => {
+    const piece = new DraughtPiece({ x, y }, colour, side, id);
+
+    return piece;
+  };
 }

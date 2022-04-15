@@ -58,17 +58,34 @@ export default class GameState<T extends GamePiece> {
     public socket: GameSocket | null = null,
     public generator: PieceGenerator<T>
   ) {
-    localStorage.setItem('movingColour', 'blacks');
     this.opponentColour = this.playerColour === 'blacks' ? 'whites' : 'blacks';
     this.localPlayer = new LocalPlayer(this, this.playerColour, this.generator);
     this.opponent = this.setOpponent();
     this.attacker =
       this.playerColour === 'blacks' ? this.localPlayer : this.opponent;
-    this.initGame();
+
+    if (
+      !localStorage.getItem('gameInProgress') ||
+      this.gameMode === 'training'
+    ) {
+      localStorage.setItem('gameInProgress', '1');
+      localStorage.setItem('movingColour', 'blacks');
+
+      this.initGame();
+    } else {
+      const attackingColour = localStorage.getItem('movingColour');
+      this.attacker =
+        attackingColour === this.localPlayer.colour
+          ? this.localPlayer
+          : this.opponent;
+      this.calculator.calc(this.localPlayer.colour, this.localPlayer.pieces);
+      this.events.applyEvents(this.attacker);
+      this.socket && new GameHandler(this.socket, this);
+    }
   }
 
   setOpponent = (): Player<T> => {
-    if (this.gameMode === 'ai') {
+    if (this.gameMode === 'ai' || this.gameMode === 'training') {
       return new ComputerPlayer(this.opponentColour, this, this.generator);
     } else {
       return new OnlinePlayer(this, this.opponentColour, this.generator);
@@ -77,6 +94,7 @@ export default class GameState<T extends GamePiece> {
 
   initGame = (): void => {
     if (this.gameMode === 'training') {
+      this.events.movingPlayer = this.localPlayer;
       new DraughtTraining(this);
     } else {
       this.calculator.calc(this.attacker.colour, this.attacker.pieces);
@@ -97,7 +115,10 @@ export default class GameState<T extends GamePiece> {
   };
 
   nextTurn = (): void => {
-    this.rules.winnerCheck(this.attacker);
+    this.localPlayer.updateSavedData();
+    this.opponent.updateSavedData();
+
+    this.rules.winnerCheck(this.attacker, this.localPlayer.colour);
     this.attacker = this.rules.getDefender(this);
     this.calculator.calc(this.attacker.colour, this.attacker.pieces);
     localStorage.setItem('movingColour', this.attacker.colour);
