@@ -225,7 +225,7 @@ export class ChatGroup extends HTMLElement {
   
       <div id="sendBar">
         <textarea type="text" id="chatContent"></textarea>
-        <button id="sendChat" class="popup-button short">Send</button>
+        <button id="sendChat" class="base-button short">Send</button>
         </div>
         <div id="${this.groupName}-chat-inner" class="chat-group"></div>
       </div>
@@ -240,6 +240,7 @@ export class ChatGroup extends HTMLElement {
   render = (): void => {
     const html = `
     <link rel="stylesheet" href="../../menu.css">
+    <link rel="stylesheet" href="../../styles/chatGroup.css">
     <div id="dragger"></div>
       <div id="${this.groupName}" class="chat-group-container-closed">
         <div id="frame" class="chat-group-inner-closed">

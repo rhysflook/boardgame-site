@@ -3,9 +3,9 @@ import { BaseComponent } from '../BaseComponent';
 export class GameResult extends BaseComponent {
   html = `
     <link rel="stylesheet" href="../../menu.css">
-    <div class="invite-menu">
+    <div class="menu-window">
     <h1 class="popup-message">You ${this.message}!</h1>
-    <button id="return" class="popup-button">Menu</button>
+    <button id="return" class="base-button">Menu</button>
     </div>
     `;
   constructor(public message: string) {

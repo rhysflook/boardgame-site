@@ -3,8 +3,9 @@ import { BaseComponent } from './BaseComponent';
 export class CollapsingComponent extends BaseComponent {
   base = `
     <link rel="stylesheet" href="../../menu.css">
+    <link rel="stylesheet" href="../../styles/collapsable.css">
     <div id="collapsable" class="collapsing ${this.customClasses}">
-    <button id="showButton" class="popup-button short corner">${this.buttonLabel}</button>
+    <button id="showButton" class="base-button short corner">${this.buttonLabel}</button>
     <div id="main" >
     </div>
     </div>

@@ -23,11 +23,11 @@ if (isset($_POST['to-registration'])) {
     </head>
     <body>
         <form method="post">
-            <div class="menu-container">
-                <div class="popup">
+            <div class="menu-container flex-column-center">
+                <div class="popup flex-column-center">
 
-                    <button class="popup-button" name="to-login">Login</button>
-                    <button class="popup-button" name="to-registration">Sign up</button>
+                    <button class="base-button" name="to-login">Login</button>
+                    <button class="base-button" name="to-registration">Sign up</button>
                 </div>
             </div>
         </form>

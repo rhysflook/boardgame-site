@@ -1,0 +1,38 @@
+.collapsing {
+  position: absolute;
+  background-color: var(--button-colour);
+  border: var(--fancy-shadow-colour) 5px solid;
+  border-radius: 15px;
+  box-shadow: 3px 0px 4px var(--light-fancy-shadow),
+    0px 3px 4px var(--light-fancy-shadow),
+    -3px 0px 4px var(--light-fancy-shadow);
+}
+
+.top-right {
+  right: 5px;
+  top: 5px;
+}
+
+.bottom-right {
+  right: 5px;
+  bottom: 25px;
+}
+
+@media (max-width: 600px) {
+  .c-open {
+    width: 60%;
+  }
+  #showButton {
+    font-size: 1.2rem;
+    margin-top: initial;
+    margin-left: 5px;
+    margin-bottom: 5px;
+    font-family: var(--font);
+    height: 30px;
+    margin-top: initial;
+    font-weight: bolder;
+    background-color: var(--button-colour);
+    border: 1px var(--btn-secondary-colour) solid;
+    border-radius: 5px;
+  }
+}

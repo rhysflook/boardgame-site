@@ -77,4 +77,4 @@ export class InvitePlayerWindow extends HTMLElement {
   };
 }
 
-customElements.define('x-invite-menu', InvitePlayerWindow);
+customElements.define('x-menu-window', InvitePlayerWindow);

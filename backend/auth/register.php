@@ -46,16 +46,15 @@ if (array_key_exists('register', $_POST)) {
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
-        <link rel="stylesheet" href="menu.css">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="../../menu.css">
     </head>
     <body>
         <form method="POST">
-        <div class="menu-container">
-            <div class="popup"> 
-            <div class="flex-container">
+        <div class="menu-container flex-column-center">
+            <div class="popup flex-column-center"> 
+            <div class="max flex-column-center">
                 <label for="username">Username</label>
                 <input type="text" name="username" >
         
@@ -68,7 +67,7 @@ if (array_key_exists('register', $_POST)) {
             <input class="popup-button" type="submit" name="register" id="register" value="Register" disabled>
       
             <?php if ($error): ?>
-                <p class="error">User with that name already exists</p>
+                <p class="popup flex-column-center">User with that name already exists</p>
             <?php endif; ?>
             </div>
             </div>

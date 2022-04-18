@@ -31,9 +31,10 @@ export class FriendList extends CollapsingComponent {
 
   setContent = (): void => {
     this.innerContent = `
+    <link rel="stylesheet" href="../../styles/friendList.css">
     <div id="addBar">
       <input type="text" id="friendName"/>
-      <button id="addFriend" class="popup-button short">Add</button>
+      <button id="addFriend" class="base-button short">Add</button>
     </div>
       <div id="friends">${Object.values(this.friends)
         .map((friend) => this.getFriendRow(friend))

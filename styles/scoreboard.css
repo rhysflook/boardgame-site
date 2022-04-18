@@ -1,0 +1,72 @@
+.player-info-moving {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  line-height: 0;
+  width: 100%;
+  height: auto;
+  font-family: var(--font);
+  background-color: var(--component-bg-colour);
+  border: var(--fancy-border);
+  color: var(--fancy-shadow-colour);
+  padding-bottom: 5px;
+  box-shadow: 3px 3px 10px var(--fancy-shadow-colour),
+    -3px 3px 10px var(--fancy-shadow-colour);
+}
+
+.player-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  line-height: 0;
+  width: 100%;
+  height: auto;
+  font-family: var(--font);
+  background-color: var(--component-bg-colour);
+  border: var(--plain-border);
+  padding-bottom: 5px;
+  box-shadow: 3px 3px 10px var(--plain-shadow-color),
+    -3px 3px 10px var(--plain-shadow-color);
+}
+
+.player-card-left {
+  display: flex;
+  flex-direction: column;
+  width: 30%;
+  height: 100%;
+  padding-left: 10px;
+  justify-content: center;
+  align-items: center;
+}
+
+#captures {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-bottom {
+  width: 100%;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+#username {
+  text-align: center;
+}
+
+@media (max-width: 600px) {
+  #captures {
+    font-size: 0.7em;
+  }
+
+  #username {
+    font-size: 1em;
+  }
+  .black-square {
+    width: 30px;
+    height: 30px;
+  }
+}

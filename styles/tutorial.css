@@ -1,0 +1,31 @@
+.tutorial {
+  left: 250px;
+  top: 600px;
+  padding: 10px;
+  text-align: center;
+  font-size: 12px;
+  width: 40%;
+  height: 30%;
+}
+
+@media (max-width: 600px) {
+  .tutorial .base-button {
+    font-size: 1.1em;
+    height: 30px;
+  }
+  .tutorial-outer {
+    width: 100%;
+    position: absolute;
+  }
+  .tutorial h2 {
+    font-size: 1.3em;
+  }
+  .tutorial {
+    height: initial;
+    width: 80%;
+    top: initial;
+    left: initial;
+    margin: auto;
+    position: relative;
+  }
+}

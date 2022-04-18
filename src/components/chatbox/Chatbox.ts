@@ -6,12 +6,13 @@ import { Message } from './Message';
 export class Chatbox extends BaseComponent {
   html = `
   <link rel="stylesheet" href="../../menu.css">
+  <link rel="stylesheet" href="../../styles/gameChat.css">
   <div id="chat-box">
       <div id="messages"></div>
       <div id="type-area">
-      <div id="type-input">
+      <div id="type-input" class="flex-column-center">
         <textarea id="new-message"></textarea>
-        <button id="send-message" class="popup-button">^</button>
+        <button id="send-message" class="base-button">^</button>
       </div>
       </div>
   </div>
@@ -22,7 +23,9 @@ export class Chatbox extends BaseComponent {
 
   constructor(public socket: GameSocket | null = null) {
     super();
+    this.className = 'chat-ele';
     this.render(this.html);
+
     this.messageBox = this.getById('messages') as HTMLElement;
     this.textInput = this.getById('new-message') as HTMLTextAreaElement;
     this.getByIdAndBind('send-message', 'click', () => this.sendMessage());

@@ -4,6 +4,7 @@ import { PopupMessage } from './PopupMessage';
 
 export class UserSettings extends CollapsingComponent {
   innerContent = `
+  <link rel="stylesheet" href="../../styles/settings.css">
         <div class="settings">
             <div class="setting-row">
                 <h3>Language:</h3>
@@ -24,7 +25,7 @@ export class UserSettings extends CollapsingComponent {
                 <h3>Change Password</h3>
                 <input type="password" id="passw"/>
                 </div>
-                <button class="popup-button" id="changeDetails">Confirm</button>
+                <button class="base-button" id="changeDetails">Confirm</button>
         </div>`;
 
   usernameInput: HTMLInputElement | null = null;

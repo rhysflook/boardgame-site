@@ -66,18 +66,18 @@ if(isset($_SESSION['type']))
     </head>
     <body>
         <form method="post">
-        <div id="screen" class="menu-container">
-        <div class="popup">
-                <div class="flex-container">
+        <div id="screen" class="menu-container flex-column-center">
+        <div class="popup flex-column-center">
+                <div class="max flex-column-center">
                         <h1>Game Type</h1>
-                        <button class="popup-button" id="vs-ai" name="ai">A.I</button>
-                        <button class="popup-button" id="vs-player" name="vs-player">Invite</button>
-                        <button class="popup-button" id="training" name="training">Training</button>
-                        <button class="popup-button spaced" id="logout" name="logout">Logout</button> 
+                        <button class="base-button" id="vs-ai" name="ai">A.I</button>
+                        <button class="base-button" id="vs-player" name="vs-player">Invite</button>
+                        <button class="base-button" id="training" name="training">Training</button>
+                        <button class="base-button spaced" id="logout" name="logout">Logout</button> 
  
                         <!-- <h3>Input a player name to join their game</h3>
                         <input type="text" name="username">
-                        <button class="popup-button" id="join-game" name="join-game">Join</button> -->
+                        <button class="base-button" id="join-game" name="join-game">Join</button> -->
 
                 </div>
             </div>

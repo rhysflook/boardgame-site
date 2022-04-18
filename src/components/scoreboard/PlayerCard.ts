@@ -16,8 +16,8 @@ export class PlayerCard extends HTMLElement {
     const scores = this.shadowRoot?.getElementById('captures');
     if (scores) {
       scores.innerHTML = `
-      <h3>Captures: ${this.numOfCaptures}</h3>
-      <h3>Kings: ${this.numOfKings}</h3>
+      <p>Captures: ${this.numOfCaptures}</p>
+      <p>Kings: ${this.numOfKings}</p>
       `;
     }
   };
@@ -57,16 +57,18 @@ export class PlayerCard extends HTMLElement {
     const tmpl = document.createElement('template');
     tmpl.innerHTML = `
     <link rel="stylesheet" href="../../menu.css">
+    <link rel="stylesheet" href="../../styles/scoreboard.css">
     <div id="card" class="player-info">
-      <div class="player-card-left">
-        <h2 id="username">${capitalise(this.name)}</h2>
-            <div class="black-square light-bg">
-            <div id="colour" class="${this.colour} select"></div>
-        </div>
+    <h2 id="username">${capitalise(this.name)}</h2>
+    <div class="card-bottom">
+
+            <div class="black-square light-bg flex-column-center">
+            <div id="colour" class="${this.colour}s-piece select"></div>
       </div>
       <div id="captures">
-        <h3>Captures: ${this.numOfCaptures}</h3>
-        <h3>Kings: ${this.numOfKings}</h3>
+        <p>Captures: ${this.numOfCaptures}</p>
+        <p>Kings: ${this.numOfKings}</p>
+      </div>
       </div>
     </div>
     `;

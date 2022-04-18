@@ -6,10 +6,10 @@ export class PopupMessage extends BaseComponent {
     this.style.maxWidth = '40%';
     this.render(`
     <link rel="stylesheet" href="../../menu.css">
-    <div id="popup" class="error">
+    <div id="popup" class="popup flex-column-center">
       <div class="popup-inner">
         <h4 class="error-message">${this.message}</h4>
-        <button id="okay" parent=${this} class="popup-button short corner">✕</button>
+        <button id="okay" parent=${this} class="base-button short corner">✕</button>
       </div>
     </div>
   `);

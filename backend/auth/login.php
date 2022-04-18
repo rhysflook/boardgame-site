@@ -58,19 +58,19 @@ if(isset($_SESSION['login error']))
     </head>
     <body>
         <form method="POST">
-        <div class="menu-container">
-            <div class="popup">
-                <div class="flex-container">
+        <div class="menu-container flex-column-center">
+            <div class="popup flex-column-center">
+                <div class="max flex-column-center">
                     <label for="username">Username</label>
                     <input type="text" name="username" >
                     <label for="password">Password</label>
                     <input type="password" name="password">
-                    <input class="popup-button" type="submit" name="login" value="Login">
-                    <button class="popup-button" name="register" value="register">Register</button>
+                    <input class="base-button" type="submit" name="login" value="Login">
+                    <button class="base-button" name="register" value="register">Register</button>
                     <?php
                     if ($error):
                     ?>
-                    <p  class="error">Username or password incorrect</p>
+                    <p  class="popup flex-column-center">Username or password incorrect</p>
                     <?php endif; ?>
                 </div>
             </div>

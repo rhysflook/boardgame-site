@@ -1,0 +1,27 @@
+.friend-row {
+  display: flex;
+  justify-content: space-around;
+}
+
+.friend-block {
+  font-size: 0.8rem;
+  width: 30%;
+}
+
+#friendName {
+  margin-right: 10px;
+  height: 1em;
+  font-size: 1.2rem;
+}
+
+#addBar {
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+  background-color: var(--component-bg-colour);
+  border-bottom: 3px outset var(--component-border-colour);
+  box-shadow: 0 3px 5px var(--component-shadow-colour);
+  padding: 5px;
+  display: flex;
+  justify-content: left;
+  align-items: center;
+}
