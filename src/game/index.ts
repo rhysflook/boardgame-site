@@ -6,17 +6,16 @@ import { ScoreBoard } from '../components/scoreboard/ScoreBoard';
 import { GameSocket } from '../socket/GameSocket';
 import GameState from './Draughts';
 import { getCookie } from './utils';
+
 const axios = require('axios').default;
 
-// const resetGamePieces = (): void => {
-//   localStorage.clear();
-//   const oldPieces = document.querySelectorAll(
-//     '.black-piece, .white-piece, .black-king, .white-king'
-//   );
-//   oldPieces.forEach((piece) => {
-//     piece.remove();
-//   });
-// };
+let viewport = document.querySelector('meta[name=viewport]') as Element;
+viewport.setAttribute(
+  'content',
+  'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0'
+);
+
+console.log(viewport);
 
 export type GameColours = 'blacks' | 'whites';
 
