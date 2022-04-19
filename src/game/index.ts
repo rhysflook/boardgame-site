@@ -9,13 +9,43 @@ import { getCookie } from './utils';
 
 const axios = require('axios').default;
 
-let viewport = document.querySelector('meta[name=viewport]') as Element;
-viewport.setAttribute(
-  'content',
-  'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0'
-);
+// if ('visualViewport' in window) {
+//   screen.
+//   window.visualViewport.addEventListener('resize', function (event: Eve) {
+//     if (event.target.height + 30 < document.scrollElement.clientHeight) {
+//       console.log('keyboard up?');
+//     } else {
+//       console.log('keyboard down?');
+//     }
+//   });
+// }
 
-console.log(viewport);
+let initialHeight = screen.availHeight;
+window.visualViewport.addEventListener('resize', () => {
+  if (screen.availHeight < initialHeight) {
+    const metaViewport = document.querySelector(
+      'meta[name=viewport]'
+    ) as Element;
+    metaViewport.setAttribute(
+      'content',
+      'height=' + initialHeight + 'px, width=device-width, initial-scale=1.0'
+    );
+  }
+});
+// let viewport = document.querySelector('meta[name=viewport]') as Element;
+// viewport.setAttribute(
+//   'content',
+//   'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0'
+// );
+
+// document.documentElement.style.setProperty('overflow', 'auto');
+// const metaViewport = document.querySelector('meta[name=viewport]') as Element;
+// metaViewport.setAttribute(
+//   'content',
+//   'height=' + initialHeight + 'px, width=device-width, initial-scale=1.0'
+// );
+
+// console.log(viewport, metaViewport);
 
 export type GameColours = 'blacks' | 'whites';
 
