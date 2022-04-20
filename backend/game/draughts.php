@@ -41,7 +41,7 @@
         
         <div id="chat-menu"></div>                          
     </div>  
-    <script>
+    <!-- <script>
         const registerServiceWorker = async () => {
   if ('serviceWorker' in navigator) {
     try {
@@ -64,6 +64,6 @@
   }
 };
 registerServiceWorker()
-    </script>
+    </script> -->
 </body>
 </html>
