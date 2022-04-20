@@ -48,7 +48,7 @@
       const registration = await navigator.serviceWorker.register(
         '../../service-worker.js',
         {
-          scope: '/draughts/',
+          scope: '../../draughts',
         }
       );
       if (registration.installing) {
