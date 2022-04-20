@@ -1,6 +1,6 @@
 {
   "name": "Draughts",
-  "start_url": "./backend/game/draughts.php",
+  "start_url": "./index.php",
   "display": "fullscreen",
   "orientation": "portrait"
 }
