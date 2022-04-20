@@ -46,6 +46,7 @@ if (array_key_exists('register', $_POST)) {
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+        <meta http-equiv="ScreenOrientation" content="autoRotate:disabled">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="../../menu.css">
@@ -64,7 +65,7 @@ if (array_key_exists('register', $_POST)) {
                 <label for="password">Repeat password</label>
                 <input type="password" name="password-again" id="repeatPassw">
          
-            <input class="popup-button" type="submit" name="register" id="register" value="Register" disabled>
+            <input class="base-button" type="submit" name="register" id="register" value="Register" disabled>
       
             <?php if ($error): ?>
                 <p class="popup flex-column-center">User with that name already exists</p>

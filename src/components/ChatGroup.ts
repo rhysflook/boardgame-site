@@ -171,11 +171,14 @@ export class ChatGroup extends HTMLElement {
         this.collapsed = !this.collapsed;
         if (this.collapsed) {
           this.inputField = null;
-
+          this.style.position = 'relative';
+          button.innerText = `${this.groupName}`;
           button.className = 'chat-button closed';
           frame.className = 'chat-group-inner-closed';
           group.className = 'chat-group-container-closed';
         } else {
+          button.innerText = `✕`;
+          this.style.position = 'initial';
           button.className = 'chat-button short open';
           frame.className = 'chat-group-inner-open';
           group.className = 'chat-group-container-open';

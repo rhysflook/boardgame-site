@@ -19,7 +19,8 @@
 
 @media (max-width: 600px) {
   .menu-window {
-    height: 50%;
+    height: fit-content;
+    padding: 20px;
   }
   .menu-window .base-button {
     font-size: 1.1em;

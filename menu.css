@@ -5,6 +5,8 @@
   --white-piece: rgb(216, 186, 147);
   --plain-shadow-colour: grey;
   --fancy-shadow-colour: rgb(134, 67, 182);
+  --moving-player-colour: rgb(216, 186, 238);
+  --waiting-player-colour: grey;
   --plain-border: var(--plain-shadow-colour) outset 5px;
   --fancy-border: 5px outset var(--fancy-shadow-colour);
   --font: 'Fredoka', sans-serif;
@@ -240,6 +242,16 @@ label {
   background-color: var(--white-piece);
 }
 
+/* .chat-group-ele {
+  position: absolute;
+  left: 5px;
+  bottom: 5px;
+} */
+
+.screen {
+  position: relative;
+}
+
 @media (max-width: 600px) {
   .popup {
     width: 90%;
@@ -269,5 +281,22 @@ label {
 
   #playerName {
     height: 40px;
+  }
+}
+
+@media (max-height: 400px) {
+  .menu-container,
+  .popup {
+    height: initial;
+    padding: 10px 0;
+    margin: 40px 0;
+  }
+
+  .popup {
+    position: relative;
+  }
+
+  .chat-group-ele {
+    position: relative;
   }
 }

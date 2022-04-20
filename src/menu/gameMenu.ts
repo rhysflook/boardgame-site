@@ -74,7 +74,7 @@ const urlParams = new URLSearchParams(queryString);
 const player = urlParams.get('user');
 const username = player === null ? localStorage.getItem('username') : player;
 
-const screen = document.getElementById('screen');
+const screen = document.querySelector('.screen');
 screen?.appendChild(new UserSettings());
 
 getPlayerId(username as string, true).then(() => {

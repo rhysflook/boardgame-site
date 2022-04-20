@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <meta http-equiv="ScreenOrientation" content="autoRotate:disabled">
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300&display=swap" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
     <link rel="stylesheet" href="../../menu.css">
@@ -15,8 +16,8 @@
     <script type="module" src="../../dist/game.bundle.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <div class="screen gameview-screen">
+        <div id="quit"><button class="base-button quit">Back</button></div>
         <div id="left-side">
-            <div id="quit"><button class="base-button quit">Back</button></div>
             <div class="container">
                 <div class="board">        
                     

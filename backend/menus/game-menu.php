@@ -59,12 +59,14 @@ if(isset($_SESSION['type']))
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+        <meta http-equiv="ScreenOrientation" content="autoRotate:disabled">
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="../../menu.css">
     </head>
     <body>
+        <div class="screen">
         <form method="post">
         <div id="screen" class="menu-container flex-column-center">
         <div class="popup flex-column-center">
@@ -84,6 +86,7 @@ if(isset($_SESSION['type']))
            <div id="chat-area-bar"></div> 
         </div>
     </form>
+</div>
     <script type="module" src="../../dist/gameModeMenu.bundle.js"></script>
     </body>
 

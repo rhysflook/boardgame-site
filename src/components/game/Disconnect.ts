@@ -4,6 +4,7 @@ import { GameResult } from './GameResult';
 export class Disconnect extends BaseComponent {
   html = `
     <link rel="stylesheet" href="../../menu.css">
+    <link rel="stylesheet" href="../../styles/menuWindow.css">
     <div  class="menu-window">
     <h1 class="popup-message">Opponent Disconnected!</h1>
     <p>If the player doesn't reconnect within 30 seconds, the win goes to you!</p>

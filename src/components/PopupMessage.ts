@@ -3,7 +3,6 @@ import { BaseComponent } from './BaseComponent';
 export class PopupMessage extends BaseComponent {
   constructor(public message: string) {
     super();
-    this.style.maxWidth = '40%';
     this.render(`
     <link rel="stylesheet" href="../../menu.css">
     <div id="popup" class="popup flex-column-center">

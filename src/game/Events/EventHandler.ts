@@ -80,10 +80,13 @@ export class EventHandler<T extends GamePiece> {
         this.draggedPiece = piece;
         const { width, height, left, top } = ele.getBoundingClientRect();
         const square = getSquare(piece.pos.x, piece.pos.y) as HTMLElement;
-        const squareHieght = square.getBoundingClientRect().height;
+        const board = document.querySelector('.board');
+        const boardTop = board?.getBoundingClientRect().top;
+        console.log(boardTop);
         console.log(ele.style.top);
         ele.style.left = e.touches[0].pageX - width / 2 + 'px';
-        ele.style.top = e.touches[0].pageY - height * 2 + 'px';
+        ele.style.top =
+          e.touches[0].pageY - Number(boardTop) - height / 2 + 'px';
         ele.style.width = `${width}px`;
         ele.style.height = `${height}px`;
         ele.style.position = 'absolute';
@@ -184,8 +187,10 @@ export class EventHandler<T extends GamePiece> {
     if (piece.moving) {
       const ele = piece.element;
       const { width, height } = ele.getBoundingClientRect();
+      const board = document.querySelector('.board');
+      const boardTop = board?.getBoundingClientRect().top;
       ele.style.left = e.touches[0].pageX - width / 2 + 'px';
-      ele.style.top = e.touches[0].pageY - height * 2 + 'px';
+      ele.style.top = e.touches[0].pageY - Number(boardTop) - height / 2 + 'px';
       Object.entries(moves).forEach((data: [string, Move]) => {
         const [key, move] = data;
         this.handleDestinationHover(
