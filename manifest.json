@@ -1,6 +1,15 @@
 {
   "name": "Draughts",
-  "start_url": "./index.php",
+
+  "icons": [
+    {
+      "src": "https://cdn.emojidex.com/emoji/seal/black_draughts_man.png",
+      "sizes": "320x320",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "/",
   "display": "fullscreen",
-  "orientation": "portrait"
+  "orientation": "portrait",
+  "scope": "/"
 }

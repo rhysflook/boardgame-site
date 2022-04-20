@@ -8,6 +8,10 @@ if (isset($_SESSION['logged in'])) {
     exit;
 }
 ?>
-<meta name="apple-mobile-web-app-capable" content="yes" />
+<head>
 
+    <link rel="manifest" href="./manifest.json" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+</head>
 

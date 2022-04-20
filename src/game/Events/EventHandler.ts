@@ -75,7 +75,6 @@ export class EventHandler<T extends GamePiece> {
   handleTouchStart(e: TouchEvent, piece: T) {
     e.preventDefault();
     const ele = piece.element;
-    console.log(e.touches);
 
     if (this.isPlayersPiece(piece)) {
       if (this.isPlayersPiece(piece)) {

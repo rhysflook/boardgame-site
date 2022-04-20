@@ -63,6 +63,7 @@ if(isset($_SESSION['type']))
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="mobile-web-app-capable" content="yes" />
+        <link rel="manifest" href="./manifest.json" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="../../menu.css">
