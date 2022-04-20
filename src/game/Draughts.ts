@@ -117,10 +117,11 @@ export default class GameState<T extends GamePiece> {
   nextTurn = (): void => {
     this.localPlayer.updateSavedData();
     this.opponent.updateSavedData();
-
+    this.attacker.clearAllMoves();
     this.rules.winnerCheck(this.attacker, this.localPlayer.colour);
     this.attacker = this.rules.getDefender(this);
     this.calculator.calc(this.attacker.colour, this.attacker.pieces);
+
     localStorage.setItem('movingColour', this.attacker.colour);
     this.events.applyEvents(this.attacker);
     this.scoreboard.switchPlayers();

@@ -55,6 +55,10 @@ export class DraughtPiece implements GamePiece {
     this.pos = { x, y };
   }
 
+  clearMoves = (): void => {
+    this.moves = {};
+  };
+
   createHTMLElement(): HTMLDivElement {
     const man = document.createElement('div');
     man.id = `${this.colour}-${this.id}`;

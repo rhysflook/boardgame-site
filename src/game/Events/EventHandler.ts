@@ -65,6 +65,9 @@ export class EventHandler<T extends GamePiece> {
       element.onmousedown = null;
       element.onmousemove = null;
       element.onmouseup = null;
+      element.ontouchstart = null;
+      element.ontouchmove = null;
+      element.ontouchend = null;
     });
     this.eventBoundPieces = [];
   };
@@ -79,19 +82,15 @@ export class EventHandler<T extends GamePiece> {
         this.draggedEle = piece.element;
         this.draggedPiece = piece;
         const { width, height, left, top } = ele.getBoundingClientRect();
-        const square = getSquare(piece.pos.x, piece.pos.y) as HTMLElement;
         const board = document.querySelector('.board');
         const boardTop = board?.getBoundingClientRect().top;
-        console.log(boardTop);
-        console.log(ele.style.top);
+
         ele.style.left = e.touches[0].pageX - width / 2 + 'px';
         ele.style.top =
           e.touches[0].pageY - Number(boardTop) - height / 2 + 'px';
         ele.style.width = `${width}px`;
         ele.style.height = `${height}px`;
         ele.style.position = 'absolute';
-        // ele.style.left = e.clientX - width / 2 + 'px';
-        console.log(ele.style.top);
         piece.left = left;
         piece.top = top;
         piece.width = width;

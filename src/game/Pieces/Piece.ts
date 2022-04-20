@@ -25,4 +25,5 @@ export interface GamePiece {
   remove(): void;
   dragPiece(destination: HTMLElement): void;
   replacePiece(destination: HTMLElement): void;
+  clearMoves(): void;
 }

@@ -42,7 +42,6 @@ export class Chatbox extends BaseComponent {
     }
     const menu = document.getElementById('chat-menu') as HTMLElement;
     if (window.innerWidth < 600) {
-      console.log(menu);
       menu.classList.add('notVisible');
       this.isOpen = false;
       this.getByIdAndBind('open-chat', 'click', () => {
@@ -55,7 +54,6 @@ export class Chatbox extends BaseComponent {
 
   toggleChat = (): void => {
     const menu = document.getElementById('chat-menu') as HTMLElement;
-    console.log(this);
     if (this.isOpen) {
       menu.classList.remove('visible');
       menu.classList.add('notVisible');

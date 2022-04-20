@@ -108,6 +108,12 @@ export abstract class Player<T extends GamePiece> implements Player<T> {
     });
   };
 
+  clearAllMoves = (): void => {
+    Object.values(this.pieces).forEach((piece) => {
+      piece.clearMoves();
+    });
+  };
+
   updateSavedData = (): void => {
     const saveData = Object.values(this.pieces).map((piece) => {
       const { x, y } = piece.pos;
