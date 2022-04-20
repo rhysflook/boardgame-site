@@ -1,5 +1,7 @@
 {
   "name": "Draughts",
+  "scope": "/draughts/",
+  "start_url": "./index.php",
 
   "icons": [
     {
@@ -8,8 +10,6 @@
       "type": "image/png"
     }
   ],
-  "start_url": "/",
   "display": "fullscreen",
-  "orientation": "portrait",
-  "scope": "/"
+  "orientation": "portrait"
 }
