@@ -8,4 +8,6 @@ if (isset($_SESSION['logged in'])) {
     exit;
 }
 ?>
+<meta name="apple-mobile-web-app-capable" content="yes" />
+
 

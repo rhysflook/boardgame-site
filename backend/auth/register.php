@@ -48,6 +48,8 @@ if (array_key_exists('register', $_POST)) {
         <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
         <meta http-equiv="ScreenOrientation" content="autoRotate:disabled">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="mobile-web-app-capable" content="yes" />
         <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="../../menu.css">
     </head>
