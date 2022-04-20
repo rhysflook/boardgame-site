@@ -15,3 +15,4 @@ if (isset($_SESSION['logged in'])) {
     <meta name="mobile-web-app-capable" content="yes" />
 </head>
 
+

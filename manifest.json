@@ -1,6 +1,6 @@
 {
   "name": "Draughts",
-  "scope": "/draughts/",
+  "scope": "./",
   "start_url": "./index.php",
 
   "icons": [
