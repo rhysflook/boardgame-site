@@ -13,11 +13,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
     <link rel="stylesheet" href="../../menu.css">
     <link rel="stylesheet" href="../../styles.css">
+    <link rel="stylesheet" href="../../styles/scoreboard.css">
 </head>
 <body>
-    <script>var exports = {};</script>
-    <script type="module" src="../../dist/game.bundle.js"></script>
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <div class="screen gameview-screen">
         <div id="quit"><button class="base-button quit">Back</button></div>
         <div id="left-side">
@@ -29,41 +27,21 @@
                             <?php if ($i % 2 == 1 && $j % 2 == 0 || $i % 2 == 0 && $j % 2 == 1): ?>
                                 <div id="<?=$i."-".$j ?>" class="square black">
                                 </div>
-                            <?php else: ?>
-                                <div class="square white"></div>
-                            <?php endif; ?>
-                        <?php endfor; ?>                   
-                    <?php endfor; ?>
-                </div>
-            </div>
+                                <?php else: ?>
+                                    <div class="square white"></div>
+                                    <?php endif; ?>
+                                    <?php endfor; ?>                   
+                                    <?php endfor; ?>
+                                </div>
+                            </div>
             <div id="scores"></div>
         </div>
         
         <div id="chat-menu"></div>                          
     </div>  
-    <!-- <script>
-        const registerServiceWorker = async () => {
-  if ('serviceWorker' in navigator) {
-    try {
-      const registration = await navigator.serviceWorker.register(
-        '../../service-worker.js',
-        {
-          scope: '../../',
-        }
-      );
-      if (registration.installing) {
-        console.log('Service worker installing');
-      } else if (registration.waiting) {
-        console.log('Service worker installed');
-      } else if (registration.active) {
-        console.log('Service worker active');
-      }
-    } catch (error) {
-      console.error(`Registration failed with ${error}`);
-    }
-  }
-};
-registerServiceWorker()
-    </script> -->
-</body>
+    
+  </body>
+  <script>var exports = {};</script>
+  <script type="module" src="../../dist/game.bundle.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 </html>

@@ -11,7 +11,7 @@ export interface Rules<T extends GamePiece> {
   capturePiece(piece: T, captureKey: number, game: GameState<T>): void;
   handleCapture(capturingPiece: T, capturedPiece: T): void;
   endTurn(game: GameState<T>, movedPiece: T): void;
-  winnerCheck(attacker: Player<T>, localColour: GameColours): void;
+  winnerCheck(attacker: Player<T>, localColour: GameColours): boolean;
   getDefender(game: GameState<T>): Player<T>;
   crownPiece(piece: T): void;
 }
@@ -88,17 +88,15 @@ export class DraughtRules<T extends DraughtGamePiece> implements Rules<T> {
     ele.classList.add(`${piece.colour}-king`);
   };
 
-  winnerCheck = (attacker: Player<T>, localColour: GameColours): void => {
+  winnerCheck = (attacker: Player<T>, localColour: GameColours): boolean => {
     if (
       this.scoreboard.playerOne.numOfCaptures === 12 ||
       this.scoreboard.playerTwo.numOfCaptures === 12
     ) {
-      const screen = document.getElementById('left-side');
-
-      screen?.appendChild(
-        new GameResult(`${attacker.colour === localColour ? 'Lose' : 'Win'}`)
-      );
+      new GameResult(`${attacker.colour === localColour ? 'Win' : 'Lose'}`);
       localStorage.removeItem('gameInProgress');
+      return true;
     }
+    return false;
   };
 }

@@ -118,14 +118,19 @@ export default class GameState<T extends GamePiece> {
     this.localPlayer.updateSavedData();
     this.opponent.updateSavedData();
     this.attacker.clearAllMoves();
-    this.rules.winnerCheck(this.attacker, this.localPlayer.colour);
-    this.attacker = this.rules.getDefender(this);
-    this.calculator.calc(this.attacker.colour, this.attacker.pieces);
+    const isOver = this.rules.winnerCheck(
+      this.attacker,
+      this.localPlayer.colour
+    );
+    if (!isOver) {
+      this.attacker = this.rules.getDefender(this);
+      this.calculator.calc(this.attacker.colour, this.attacker.pieces);
 
-    localStorage.setItem('movingColour', this.attacker.colour);
-    this.events.applyEvents(this.attacker);
-    this.scoreboard.switchPlayers();
-    this.computerIsAttacking() && this.opponent.move();
+      localStorage.setItem('movingColour', this.attacker.colour);
+      this.events.applyEvents(this.attacker);
+      this.scoreboard.switchPlayers();
+      this.computerIsAttacking() && this.opponent.move();
+    }
   };
 
   isOnlineGame = (): boolean => {

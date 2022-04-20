@@ -6,6 +6,7 @@ export class BaseComponent extends HTMLElement implements Component {
   constructor() {
     super();
     const shadowRoot = this.attachShadow({ mode: 'open' });
+    this.style.display = 'hidden';
   }
   render = (template: string): void => {
     const tmpl = document.createElement('template');
