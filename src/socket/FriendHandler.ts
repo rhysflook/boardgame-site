@@ -1,6 +1,8 @@
 import { FriendList, Friends } from '../components/FriendList';
 import { PopupMessage } from '../components/PopupMessage';
+import { GamePiece } from '../game/Pieces/Piece';
 import { capitalise } from '../game/utils';
+import { SiteSocket } from './MenuSocket';
 import { MessageHandler } from './MessageHandler';
 
 export interface INewFriend {
@@ -26,7 +28,7 @@ export interface IGameStatus {
   id: number;
 }
 
-export class FriendHandler extends MessageHandler {
+export class FriendHandler extends MessageHandler<SiteSocket> {
   constructor(public friendList: FriendList) {
     super(friendList.socket);
   }
@@ -59,6 +61,9 @@ export class FriendHandler extends MessageHandler {
   logout = (data: IAuthStatus): void => {
     this.friendList.friends[data.id].online = false;
     this.friendList.updateFriendRow(data.id, { online: 'Offline' });
+    const savedList = JSON.parse(localStorage.getItem('friends') as string);
+    savedList[data.id].online = false;
+    localStorage.setItem('friends', JSON.stringify(savedList));
   };
 
   joinGame = (data: IGameStatus): void => {

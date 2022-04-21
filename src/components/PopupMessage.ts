@@ -5,10 +5,12 @@ export class PopupMessage extends BaseComponent {
     super();
     this.render(`
     <link rel="stylesheet" href="../../menu.css">
-    <div id="popup" class="popup flex-column-center">
+    <link rel="stylesheet" href="../../styles/popup.css">
+
+    <div id="popup" class="popup-window flex-column-center">
+    <button id="okay" parent=${this} class="base-button chibi corner">✕</button>
       <div class="popup-inner">
         <h4 class="error-message">${this.message}</h4>
-        <button id="okay" parent=${this} class="base-button short corner">✕</button>
       </div>
     </div>
   `);
@@ -24,7 +26,7 @@ export class PopupMessage extends BaseComponent {
         });
       }
     }
-    setTimeout(() => this.remove(), 5000);
+    setTimeout(() => this.remove(), 500000);
   }
 }
 

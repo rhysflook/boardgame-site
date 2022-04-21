@@ -1,0 +1,22 @@
+.popup-window {
+  font-family: var(--font);
+  width: auto;
+  height: auto;
+  padding: 10px;
+  background-color: var(--component-bg-colour);
+  position: absolute;
+  border: var(--fancy-border);
+  box-shadow: 5px 10px 20px var(--plain-shadow-color);
+  left: 5px;
+  top: 5px;
+}
+
+.chibi {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  font-size: 0.4;
+  width: auto;
+  height: auto;
+  margin-top: initial;
+}
