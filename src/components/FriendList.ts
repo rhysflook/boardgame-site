@@ -2,7 +2,7 @@ import { addFriend } from '../api';
 import { capitalise } from '../game/utils';
 import { Friend } from '../menu/gameMenu';
 import { FriendHandler } from '../socket/FriendHandler';
-import { SiteSocket } from '../socket/MenuSocket';
+import { MenuSocket, SiteSocket } from '../socket/MenuSocket';
 import { ChatGroup } from './ChatGroup';
 import { CollapsingComponent } from './CollapsingComponent';
 
@@ -19,7 +19,7 @@ export class FriendList extends CollapsingComponent {
   collapsed: boolean = true;
   add: HTMLElement | null = null;
 
-  constructor(public socket: SiteSocket, public friends: Friends) {
+  constructor(public socket: MenuSocket, public friends: Friends) {
     super('Friends', 'top-right', () => {
       this.renderFriends();
       this.add = this.shadowRoot?.getElementById('addFriend') as HTMLElement;
@@ -60,15 +60,17 @@ export class FriendList extends CollapsingComponent {
     Object.values(this.friends).forEach((friend) => {
       const ele = this.shadowRoot?.getElementById(String(friend.id));
       ele?.addEventListener('click', () => {
-        document.body.appendChild(
-          new ChatGroup(
-            this.socket,
-            localStorage.getItem('username') as string,
-            friend.name,
-            friend.id,
-            false
-          )
+        const screen = document.querySelector('.screen');
+        const newGroup = new ChatGroup(
+          this.socket,
+          localStorage.getItem('username') as string,
+          friend.name,
+          friend.id,
+          this.socket.chatGroups,
+          false
         );
+        screen?.appendChild(newGroup);
+        this.socket.chatGroups.addChatGroup(friend.id, newGroup);
       });
     });
   };

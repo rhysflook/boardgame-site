@@ -84,7 +84,7 @@ label {
 
 ::-webkit-scrollbar-thumb {
   border-radius: 16px;
-  background-color: var(--fancy-shadow-colour);
+  background-color: var(--light-fancy-shadow);
   outline: 1px solid var(--fancy-shadow-colour);
 }
 
@@ -242,11 +242,9 @@ label {
   background-color: var(--white-piece);
 }
 
-/* .chat-group-ele {
+.chat-group-ele {
   position: absolute;
-  left: 5px;
-  bottom: 5px;
-} */
+}
 
 .screen {
   position: relative;
@@ -281,6 +279,9 @@ label {
 
   #playerName {
     height: 40px;
+  }
+  .chat-group-ele {
+    position: initial;
   }
 }
 

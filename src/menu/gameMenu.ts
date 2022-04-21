@@ -5,6 +5,7 @@ import { MenuSocket } from '../socket/MenuSocket';
 import { getTemplate } from '../templates/invite';
 import { ChatGroup } from '../components/ChatGroup';
 import { UserSettings } from '../components/UserSettings';
+import { Friends } from '../components/FriendList';
 
 export type FriendShip = [number, number, string, string];
 
@@ -20,6 +21,26 @@ localStorage.removeItem('gameInProgress');
 const axios = require('axios').default;
 
 const menu = document.querySelector('.menu-container') as HTMLElement;
+
+export interface ChatGroups {
+  [grouo_id: number]: ChatGroup;
+}
+
+export class ChatControls {
+  chats: ChatGroups = {};
+
+  addChatGroup = (id: number, group: ChatGroup): void => {
+    this.chats[id] = group;
+  };
+
+  removeChatGroup = (id: number) => {
+    delete this.chats[id];
+  };
+
+  get numOfGroups() {
+    return Object.keys(this.chats).length;
+  }
+}
 
 export class InviteWindow extends HTMLDivElement {
   constructor(
@@ -78,9 +99,18 @@ const screen = document.querySelector('.screen');
 
 getPlayerId(username as string, true).then(() => {
   axios.get('../auth/socket-url.php').then((res: AxiosResponse) => {
-    const socket = new MenuSocket(res.data as string);
+    const chatGroups = new ChatControls();
+    const socket = new MenuSocket(res.data as string, chatGroups);
+    const allChat = new ChatGroup(
+      socket,
+      username as string,
+      'Chat',
+      0,
+      chatGroups
+    );
+    chatGroups.addChatGroup(0, allChat);
+    screen?.appendChild(allChat);
 
-    screen?.appendChild(new ChatGroup(socket, username as string, 'Chat', 0));
     screen?.appendChild(new UserSettings());
     axios
       .get(
@@ -95,10 +125,12 @@ getPlayerId(username as string, true).then(() => {
           }
         });
         unreadIds.forEach((id) => {
-          const friends = localStorage.getItem('friends') as string;
-          const friendName = JSON.parse(friends).find(
-            (friend: Friend) => id === friend.id
-          );
+          const friends = JSON.parse(
+            localStorage.getItem('friends') as string
+          ) as Friends;
+          const friendName = Object.values(friends).find((friend: Friend) => {
+            return id === friend.id;
+          });
           if (friendName) {
             document.body.append(
               new ChatGroup(
@@ -106,6 +138,7 @@ getPlayerId(username as string, true).then(() => {
                 username as string,
                 friendName.name,
                 id,
+                chatGroups,
                 false,
                 true
               )

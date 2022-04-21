@@ -48,16 +48,17 @@ export class GeneralHandler extends MessageHandler<MenuSocket> {
       data.sender !== (localStorage.getItem('username') as string) &&
       data.recipient_id !== 0
     ) {
-      document.body.append(
-        new ChatGroup(
-          this.socket,
-          localStorage.getItem('username') as string,
-          data.sender,
-          data.sender_id,
-          false,
-          true
-        )
+      const newGroup = new ChatGroup(
+        this.socket,
+        localStorage.getItem('username') as string,
+        data.sender,
+        data.sender_id,
+        this.socket.chatGroups,
+        false,
+        true
       );
+      this.socket.chatGroups.addChatGroup(data.sender_id, newGroup);
+      document.body.append(newGroup);
     }
   };
 

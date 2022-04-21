@@ -1,4 +1,5 @@
 import { getCookie } from '../game/utils';
+import { ChatControls, ChatGroups } from '../menu/gameMenu';
 import { GeneralHandler } from './GeneralHandler';
 import { MessageHandler } from './MessageHandler';
 
@@ -11,7 +12,7 @@ export interface SiteSocket extends WebSocket {
 }
 
 export class MenuSocket extends WebSocket implements SiteSocket {
-  constructor(url: string) {
+  constructor(url: string, public chatGroups: ChatControls) {
     super(url);
     this.addEventListener('open', () => {
       this.setupConnection();
