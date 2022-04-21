@@ -1,6 +1,28 @@
-.collapsing {
+.collapsed {
+  font-size: 0.8em;
   position: absolute;
   background-color: var(--button-colour);
+}
+
+.collapsed .toggle-button {
+  margin-top: initial;
+  font-size: 1.3em;
+  width: auto;
+  height: auto;
+}
+
+.c-open .base-button {
+  font-size: 1em;
+  width: auto;
+  height: auto;
+  margin-top: initial;
+}
+
+.c-open {
+  margin-top: initial;
+  position: absolute;
+  background-color: var(--button-colour);
+
   border: var(--fancy-shadow-colour) 5px solid;
   border-radius: 15px;
   box-shadow: 3px 0px 4px var(--light-fancy-shadow),
@@ -8,27 +30,41 @@
     -3px 0px 4px var(--light-fancy-shadow);
 }
 
-.top-right {
+.c-open .toggle-button {
+  position: absolute;
   right: 5px;
+  top: 5px;
+  margin-top: initial;
+  font-size: 0.8em;
+  width: auto;
+  height: auto;
+}
+
+.top-right {
+  right: 1%;
   top: 5px;
 }
 
 .bottom-right {
-  right: 5px;
-  bottom: 25px;
+  left: 1%;
+  top: 5px;
 }
 
 @media (max-width: 600px) {
   .c-open {
-    width: 60%;
+    width: calc(98% - 10px);
+    z-index: 10;
   }
+
+  fieldset {
+    width: 100%;
+  }
+
   #showButton {
-    font-size: 1.2rem;
     margin-top: initial;
-    margin-left: 5px;
-    margin-bottom: 5px;
+
     font-family: var(--font);
-    height: 30px;
+
     margin-top: initial;
     font-weight: bolder;
     background-color: var(--button-colour);

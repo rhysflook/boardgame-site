@@ -297,6 +297,6 @@ label {
   }
 
   .chat-group-ele {
-    position: relative;
+    position: initial;
   }
 }

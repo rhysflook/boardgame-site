@@ -1,4 +1,4 @@
-.chat-button {
+.chat-button-closed {
   font-family: var(--font);
   width: 100%;
   height: 50px;
@@ -11,11 +11,24 @@
   /* border-top: 0; */
   /* box-shadow: 0 5px indigo; */
 }
-.chat-button:hover {
+
+.chat-button-open {
+  font-family: var(--font);
+  width: auto;
+  height: auto;
+
+  font-size: 0.8rem;
+  font-weight: bolder;
+  background-color: var(--button-colour);
+  border: 1px var(--btn-secondary-colour) solid;
+  border-radius: 5px;
+}
+
+.chat-button-closed:hover {
   color: var(--btn-secondary-colour);
 }
 
-.chat-button:active {
+.chat-button-closed:active {
   box-shadow: 1px 1px 5px var(--fancy-shadow-colour),
     -1px 1px 5px var(--fancy-shadow-colour);
 }
@@ -101,6 +114,9 @@
 }
 
 @media (max-width: 600px) {
+  .chat-group {
+    height: calc(100% - 150px);
+  }
   .chat-group-inner-open {
     width: 100%;
     height: 100%;
@@ -111,6 +127,7 @@
     height: calc(100% - 10px);
     left: initial;
     top: 0;
+    z-index: 10;
   }
 
   .chat-group-ele {
@@ -138,8 +155,9 @@
   }
 
   .chat-button {
-    height: 30px;
-    font-size: 1.2rem;
+    width: auto;
+    height: auto;
+    font-size: 0.8em;
     margin-top: initial;
     margin-left: 5px;
     margin-bottom: 5px;
@@ -148,6 +166,11 @@
   .open {
     width: auto;
     height: auto;
+  }
+
+  #sendBar {
+    border-top-left-radius: initial;
+    border-top-right-radius: initial;
   }
 }
 

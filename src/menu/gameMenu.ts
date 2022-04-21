@@ -75,13 +75,13 @@ const player = urlParams.get('user');
 const username = player === null ? localStorage.getItem('username') : player;
 
 const screen = document.querySelector('.screen');
-screen?.appendChild(new UserSettings());
 
 getPlayerId(username as string, true).then(() => {
   axios.get('../auth/socket-url.php').then((res: AxiosResponse) => {
     const socket = new MenuSocket(res.data as string);
 
     screen?.appendChild(new ChatGroup(socket, username as string, 'Chat', 0));
+    screen?.appendChild(new UserSettings());
     axios
       .get(
         '../friends/getChatHistory.php?recipient_id=' +
