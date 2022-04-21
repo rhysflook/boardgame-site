@@ -115,15 +115,17 @@ export class ChatGroup extends HTMLElement {
     show: boolean
   ): void => {
     console.log(sender, this.localUser);
-    const message = new Message(
-      content,
-      capitalise(sender),
-      sender === this.localUser,
-      sender === this.lastSender
-    );
-    this.lastSender = sender;
-    this.chat.push(message.renderMessage());
-    show && this.displayMessage(message);
+    if (content !== '') {
+      const message = new Message(
+        content,
+        capitalise(sender),
+        sender === this.localUser,
+        sender === this.lastSender
+      );
+      this.lastSender = sender;
+      this.chat.push(message.renderMessage());
+      show && this.displayMessage(message);
+    }
   };
 
   displayMessage = (message: HTMLElement): void => {
