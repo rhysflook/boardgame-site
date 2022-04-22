@@ -61,6 +61,13 @@ if(isset($_SESSION['login error']))
     </head>
     <body>
         <form method="POST">
+            <?php
+            if ($error):
+            ?>
+            <div id="error" class="login-error">
+                <p  class="popup flex-column-center">Username or password incorrect</p>
+            </div>
+            <?php endif; ?>
         <div class="menu-container flex-column-center">
             <div class="popup flex-column-center">
                 <div class="max flex-column-center">
@@ -70,14 +77,10 @@ if(isset($_SESSION['login error']))
                     <input type="password" name="password">
                     <input class="base-button" type="submit" name="login" value="Login">
                     <button class="base-button" name="register" value="register">Register</button>
-                    <?php
-                    if ($error):
-                    ?>
-                    <p  class="popup flex-column-center">Username or password incorrect</p>
-                    <?php endif; ?>
                 </div>
             </div>
         </div>
         </form>
+
     </body>
 </html>

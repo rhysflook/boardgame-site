@@ -251,6 +251,15 @@ label {
   position: relative;
 }
 
+.login-error {
+  width: 80%;
+  height: 20%;
+  position: absolute;
+  left: 5px;
+  top: 5px;
+  z-index: 10;
+}
+
 @media (max-width: 600px) {
   .popup {
     width: 90%;
