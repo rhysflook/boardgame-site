@@ -159,6 +159,7 @@ label {
   position: absolute;
   border: var(--plain-border);
   box-shadow: 5px 10px 20px var(--plain-shadow-color);
+  padding: 10px;
 }
 
 .popup-inner {
