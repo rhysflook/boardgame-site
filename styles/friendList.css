@@ -25,3 +25,7 @@
   justify-content: left;
   align-items: center;
 }
+
+.all-friends {
+  overflow-y: auto;
+}

@@ -39,6 +39,10 @@ export class FriendHandler extends MessageHandler<SiteSocket> {
 
   newFriend = (data: INewFriend): void => {
     const { id, name, online, in_game } = data;
+    const savedList = JSON.parse(localStorage.getItem('friends') as string);
+    savedList[id].online = online;
+    savedList[id].inGame = in_game;
+    localStorage.setItem('friends', JSON.stringify(savedList));
     this.friendList.createRow({ id, name, online, inGame: in_game });
   };
 

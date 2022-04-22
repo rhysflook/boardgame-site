@@ -114,7 +114,6 @@ export class ChatGroup extends HTMLElement {
     sender: string,
     show: boolean
   ): void => {
-    console.log(sender, this.localUser);
     if (content !== '') {
       const message = new Message(
         content,

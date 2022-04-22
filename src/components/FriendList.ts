@@ -36,7 +36,7 @@ export class FriendList extends CollapsingComponent {
       <input type="text" id="friendName"/>
       <button id="addFriend" class="base-button short">Add</button>
     </div>
-      <div id="friends">${Object.values(this.friends)
+      <div id="friends" class="all-friends">${Object.values(this.friends)
         .map((friend) => this.getFriendRow(friend))
         .join('')}</div>
     `;
