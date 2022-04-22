@@ -72,7 +72,7 @@ export class DraughtTraining<T extends GamePiece> {
   screen: HTMLElement | null = null;
   tutorialMessage: HTMLElement | null = null;
   constructor(public game: GameState<T>) {
-    this.screen = document.querySelector('.container') as HTMLElement;
+    this.screen = document.querySelector('#left-side') as HTMLElement;
     this.game.events.setupTraining(this.setupMove);
     this.setupMove();
   }

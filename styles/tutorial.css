@@ -1,11 +1,13 @@
 .tutorial {
-  left: 250px;
+  left: 50%;
+  transform: translateX(-50%);
   top: 600px;
   padding: 10px;
   text-align: center;
   font-size: 12px;
   height: auto;
   width: auto;
+  position: absolute;
 }
 
 @media (max-width: 600px) {
@@ -25,6 +27,7 @@
     width: 80%;
     top: initial;
     left: initial;
+    transform: initial;
     margin: auto;
     position: relative;
   }

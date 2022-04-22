@@ -29,7 +29,9 @@ if (gameType === 'training') {
     'black'
   );
   cardOne.select();
+  const chatBox = new Chatbox();
   const cardTwo = new PlayerCard('Boss A.I', 'white');
+
   const scoreCard = new ScoreBoard(cardOne, cardTwo);
   GameState.setupDraughtsGame('training', 'blacks', scoreCard);
 } else if (gameType === 'ai') {
