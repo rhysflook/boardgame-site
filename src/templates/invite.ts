@@ -15,7 +15,7 @@ const invitePlayer = `
 const invitation = `
   <link rel="stylesheet" href="../../menu.css">
   <link rel="stylesheet" href="../../styles/menuWindow.css">
-  <div class="popup flex-column-center">
+  <div class="popup invite flex-column-center">
   <h2 id="message"></h2>
     <button class="base-button" id="accept">Accept</button>
     <button class="base-button" id="reject">Reject</button>

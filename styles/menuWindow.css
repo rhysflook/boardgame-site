@@ -17,6 +17,15 @@
   z-index: 1000;
 }
 
+.invite {
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  border: 4px var(--fancy-shadow-colour) solid;
+  box-shadow: 3px 3px 10px var(--fancy-shadow-colour),
+    -3px 3px 10px var(--fancy-shadow-colour);
+}
+
 @media (max-width: 600px) {
   .menu-window {
     height: fit-content;
