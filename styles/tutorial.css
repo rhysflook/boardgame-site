@@ -4,8 +4,8 @@
   padding: 10px;
   text-align: center;
   font-size: 12px;
-  width: 40%;
-  height: 30%;
+  height: auto;
+  width: auto;
 }
 
 @media (max-width: 600px) {
