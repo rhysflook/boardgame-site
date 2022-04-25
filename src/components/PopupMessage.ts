@@ -8,7 +8,7 @@ export class PopupMessage extends BaseComponent {
     <link rel="stylesheet" href="../../styles/popup.css">
 
     <div id="popup" class="popup-window flex-column-center">
-    <button id="okay" parent=${this} class="base-button chibi corner">✕</button>
+    <button id="okay" class="base-button chibi corner">✕</button>
       <div class="popup-inner">
         <h4 class="error-message">${this.message}</h4>
       </div>
@@ -26,7 +26,7 @@ export class PopupMessage extends BaseComponent {
         });
       }
     }
-    setTimeout(() => this.remove(), 5000);
+    setTimeout(() => this.remove(), 500);
   }
 }
 

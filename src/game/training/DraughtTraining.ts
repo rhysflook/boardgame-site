@@ -113,7 +113,11 @@ export class DraughtTraining<T extends GamePiece> {
   showMessage = (): void => {
     if (this.screen) {
       this.tutorialMessage = new TutorialMessage(messages[this.messageCount]);
-      this.screen.appendChild(this.tutorialMessage);
+      setTimeout(() => {
+        if (this.tutorialMessage) {
+          this.screen?.appendChild(this.tutorialMessage);
+        }
+      }, 100);
       this.messageCount++;
     }
   };

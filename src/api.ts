@@ -36,7 +36,7 @@ export const getPlayerId = (
 };
 
 export const addFriend = async (name: string): Promise<Friend> => {
-  const promise = new Promise<Friend>((resolve) => {
+  const promise = new Promise<Friend>((resolve, reject) => {
     axios.get(`../utils/getPlayer.php?user=${name}`).then((res) => {
       if (!alreadyFriends(res.data.id)) {
         const reqBody = getFriendReq(res.data.id, name);
