@@ -1,17 +1,23 @@
 import { AxiosResponse } from '../../../node_modules/axios/index';
 import { GameSocket } from '../../socket/GameSocket';
 import { getTemplate } from '../../templates/invite';
+import { BaseComponent } from '../BaseComponent';
 import { PopupMessage } from '../PopupMessage';
 
 const axios = require('axios').default;
 
-export class InvitePlayerWindow extends HTMLElement {
+export class InvitePlayerWindow extends BaseComponent {
   timer: NodeJS.Timeout | null = null;
+  html = `
+  <div class="menu-window custom-comp">
+  <h1 class="message">Invite a player!</h1>
+  <input type="text" id="playerName">
+  <button class="base-button" id="inviteButton">Invite</button>
+</div>
+  `;
   constructor(public socket: GameSocket, public parent: HTMLElement) {
     super();
-    const shadowRoot = this.attachShadow({ mode: 'open' });
-
-    shadowRoot.appendChild(getTemplate('invitePlayer'));
+    this.render(this.html);
   }
 
   connectedCallback(): void {
@@ -44,8 +50,10 @@ export class InvitePlayerWindow extends HTMLElement {
             }
             this.waitForOpponent();
           })
-          .catch(() => {
-            new PopupMessage('Player not found!');
+          .catch((error: AxiosResponse) => {
+            const popup = new PopupMessage('Player not found!', 'left-side');
+            const parent = document.querySelector('.screen');
+            setTimeout(() => parent?.appendChild(popup), 500);
           });
       });
     }

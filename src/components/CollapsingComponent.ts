@@ -5,7 +5,7 @@ export class CollapsingComponent extends BaseComponent {
     <link rel="stylesheet" href="../../menu.css">
     <link rel="stylesheet" href="../../styles/collapsable.css">
     <div id="collapsable" class="collapsed ${this.customClasses}">
-    <button id="showButton" class="base-button toggle-button short">${this.buttonLabel}</button>
+    <button id="showButton" part="base-button" class="base-button toggle-button short">${this.buttonLabel}</button>
     <div id="main" >
     </div>
     </div>

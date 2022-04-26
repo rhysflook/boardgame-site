@@ -11,7 +11,7 @@
   top: 5px;
 }
 
-.chibi {
+popup-message::part(chibi) {
   position: absolute;
   top: 3px;
   right: 3px;

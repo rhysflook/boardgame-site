@@ -32,8 +32,7 @@ const inviteWait = `
 `;
 
 const chooseColour = `
-<link rel="stylesheet" href="../../menu.css">
-<link rel="stylesheet" href="../../styles/menuWindow.css">
+
 
   <div class="light-bg flex-column-center">
       <div class="colour-select flex-row centered">

@@ -14,7 +14,7 @@
   border-radius: 10px;
 }
 
-x-player-card::shadow div {
+x-player-card div {
   display: flex;
   flex-direction: column;
   justify-content: space-between;

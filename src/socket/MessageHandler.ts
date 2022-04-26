@@ -6,6 +6,7 @@ export abstract class MessageHandler<T extends SiteSocket> {
   constructor(public socket: T) {
     this.socket.addEventListener('message', (event) => {
       const data = JSON.parse(event.data);
+      console.log(data);
       if (this.hasProperty(data.type)) {
         this[data.type as Handler](data);
         this.callback();

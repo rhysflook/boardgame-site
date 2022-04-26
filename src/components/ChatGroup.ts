@@ -258,7 +258,7 @@ export class ChatGroup extends HTMLElement {
   
       <div id="sendBar">
         <textarea type="text" id="chatContent"></textarea>
-        <button id="sendChat" class="base-button short">Send</button>
+        <button id="sendChat" part="base-button" class="base-button short">Send</button>
         </div>
         <div id="${this.groupName}-chat-inner" class="chat-group"></div>
       </div>

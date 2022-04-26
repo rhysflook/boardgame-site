@@ -142,11 +142,15 @@ label {
   border-radius: 5px;
 }
 
-.base-button:hover {
+.base-button:hover,
+::part(base-button):hover,
+::part(shadow-button):hover {
   color: var(--btn-secondary-colour);
 }
 
-.base-button:active {
+.base-button:active,
+::part(base-button):active,
+::part(shadow-button):active {
   box-shadow: 1px 1px 5px var(--fancy-shadow-colour),
     -1px 1px 5px var(--fancy-shadow-colour);
 }

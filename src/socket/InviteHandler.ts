@@ -45,7 +45,9 @@ export class InviteHandler extends MessageHandler<GameSocket> {
     this.socket.handleColourChoice(data.coinFlip === 1 ? 0 : 1);
   };
 
-  offline = (): void => {};
+  offline = (): void => {
+    console.log('heheh');
+  };
 
   playing = (): void => {};
 }

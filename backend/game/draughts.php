@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="../../menu.css">
     <link rel="stylesheet" href="../../styles.css">
     <link rel="stylesheet" href="../../styles/scoreboard.css">
+    <link rel="stylesheet" href="../../styles/popup.css">
 </head>
 <body>
     <div class="screen gameview-screen">
@@ -36,7 +37,7 @@
                             </div>
             <div id="scores"></div>
         </div>
-        
+       <popup-window></popup-window> 
         <div id="chat-menu"></div>                          
     </div>  
     
