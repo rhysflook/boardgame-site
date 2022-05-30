@@ -3,6 +3,8 @@ namespace draughts;
 function getConnection() {
     if($_SERVER["SERVER_NAME"]=="localhost"){
         return new \mysqli("127.0.0.1", "root", "", "draughts");
+    } else if (\str_contains($_SERVER["SERVER_NAME"], "progress")) {
+
     } else {
         $cleardb_url = parse_url(getenv("CLEARDB_DATABASE_URL"));
         $cleardb_server = $cleardb_url["host"];
